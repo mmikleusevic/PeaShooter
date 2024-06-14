@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float xBound = 21.5f;
+    [SerializeField] private CameraBounds bounds;
 
     private PlayerInput playerInput;
     private Rigidbody playerRb;
@@ -14,6 +16,12 @@ public class PlayerController : MonoBehaviour
     {
         playerInput = new PlayerInput();
         playerRb = GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        float distanceFromCamera = Vector3.Distance(Camera.main.transform.position, transform.position);
+        bounds.SetPerspectiveCameraBounds(distanceFromCamera);
     }
 
     private void OnEnable()
@@ -32,6 +40,13 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Vector2 currentPosition = playerRb.position;
+
+        currentPosition.x = Mathf.Clamp(currentPosition.x, -bounds.GetPerspectiveCameraBounds().x, bounds.GetPerspectiveCameraBounds().x);
+        currentPosition.y = Mathf.Clamp(currentPosition.y, -bounds.GetPerspectiveCameraBounds().y, bounds.GetPerspectiveCameraBounds().y);
+
+        playerRb.position = currentPosition;
+
         playerRb.velocity = movementVector * moveSpeed * Time.deltaTime;
     }
 
