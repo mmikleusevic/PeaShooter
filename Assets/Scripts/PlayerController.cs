@@ -40,13 +40,22 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        SetPlayerPosition();
+        MovePlayer();
+    }
+
+    private void SetPlayerPosition()
+    {
         Vector2 currentPosition = playerRb.position;
 
         currentPosition.x = Mathf.Clamp(currentPosition.x, -bounds.GetPerspectiveCameraBounds().x, bounds.GetPerspectiveCameraBounds().x);
         currentPosition.y = Mathf.Clamp(currentPosition.y, -bounds.GetPerspectiveCameraBounds().y, bounds.GetPerspectiveCameraBounds().y);
 
         playerRb.position = currentPosition;
+    }
 
+    private void MovePlayer()
+    {
         playerRb.velocity = movementVector * moveSpeed * Time.deltaTime;
     }
 
