@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float xBound = 21.5f;
     [SerializeField] private CameraBounds bounds;
 
     private PlayerInput playerInput;
