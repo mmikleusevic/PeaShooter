@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -13,11 +14,12 @@ public partial struct PlayerSpawnerSystem : ISystem
         SpawnEntity(ref state);
     }
 
+    [BurstCompile]
     private void SpawnEntity(ref SystemState state)
     {
-        state.Enabled = false;
-
         if (!SystemAPI.TryGetSingletonEntity<PlayerSpawnerComponent>(out Entity entity)) return;
+
+        state.Enabled = false;
 
         RefRW<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRW<PlayerSpawnerComponent>(entity);
 

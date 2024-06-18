@@ -3,41 +3,52 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private Random random;
+    private const float epsilon = 1e-5f;
     private float planeSize;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         random = new Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
+        planeSize = 0f;
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        CheckIfPlaneSet(ref state);
+        bool planeSet = CheckIfPlaneSet(ref state);
+
+        if (!planeSet) return;
 
         SpawnEntities(ref state);
     }
 
-    private void CheckIfPlaneSet(ref SystemState state)
+    [BurstCompile]
+    private bool CheckIfPlaneSet(ref SystemState state)
     {
-        if (Mathf.Approximately(planeSize, 0))
+        bool approximatelyZero = planeSize < epsilon;
+        if (approximatelyZero)
         {
-            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return;
+            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return false;
 
             RefRO<PlaneComponent> entitySpawner = SystemAPI.GetComponentRO<PlaneComponent>(planeEntity);
 
             planeSize = entitySpawner.ValueRO.planeSize;
+
+            return true;
         }
+
+        return true;
     }
 
+    [BurstCompile]
     private void SpawnEntities(ref SystemState state)
     {
         if (!SystemAPI.TryGetSingletonEntity<EnemySpawnerComponent>(out Entity entity)) return;

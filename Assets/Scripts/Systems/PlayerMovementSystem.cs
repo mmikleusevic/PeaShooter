@@ -2,33 +2,49 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 [BurstCompile]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
+    private const float epsilon = 1e-5f;
     private float planeSize;
+
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        planeSize = 0f;
+    }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        CheckIfPlaneSet(ref state);
+        bool planeSet = CheckIfPlaneSet(ref state);
+
+        if (!planeSet) return;
 
         MovePlayer(ref state);
     }
 
-    private void CheckIfPlaneSet(ref SystemState state)
+    [BurstCompile]
+    private bool CheckIfPlaneSet(ref SystemState state)
     {
-        if (Mathf.Approximately(planeSize, 0))
+        bool approximatelyZero = planeSize < epsilon;
+        if (approximatelyZero)
         {
-            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return;
+            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return false;
 
             RefRO<PlaneComponent> entitySpawner = SystemAPI.GetComponentRO<PlaneComponent>(planeEntity);
 
             planeSize = entitySpawner.ValueRO.planeSize;
+
+            return true;
         }
+
+        return true;
     }
 
+    [BurstCompile]
     private void MovePlayer(ref SystemState state)
     {
         foreach (var (data, input, transform) in SystemAPI.Query<RefRO<PlayerControllerComponent>, RefRO<InputComponent>, RefRW<LocalTransform>>())
@@ -41,8 +57,8 @@ public partial struct PlayerMovementSystem : ISystem
 
             float3 currentPosition = transform.ValueRO.Position;
 
-            currentPosition.x = Mathf.Clamp(currentPosition.x, -planeSize, planeSize);
-            currentPosition.y = Mathf.Clamp(currentPosition.y, -planeSize, planeSize);
+            currentPosition.x = math.clamp(currentPosition.x, -planeSize, planeSize);
+            currentPosition.y = math.clamp(currentPosition.y, -planeSize, planeSize);
 
             transform.ValueRW.Position = currentPosition;
         }

@@ -23,17 +23,17 @@ public partial class PlayerControllerSystem : SystemBase
 
     }
 
+    [BurstCompile]
     private void OnMovementCanceled(InputAction.CallbackContext obj)
     {
         SetMovement(Vector2.zero);
     }
 
+    [BurstCompile]
     private void OnMovementPerformed(InputAction.CallbackContext obj)
     {
         SetMovement(playerInput.Player.Movement.ReadValue<Vector2>());
     }
-
-
 
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
@@ -43,6 +43,7 @@ public partial class PlayerControllerSystem : SystemBase
         playerInput.Disable();
     }
 
+    [BurstCompile]
     private void SetMovement(Vector2 vector2)
     {
         foreach (RefRW<InputComponent> input in SystemAPI.Query<RefRW<InputComponent>>())
