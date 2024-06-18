@@ -10,6 +10,11 @@ public partial struct PlayerSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        SpawnEntity(ref state);
+    }
+
+    private void SpawnEntity(ref SystemState state)
+    {
         state.Enabled = false;
 
         if (!SystemAPI.TryGetSingletonEntity<PlayerSpawnerComponent>(out Entity entity)) return;
@@ -25,11 +30,6 @@ public partial struct PlayerSpawnerSystem : ISystem
             Position = spawner.ValueRO.spawnPosition,
             Rotation = quaternion.identity,
             Scale = 1f,
-        });
-
-        ecb.AddComponent(spawnedEntity, new PlayerComponent
-        {
-            position = spawner.ValueRO.spawnPosition
         });
 
         ecb.Playback(state.EntityManager);

@@ -3,12 +3,14 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private Random random;
+    private float planeSize;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -18,6 +20,25 @@ public partial struct EnemySpawnerSystem : ISystem
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
+    {
+        CheckIfPlaneSet(ref state);
+
+        SpawnEntities(ref state);
+    }
+
+    private void CheckIfPlaneSet(ref SystemState state)
+    {
+        if (Mathf.Approximately(planeSize, 0))
+        {
+            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return;
+
+            RefRO<PlaneComponent> entitySpawner = SystemAPI.GetComponentRO<PlaneComponent>(planeEntity);
+
+            planeSize = entitySpawner.ValueRO.planeSize;
+        }
+    }
+
+    private void SpawnEntities(ref SystemState state)
     {
         if (!SystemAPI.TryGetSingletonEntity<EnemySpawnerComponent>(out Entity entity)) return;
 
@@ -29,19 +50,13 @@ public partial struct EnemySpawnerSystem : ISystem
 
             Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
 
-            float3 spawnPosition = new float3(random.NextFloat(-25f, 25f), random.NextFloat(-25f, 25f), 0f);
+            float3 spawnPosition = new float3(random.NextFloat(-planeSize, planeSize), random.NextFloat(-planeSize, planeSize), 0f);
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
                 Position = spawnPosition,
                 Rotation = quaternion.identity,
                 Scale = 1f,
-            });
-
-            ecb.AddComponent(spawnedEntity, new EnemyComponent
-            {
-                moveSpeed = 10f,
-                moveDirection = new float3(0f, 0f, 0f)
             });
 
             spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;

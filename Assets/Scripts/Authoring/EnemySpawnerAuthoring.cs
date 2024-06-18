@@ -16,7 +16,6 @@ public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
         AddComponent(entity, new EnemySpawnerComponent
         {
             prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-            spawnPosition = authoring.transform.position,
             nextSpawnTime = 0.0f,
             spawnRate = authoring.spawnRate
         });
