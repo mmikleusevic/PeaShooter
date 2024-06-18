@@ -1,19 +1,19 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class SpawnManagerAuthoring : MonoBehaviour
+public class EnemySpawnerAuthoring : MonoBehaviour
 {
     public GameObject prefab;
-    public float spawnRate; 
+    public float spawnRate;
 }
 
-public class SpawnManagerBaker : Baker<SpawnManagerAuthoring>
+public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
 {
-    public override void Bake(SpawnManagerAuthoring authoring)
+    public override void Bake(EnemySpawnerAuthoring authoring)
     {
         Entity entity = GetEntity(TransformUsageFlags.None);
 
-        AddComponent(entity, new SpawnManager
+        AddComponent(entity, new EnemySpawnerComponent
         {
             prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
             spawnPosition = authoring.transform.position,

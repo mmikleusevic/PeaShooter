@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private CameraBounds bounds;
 
+    private CameraBounds bounds;
     private PlayerInput playerInput;
     private Rigidbody playerRb;
 
@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        bounds = Camera.main.GetComponent<CameraBounds>();
         playerInput = new PlayerInput();
         playerRb = GetComponent<Rigidbody>();
     }

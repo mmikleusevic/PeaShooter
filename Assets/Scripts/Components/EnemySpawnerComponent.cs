@@ -1,10 +1,10 @@
 using Unity.Entities;
-using UnityEngine;
+using Unity.Mathematics;
 
-public struct SpawnManager : IComponentData
+public struct EnemySpawnerComponent : IComponentData
 {
     public Entity prefab;
-    public Vector3 spawnPosition;
+    public float3 spawnPosition;
     public float nextSpawnTime;
     public float spawnRate;
 }
