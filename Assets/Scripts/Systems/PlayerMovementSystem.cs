@@ -29,7 +29,7 @@ public partial struct PlayerMovementSystem : ISystem
     [BurstCompile]
     private bool CheckIfPlaneSet(ref SystemState state)
     {
-        bool approximatelyZero = planeSize < epsilon;
+        bool approximatelyZero = MathExtensions.Approximately(planeSize, 0f);
 
         if (approximatelyZero)
         {
