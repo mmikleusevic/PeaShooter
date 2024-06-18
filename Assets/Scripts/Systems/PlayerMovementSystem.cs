@@ -7,7 +7,7 @@ using Unity.Transforms;
 [UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
-    private const float epsilon = 1e-5f;
+    private const float epsilon = math.EPSILON;
     private float planeSize;
 
     [BurstCompile]
@@ -30,6 +30,7 @@ public partial struct PlayerMovementSystem : ISystem
     private bool CheckIfPlaneSet(ref SystemState state)
     {
         bool approximatelyZero = planeSize < epsilon;
+
         if (approximatelyZero)
         {
             if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return false;
