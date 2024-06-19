@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class PlaneSpawnerAuthoring : MonoBehaviour
 {
-    public GameObject prefab;
-    public Vector3 position;
-    public Quaternion rotation;
-    public float planeSize;
-}
+    [SerializeField] private GameObject prefab;
+    [SerializeField] private Vector3 position;
+    [SerializeField] private Quaternion rotation;
+    [SerializeField] private float planeSize;
 
-public class PlaneSpawnerAuthoringBaker : Baker<PlaneSpawnerAuthoring>
-{
-    public override void Bake(PlaneSpawnerAuthoring authoring)
+    public class PlaneSpawnerAuthoringBaker : Baker<PlaneSpawnerAuthoring>
     {
-        Entity entity = GetEntity(TransformUsageFlags.None);
-
-        AddComponent(entity, new PlaneSpawnerComponent
+        public override void Bake(PlaneSpawnerAuthoring authoring)
         {
-            prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
-            position = authoring.position,
-            rotation = authoring.rotation,
-            planeSize = authoring.planeSize,
-        });
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+            AddComponent(entity, new PlaneSpawnerComponent
+            {
+                prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
+                position = authoring.position,
+                rotation = authoring.rotation,
+                planeSize = authoring.planeSize,
+            });
+        }
     }
 }

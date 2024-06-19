@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 [BurstCompile]
 [UpdateAfter(typeof(PlaneSpawnerSystem))]
@@ -14,6 +13,8 @@ public partial struct PlayerMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         planeSize = 0f;
+
+        state.RequireForUpdate<PlaneComponent>();
     }
 
     [BurstCompile]
@@ -48,20 +49,21 @@ public partial struct PlayerMovementSystem : ISystem
     [BurstCompile]
     private void MovePlayer(ref SystemState state)
     {
-        foreach (var (data, input, transform) in SystemAPI.Query<RefRO<PlayerControllerComponent>, RefRO<InputComponent>, RefRW<LocalTransform>>())
-        {
-            float x = input.ValueRO.move.x * data.ValueRO.speed * SystemAPI.Time.DeltaTime;
-            float y = input.ValueRO.move.y * data.ValueRO.speed * SystemAPI.Time.DeltaTime;
-            float z = 0;
+        if (!SystemAPI.TryGetSingletonEntity<PlayerControllerComponent>(out Entity player)) return;
 
-            transform.ValueRW.Position += new float3(x, y, z);
+        PlayerMovementAspect playerMovement = SystemAPI.GetAspect<PlayerMovementAspect>(player);
 
-            float3 currentPosition = transform.ValueRO.Position;
+        float x = playerMovement.input.ValueRO.move.x * playerMovement.playerController.ValueRO.speed * SystemAPI.Time.DeltaTime;
+        float y = playerMovement.input.ValueRO.move.y * playerMovement.playerController.ValueRO.speed * SystemAPI.Time.DeltaTime;
+        float z = 0;
 
-            currentPosition.x = math.clamp(currentPosition.x, -planeSize, planeSize);
-            currentPosition.y = math.clamp(currentPosition.y, -planeSize, planeSize);
+        playerMovement.transform.ValueRW.Position += new float3(x, y, z);
 
-            transform.ValueRW.Position = currentPosition;
-        }
+        float3 currentPosition = playerMovement.transform.ValueRO.Position;
+
+        currentPosition.x = math.clamp(currentPosition.x, -planeSize, planeSize);
+        currentPosition.y = math.clamp(currentPosition.y, -planeSize, planeSize);
+
+        playerMovement.transform.ValueRW.Position = currentPosition;
     }
 }

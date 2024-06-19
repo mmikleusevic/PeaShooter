@@ -1,5 +1,4 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -23,18 +22,13 @@ public partial struct PlayerSpawnerSystem : ISystem
 
         RefRW<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRW<PlayerSpawnerComponent>(entity);
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 
-        Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
-
-        ecb.SetComponent(spawnedEntity, new LocalTransform
+        state.EntityManager.SetComponentData(spawnedEntity, new LocalTransform
         {
             Position = spawner.ValueRO.spawnPosition,
             Rotation = quaternion.identity,
             Scale = 1f,
         });
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 }

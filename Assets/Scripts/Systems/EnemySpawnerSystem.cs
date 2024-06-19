@@ -18,6 +18,8 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         random = new Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
         planeSize = 0f;
+
+        state.RequireForUpdate<PlaneComponent>();
     }
 
     [BurstCompile]
@@ -69,6 +71,11 @@ public partial struct EnemySpawnerSystem : ISystem
                 Position = spawnPosition,
                 Rotation = quaternion.identity,
                 Scale = 1f,
+            });
+
+            ecb.AddComponent(spawnedEntity, new EnemyComponent
+            {
+                moveSpeed = 6f
             });
 
             spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;

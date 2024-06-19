@@ -46,10 +46,13 @@ public partial class PlayerControllerSystem : SystemBase
     [BurstCompile]
     private void SetMovement(Vector2 vector2)
     {
-        foreach (RefRW<InputComponent> input in SystemAPI.Query<RefRW<InputComponent>>())
-        {
-            input.ValueRW.move = vector2;
-        }
+        if (!SystemAPI.TryGetSingletonEntity<InputComponent>(out Entity player)) return;
+
+        InputComponent input = SystemAPI.GetComponent<InputComponent>(player);
+
+        input.move = vector2;
+
+        EntityManager.SetComponentData(player, input);
     }
 }
 

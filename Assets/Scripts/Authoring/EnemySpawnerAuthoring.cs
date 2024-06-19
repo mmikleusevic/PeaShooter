@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class EnemySpawnerAuthoring : MonoBehaviour
 {
-    public GameObject prefab;
-    public float spawnRate;
-}
+    [SerializeField] private GameObject prefab;
+    [SerializeField] private float spawnRate;
 
-public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
-{
-    public override void Bake(EnemySpawnerAuthoring authoring)
+    public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
     {
-        Entity entity = GetEntity(TransformUsageFlags.None);
-
-        AddComponent(entity, new EnemySpawnerComponent
+        public override void Bake(EnemySpawnerAuthoring authoring)
         {
-            prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-            nextSpawnTime = 0.0f,
-            spawnRate = authoring.spawnRate
-        });
+            Entity entity = GetEntity(TransformUsageFlags.None);
+
+            AddComponent(entity, new EnemySpawnerComponent
+            {
+                prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                nextSpawnTime = 0.0f,
+                spawnRate = authoring.spawnRate
+            });
+        }
     }
 }

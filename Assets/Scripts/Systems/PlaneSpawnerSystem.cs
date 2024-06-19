@@ -1,11 +1,16 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
 [BurstCompile]
 public partial struct PlaneSpawnerSystem : ISystem
 {
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<PlaneSpawnerComponent>();
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
@@ -15,23 +20,18 @@ public partial struct PlaneSpawnerSystem : ISystem
 
         RefRO<PlaneSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlaneSpawnerComponent>(entity);
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 
-        Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
-
-        ecb.SetComponent(spawnedEntity, new LocalTransform
+        state.EntityManager.SetComponentData(spawnedEntity, new LocalTransform
         {
             Position = spawner.ValueRO.position,
             Rotation = spawner.ValueRO.rotation,
             Scale = 1f,
         });
 
-        ecb.AddComponent(entity, new PlaneComponent
+        state.EntityManager.AddComponentData(entity, new PlaneComponent
         {
             planeSize = spawner.ValueRO.planeSize
         });
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
     }
 }
