@@ -9,11 +9,11 @@ public partial struct EnemyMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        MovePlayer(ref state);
+        MoveEnemy(ref state);
     }
 
     [BurstCompile]
-    private void MovePlayer(ref SystemState state)
+    private void MoveEnemy(ref SystemState state)
     {
         foreach (var (enemy, transform) in SystemAPI.Query<RefRO<EnemyComponent>, RefRW<LocalTransform>>())
         {
