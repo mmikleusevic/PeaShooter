@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
-[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]

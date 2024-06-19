@@ -6,7 +6,7 @@ using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
-public partial struct EnemySpawnerSystem : ISystem
+public partial struct ObstacleSpawnerSystem : ISystem
 {
     private Random random;
 
@@ -25,14 +25,16 @@ public partial struct EnemySpawnerSystem : ISystem
     [BurstCompile]
     private void SpawnEntities(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<EnemySpawnerComponent>(out Entity entity)) return;
+        if (!SystemAPI.TryGetSingletonEntity<ObstacleSpawnerComponent>(out Entity entity)) return;
 
-        RefRW<EnemySpawnerComponent> spawner = SystemAPI.GetComponentRW<EnemySpawnerComponent>(entity);
+        state.Enabled = false;
 
-        if (spawner.ValueRO.nextSpawnTime < SystemAPI.Time.ElapsedTime)
+        RefRW<ObstacleSpawnerComponent> spawner = SystemAPI.GetComponentRW<ObstacleSpawnerComponent>(entity);
+
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        for (int i = 0; i < spawner.ValueRO.numberToSpawn; i++)
         {
-            EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
             Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
 
             float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()),
@@ -44,17 +46,9 @@ public partial struct EnemySpawnerSystem : ISystem
                 Rotation = quaternion.identity,
                 Scale = 1f,
             });
-
-            ecb.AddComponent(spawnedEntity, new EnemyComponent
-            {
-                moveSpeed = 6f,
-                moveDirection = new float3(0, 0, 0)
-            });
-
-            spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
         }
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }

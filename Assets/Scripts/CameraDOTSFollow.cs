@@ -25,7 +25,7 @@ public class CameraDOTSFollow : MonoBehaviour
             if (playerEntity == Entity.Null) return;
         }
 
-        if (entityManager.HasComponent<PlayerControllerComponent>(playerEntity))
+        if (entityManager.HasComponent<PlayerComponent>(playerEntity))
         {
             LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
             Transform cameraTargetTransform = virtualCamera.Follow;
@@ -44,7 +44,7 @@ public class CameraDOTSFollow : MonoBehaviour
 
     private Entity GetPlayerEntity()
     {
-        var entityQuery = entityManager.CreateEntityQuery(typeof(PlayerControllerComponent));
+        var entityQuery = entityManager.CreateEntityQuery(typeof(PlayerComponent));
 
         if (entityQuery.CalculateEntityCount() > 0)
         {

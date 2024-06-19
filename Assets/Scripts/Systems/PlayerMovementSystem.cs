@@ -3,66 +3,31 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [BurstCompile]
-[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
-    private const float epsilon = math.EPSILON;
-    private float planeSize;
-
-    [BurstCompile]
-    public void OnCreate(ref SystemState state)
-    {
-        planeSize = 0f;
-
-        state.RequireForUpdate<PlaneComponent>();
-    }
-
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        bool planeSet = CheckIfPlaneSet(ref state);
-
-        if (!planeSet) return;
-
         MovePlayer(ref state);
-    }
-
-    [BurstCompile]
-    private bool CheckIfPlaneSet(ref SystemState state)
-    {
-        bool approximatelyZero = MathExtensions.Approximately(planeSize, 0f);
-
-        if (approximatelyZero)
-        {
-            if (!SystemAPI.TryGetSingletonEntity<PlaneComponent>(out Entity planeEntity)) return false;
-
-            RefRO<PlaneComponent> entitySpawner = SystemAPI.GetComponentRO<PlaneComponent>(planeEntity);
-
-            planeSize = entitySpawner.ValueRO.planeSize;
-
-            return true;
-        }
-
-        return true;
     }
 
     [BurstCompile]
     private void MovePlayer(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<PlayerControllerComponent>(out Entity player)) return;
+        if (!SystemAPI.TryGetSingletonEntity<PlayerComponent>(out Entity player)) return;
 
         PlayerMovementAspect playerMovement = SystemAPI.GetAspect<PlayerMovementAspect>(player);
 
-        float x = playerMovement.input.ValueRO.move.x * playerMovement.playerController.ValueRO.speed * SystemAPI.Time.DeltaTime;
-        float y = playerMovement.input.ValueRO.move.y * playerMovement.playerController.ValueRO.speed * SystemAPI.Time.DeltaTime;
-        float z = 0;
+        float3 moveDirection = new float3(playerMovement.input.ValueRO.move.x, playerMovement.input.ValueRO.move.y, 0);
 
-        playerMovement.transform.ValueRW.Position += new float3(x, y, z);
+        playerMovement.physics.ValueRW.Linear += moveDirection * playerMovement.playerController.ValueRO.moveSpeed * SystemAPI.Time.DeltaTime;
+
+        playerMovement.playerController.ValueRW.moveDirection = moveDirection;
 
         float3 currentPosition = playerMovement.transform.ValueRO.Position;
 
-        currentPosition.x = math.clamp(currentPosition.x, -planeSize, planeSize);
-        currentPosition.y = math.clamp(currentPosition.y, -planeSize, planeSize);
+        currentPosition.x = math.clamp(currentPosition.x, -Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize());
+        currentPosition.y = math.clamp(currentPosition.y, -Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize());
 
         playerMovement.transform.ValueRW.Position = currentPosition;
     }

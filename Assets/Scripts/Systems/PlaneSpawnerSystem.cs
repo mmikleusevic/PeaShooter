@@ -28,10 +28,5 @@ public partial struct PlaneSpawnerSystem : ISystem
             Rotation = spawner.ValueRO.rotation,
             Scale = 1f,
         });
-
-        state.EntityManager.AddComponentData(entity, new PlaneComponent
-        {
-            planeSize = spawner.ValueRO.planeSize
-        });
     }
 }

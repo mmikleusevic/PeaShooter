@@ -6,7 +6,6 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
     [SerializeField] private GameObject prefab;
     [SerializeField] private Vector3 position;
     [SerializeField] private Quaternion rotation;
-    [SerializeField] private float planeSize;
 
     public class PlaneSpawnerAuthoringBaker : Baker<PlaneSpawnerAuthoring>
     {
@@ -19,7 +18,6 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
                 position = authoring.position,
                 rotation = authoring.rotation,
-                planeSize = authoring.planeSize,
             });
         }
     }

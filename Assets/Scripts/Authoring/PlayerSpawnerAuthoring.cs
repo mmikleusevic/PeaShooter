@@ -16,7 +16,7 @@ public class PlayerSpawnerAuthoring : MonoBehaviour
             AddComponent(entity, new PlayerSpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                spawnPosition = authoring.position,
+                spawnPosition = authoring.position
             });
         }
     }

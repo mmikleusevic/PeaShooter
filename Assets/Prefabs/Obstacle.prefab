@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7837874150277812291}
   - component: {fileID: 3921482476523965089}
   - component: {fileID: 6335971796991636209}
-  - component: {fileID: 4839856144740688131}
+  - component: {fileID: 7271610530625624253}
   m_Layer: 0
   m_Name: Obstacle
   m_TagString: Untagged
@@ -84,7 +84,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4839856144740688131
+--- !u!65 &7271610530625624253
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,7 +99,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

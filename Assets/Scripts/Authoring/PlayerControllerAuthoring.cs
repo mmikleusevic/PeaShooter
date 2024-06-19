@@ -12,9 +12,10 @@ public class PlayerControllerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
-            AddComponent(entity, new PlayerControllerComponent
+            AddComponent(entity, new PlayerComponent
             {
-                speed = authoring.speed
+                moveSpeed = authoring.speed,
+                moveDirection = new float3(0, 0, 0)
             });
 
             AddComponent(entity, new InputComponent
