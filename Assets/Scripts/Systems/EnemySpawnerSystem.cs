@@ -19,12 +19,6 @@ public partial struct EnemySpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        SpawnEntities(ref state);
-    }
-
-    [BurstCompile]
-    private void SpawnEntities(ref SystemState state)
-    {
         if (!SystemAPI.TryGetSingletonEntity<EnemySpawnerComponent>(out Entity entity)) return;
 
         RefRW<EnemySpawnerComponent> spawner = SystemAPI.GetComponentRW<EnemySpawnerComponent>(entity);
@@ -35,8 +29,8 @@ public partial struct EnemySpawnerSystem : ISystem
 
             Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
 
-            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()),
-                random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()), 0f);
+            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()), 0,
+               random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {

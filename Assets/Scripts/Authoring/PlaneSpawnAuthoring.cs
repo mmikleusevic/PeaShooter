@@ -4,8 +4,6 @@ using UnityEngine;
 public class PlaneSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    [SerializeField] private Vector3 position;
-    [SerializeField] private Quaternion rotation;
 
     public class PlaneSpawnerAuthoringBaker : Baker<PlaneSpawnerAuthoring>
     {
@@ -16,8 +14,8 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
             AddComponent(entity, new PlaneSpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
-                position = authoring.position,
-                rotation = authoring.rotation,
+                position = authoring.prefab.transform.position,
+                rotation = authoring.prefab.transform.rotation,
             });
         }
     }

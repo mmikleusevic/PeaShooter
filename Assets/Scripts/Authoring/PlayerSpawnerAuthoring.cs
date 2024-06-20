@@ -1,11 +1,9 @@
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    [SerializeField] private float3 position;
 
     public class PlayerBaker : Baker<PlayerSpawnerAuthoring>
     {
@@ -16,7 +14,8 @@ public class PlayerSpawnerAuthoring : MonoBehaviour
             AddComponent(entity, new PlayerSpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                spawnPosition = authoring.position
+                position = authoring.prefab.transform.position,
+                rotation = authoring.prefab.transform.rotation,
             });
         }
     }

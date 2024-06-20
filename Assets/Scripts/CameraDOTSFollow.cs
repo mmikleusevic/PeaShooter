@@ -16,7 +16,7 @@ public class CameraDOTSFollow : MonoBehaviour
         playerEntity = GetPlayerEntity();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (playerEntity == Entity.Null)
         {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 15118979451633497}
   - component: {fileID: 6039908492655067817}
   - component: {fileID: 5087402431741232096}
-  - component: {fileID: 8891377658664216695}
+  - component: {fileID: 5034673592570735387}
   m_Layer: 0
   m_Name: BigBoss
   m_TagString: Untagged
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1439509425129330657}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -254772216101241291, guid: b44fd89ab64c5a34182fac3916d14fbc, type: 3}
 --- !u!23 &6039908492655067817
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: da12579596becb54c8cf3e10cab37f58, type: 2}
+  - {fileID: 2100000, guid: e0bc8473bd73ca64f8c1f66d6044b0e6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,8 +112,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 56
   m_CollisionDetection: 0
---- !u!136 &8891377658664216695
-CapsuleCollider:
+--- !u!64 &5034673592570735387
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -130,8 +130,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -254772216101241291, guid: b44fd89ab64c5a34182fac3916d14fbc, type: 3}
