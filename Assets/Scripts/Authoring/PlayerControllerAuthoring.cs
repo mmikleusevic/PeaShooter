@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerControllerAuthoring : MonoBehaviour
 {
     [SerializeField] private float speed = 100f;
+    [SerializeField] private float rotationSpeed = 5f;
 
     public class PlayerControllerBaker : Baker<PlayerControllerAuthoring>
     {
@@ -15,7 +16,8 @@ public class PlayerControllerAuthoring : MonoBehaviour
             AddComponent(entity, new PlayerComponent
             {
                 moveSpeed = authoring.speed,
-                moveDirection = new float3(0, 0, 0)
+                moveDirection = new float3(0, 0, 0),
+                rotationSpeed = authoring.rotationSpeed,
             });
 
             AddComponent(entity, new InputComponent
