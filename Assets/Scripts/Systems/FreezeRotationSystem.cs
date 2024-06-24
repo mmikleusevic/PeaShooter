@@ -5,12 +5,12 @@ public partial struct FreezeRotationSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (freeRot, pmass) in SystemAPI.Query<
+        foreach (var (freezeRotation, physicalMass) in SystemAPI.Query<
             RefRO<FreezeRotationComponent>, RefRW<PhysicsMass>>())
         {
-            if (freeRot.ValueRO.flags.x) pmass.ValueRW.InverseInertia.x = 0f;
-            if (freeRot.ValueRO.flags.y) pmass.ValueRW.InverseInertia.y = 0f;
-            if (freeRot.ValueRO.flags.z) pmass.ValueRW.InverseInertia.z = 0f;
+            if (freezeRotation.ValueRO.flags.x) physicalMass.ValueRW.InverseInertia.x = 0f;
+            if (freezeRotation.ValueRO.flags.y) physicalMass.ValueRW.InverseInertia.y = 0f;
+            if (freezeRotation.ValueRO.flags.z) physicalMass.ValueRW.InverseInertia.z = 0f;
         }
     }
 }

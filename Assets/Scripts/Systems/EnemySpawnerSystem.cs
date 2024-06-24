@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private Random random;
@@ -29,8 +30,8 @@ public partial struct EnemySpawnerSystem : ISystem
 
             Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
 
-            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()), 0,
-               random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()));
+            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1), 0,
+               random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {

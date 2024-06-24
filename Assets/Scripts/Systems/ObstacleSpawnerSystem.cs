@@ -6,6 +6,7 @@ using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     private Random random;

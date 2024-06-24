@@ -1,11 +1,9 @@
 using Unity.Entities;
 using Unity.Physics;
 using Unity.Transforms;
-
-public readonly partial struct PlayerMovementAspect : IAspect
+public readonly partial struct EnemyMovementAspect : IAspect
 {
-    public readonly RefRO<PlayerComponent> playerController;
-    public readonly RefRO<InputComponent> input;
+    public readonly RefRO<EnemyComponent> enemyController;
     public readonly RefRW<LocalTransform> transform;
     public readonly RefRW<PhysicsVelocity> physics;
 }

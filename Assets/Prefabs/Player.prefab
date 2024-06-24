@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 403225125583939510}
   - component: {fileID: 1847179147241636585}
   - component: {fileID: 6086069304646560796}
-  - component: {fileID: 2078191253835486325}
+  - component: {fileID: 541791999387196195}
   m_Layer: 0
   m_Name: Object
   m_TagString: Player
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2678676591097856640}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2078191253835486325
-MeshCollider:
+--- !u!136 &541791999387196195
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -102,10 +102,11 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -462164198898675861, guid: f18e3eb9426444d46a217114ca234033, type: 3}
+  serializedVersion: 2
+  m_Radius: 0.27975196
+  m_Height: 1.0826776
+  m_Direction: 1
+  m_Center: {x: -0.09017444, y: 0.5413387, z: -0.0000006854534}
 --- !u!1 &4514804550613245317
 GameObject:
   m_ObjectHideFlags: 0
