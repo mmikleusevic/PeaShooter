@@ -39,12 +39,6 @@ public partial struct EnemySpawnerSystem : ISystem
                 Scale = 1f,
             });
 
-            ecb.AddComponent(spawnedEntity, new EnemyComponent
-            {
-                moveSpeed = 6f,
-                moveDirection = new float3(0, 0, 0)
-            });
-
             spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;
 
             ecb.Playback(state.EntityManager);

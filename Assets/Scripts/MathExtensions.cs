@@ -13,4 +13,9 @@ public static class MathExtensions
     {
         return math.abs(a - b) < EPSILON;
     }
+
+    public static bool Approximately(float3 a, float3 b)
+    {
+        return a.x == b.x && a.y == b.y && a.z == b.z;
+    }
 }

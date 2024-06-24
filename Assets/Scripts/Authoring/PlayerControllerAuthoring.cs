@@ -16,7 +16,6 @@ public class PlayerControllerAuthoring : MonoBehaviour
             AddComponent(entity, new PlayerComponent
             {
                 moveSpeed = authoring.speed,
-                moveDirection = new float3(0, 0, 0),
                 rotationSpeed = authoring.rotationSpeed,
             });
 
