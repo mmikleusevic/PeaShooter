@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial struct EnemyMovementSystem : ISystem
 {
     [BurstCompile]
@@ -16,7 +17,6 @@ public partial struct EnemyMovementSystem : ISystem
             LocalTransform playerTransform = SystemAPI.GetComponent<LocalTransform>(player);
 
             float3 direction = math.normalize(playerTransform.Position - enemyMovement.transform.ValueRO.Position);
-            direction.y = 0;
 
             enemyMovement.physics.ValueRW.Linear = direction * enemyMovement.enemyController.ValueRO.moveSpeed * SystemAPI.Time.DeltaTime;
         }

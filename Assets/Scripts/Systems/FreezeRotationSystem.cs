@@ -1,6 +1,7 @@
 using Unity.Entities;
 using Unity.Physics;
 
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial struct FreezeRotationSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)

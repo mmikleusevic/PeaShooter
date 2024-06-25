@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [BurstCompile]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial struct PlayerMovementSystem : ISystem
 {
     [BurstCompile]
