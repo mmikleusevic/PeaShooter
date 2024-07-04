@@ -1,29 +1,28 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Mathematics;
-using UnityEngine;
+using Unity.Jobs;
+using Unity.Physics.Systems;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateBefore(typeof(PhysicsSystemGroup))]
 public partial struct PlayerMovementSystem : ISystem
 {
     [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<PlayerComponent>();
+    }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<PlayerComponent>(out Entity player)) return;
-
-        PlayerMovementAspect playerMovement = SystemAPI.GetAspect<PlayerMovementAspect>(player);
-
-        float3 moveDirection = new float3(playerMovement.input.ValueRO.move.x, 0, playerMovement.input.ValueRO.move.y);
-
-        if (!MathExtensions.Approximately(moveDirection, 0))
+        PlayerMovementJob playerMovementJob = new PlayerMovementJob
         {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z), Vector3.up);
+            DeltaTime = SystemAPI.Time.DeltaTime
+        };
 
-            playerMovement.transform.ValueRW.Rotation = Quaternion.Slerp(playerMovement.transform.ValueRO.Rotation, targetRotation,
-                playerMovement.playerController.ValueRO.rotationSpeed * Time.deltaTime);
-        }
-
-        playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.playerController.ValueRO.moveSpeed * SystemAPI.Time.DeltaTime;
+        JobHandle handle = playerMovementJob.Schedule(state.Dependency);
+        state.Dependency = handle;
     }
 }

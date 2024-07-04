@@ -1,8 +1,6 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
@@ -20,30 +18,25 @@ public partial struct EnemySpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<EnemySpawnerComponent>(out Entity entity)) return;
+        EntityCommandBuffer.ParallelWriter ecb = GetEntityCommandBuffer(ref state);
 
-        RefRW<EnemySpawnerComponent> spawner = SystemAPI.GetComponentRW<EnemySpawnerComponent>(entity);
-
-        if (spawner.ValueRO.nextSpawnTime < SystemAPI.Time.ElapsedTime)
+        new EnemySpawnJob
         {
-            EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-            Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
-
-            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1), 0,
-               random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1));
-
-            ecb.SetComponent(spawnedEntity, new LocalTransform
+            ecb = ecb,
+            spawnPosition = new float3
             {
-                Position = spawnPosition,
-                Rotation = quaternion.identity,
-                Scale = 1f,
-            });
+                x = random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1),
+                y = 0,
+                z = random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1)
+            },
+            elapsedTime = SystemAPI.Time.ElapsedTime,
+        }.ScheduleParallel();
+    }
 
-            spawner.ValueRW.nextSpawnTime = (float)SystemAPI.Time.ElapsedTime + spawner.ValueRO.spawnRate;
-
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
-        }
+    private EntityCommandBuffer.ParallelWriter GetEntityCommandBuffer(ref SystemState state)
+    {
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        return ecb.AsParallelWriter();
     }
 }

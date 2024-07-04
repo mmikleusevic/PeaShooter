@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1847179147241636585}
   - component: {fileID: 6086069304646560796}
   - component: {fileID: 541791999387196195}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Object
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -118,10 +118,10 @@ GameObject:
   - component: {fileID: 4558735450935971724}
   - component: {fileID: 5392305583404523313}
   - component: {fileID: -8701667698109161449}
-  - component: {fileID: -4022051482266869924}
-  m_Layer: 0
+  - component: {fileID: 4123034709786118253}
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -183,7 +183,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-4022051482266869924
+--- !u!114 &4123034709786118253
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
