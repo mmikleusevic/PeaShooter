@@ -8,6 +8,7 @@ using Random = Unity.Mathematics.Random;
 public partial struct EnemySpawnerSystem : ISystem
 {
     private Random random;
+    private float planeSize;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -20,14 +21,20 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         EntityCommandBuffer.ParallelWriter ecb = GetEntityCommandBuffer(ref state);
 
+        if (MathExtensions.Approximately(planeSize, 0f))
+        {
+            if (!SystemAPI.TryGetSingleton(out PlaneConfigComponent planeConfig)) return;
+            planeSize = planeConfig.planeSize;
+        }
+
         new EnemySpawnJob
         {
             ecb = ecb,
             spawnPosition = new float3
             {
-                x = random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1),
+                x = random.NextFloat(-planeSize + 1, planeSize - 1),
                 y = 0,
-                z = random.NextFloat(-Config.Instance.GetPlaneSize() + 1, Config.Instance.GetPlaneSize() - 1)
+                z = random.NextFloat(-planeSize + 1, planeSize - 1)
             },
             elapsedTime = SystemAPI.Time.ElapsedTime,
         }.ScheduleParallel();

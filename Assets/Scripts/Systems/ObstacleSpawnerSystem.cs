@@ -10,6 +10,7 @@ using Random = Unity.Mathematics.Random;
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     private Random random;
+    private float planeSize;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -22,6 +23,12 @@ public partial struct ObstacleSpawnerSystem : ISystem
     {
         if (!SystemAPI.TryGetSingletonEntity<ObstacleSpawnerComponent>(out Entity entity)) return;
 
+        if (MathExtensions.Approximately(planeSize, 0f))
+        {
+            if (!SystemAPI.TryGetSingleton(out PlaneConfigComponent planeConfig)) return;
+            planeSize = planeConfig.planeSize;
+        }
+
         state.Enabled = false;
 
         RefRW<ObstacleSpawnerComponent> spawner = SystemAPI.GetComponentRW<ObstacleSpawnerComponent>(entity);
@@ -32,8 +39,8 @@ public partial struct ObstacleSpawnerSystem : ISystem
         {
             Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
 
-            float3 spawnPosition = new float3(random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()), 0,
-               random.NextFloat(-Config.Instance.GetPlaneSize(), Config.Instance.GetPlaneSize()));
+            float3 spawnPosition = new float3(random.NextFloat(-planeSize, planeSize), 0,
+               random.NextFloat(-planeSize, planeSize));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
