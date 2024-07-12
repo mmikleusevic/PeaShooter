@@ -13,6 +13,5 @@ public partial struct PlaneConfigSystem : ISystem
         float planeSize = Config.Instance.GetPlaneSize();
 
         state.EntityManager.SetComponentData(configEntity, new PlaneConfigComponent { planeSize = planeSize });
-
     }
 }
