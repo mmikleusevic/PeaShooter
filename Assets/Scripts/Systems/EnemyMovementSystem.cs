@@ -19,7 +19,7 @@ public partial struct EnemyMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<PlayerComponent>(out Entity playerEntity)) return;
+        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
 
         float deltaTime = SystemAPI.Time.DeltaTime;
         float3 playerPosition = SystemAPI.GetComponent<LocalTransform>(playerEntity).Position;

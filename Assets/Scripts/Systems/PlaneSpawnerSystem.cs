@@ -16,7 +16,7 @@ public partial struct PlaneSpawnerSystem : ISystem
     {
         state.Enabled = false;
 
-        if (!SystemAPI.TryGetSingletonEntity<PlaneSpawnerComponent>(out Entity entity)) return;
+        Entity entity = SystemAPI.GetSingletonEntity<PlaneSpawnerComponent>();
 
         RefRO<PlaneSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlaneSpawnerComponent>(entity);
 

@@ -13,6 +13,8 @@ public partial struct EnemySpawnerSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         random = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue));
+
+        state.RequireForUpdate<PlaneConfigComponent>();
     }
 
     [BurstCompile]
@@ -20,8 +22,8 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         if (MathExtensions.Approximately(planeSize, 0f))
         {
-            if (!SystemAPI.TryGetSingleton(out PlaneConfigComponent planeConfig)) return;
-            planeSize = planeConfig.planeSize;
+            PlaneConfigComponent planeConfigComponent = SystemAPI.GetSingleton<PlaneConfigComponent>();
+            planeSize = planeConfigComponent.planeSize;
         }
 
         new EnemySpawnJob
@@ -34,7 +36,7 @@ public partial struct EnemySpawnerSystem : ISystem
                 z = random.NextFloat(-planeSize + 1, planeSize - 1)
             },
             elapsedTime = SystemAPI.Time.ElapsedTime,
-        }.Schedule();
+        }.ScheduleParallel();
     }
 
     [BurstCompile]

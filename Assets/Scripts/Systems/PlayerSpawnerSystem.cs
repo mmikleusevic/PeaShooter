@@ -7,13 +7,19 @@ using Unity.Transforms;
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<PlayerSpawnerComponent>();
+    }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<PlayerSpawnerComponent>(out Entity entity)) return;
-
         state.Enabled = false;
 
-        RefRW<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRW<PlayerSpawnerComponent>(entity);
+        Entity entity = SystemAPI.GetSingletonEntity<PlayerSpawnerComponent>();
+
+        RefRO<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlayerSpawnerComponent>(entity);
 
         Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 

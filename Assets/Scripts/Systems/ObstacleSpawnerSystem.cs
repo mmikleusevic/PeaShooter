@@ -15,22 +15,22 @@ public partial struct ObstacleSpawnerSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         random = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue));
+
+        state.RequireForUpdate<ObstacleSpawnerComponent>();
+        state.RequireForUpdate<PlaneConfigComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (!SystemAPI.TryGetSingletonEntity<ObstacleSpawnerComponent>(out Entity entity)) return;
-
-        if (MathExtensions.Approximately(planeSize, 0f))
-        {
-            if (!SystemAPI.TryGetSingleton(out PlaneConfigComponent planeConfig)) return;
-            planeSize = planeConfig.planeSize;
-        }
-
         state.Enabled = false;
 
-        RefRW<ObstacleSpawnerComponent> spawner = SystemAPI.GetComponentRW<ObstacleSpawnerComponent>(entity);
+        PlaneConfigComponent planeConfig = SystemAPI.GetSingleton<PlaneConfigComponent>();
+        planeSize = planeConfig.planeSize;
+
+        Entity entity = SystemAPI.GetSingletonEntity<ObstacleSpawnerComponent>();
+
+        RefRO<ObstacleSpawnerComponent> spawner = SystemAPI.GetComponentRO<ObstacleSpawnerComponent>(entity);
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
