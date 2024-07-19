@@ -10,17 +10,14 @@ public partial struct EnemySpawnerSystem : ISystem
     private Random random;
     private float planeSize;
 
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        random = new Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
+        random = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue));
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer.ParallelWriter ecb = GetEntityCommandBuffer(ref state);
-
         if (MathExtensions.Approximately(planeSize, 0f))
         {
             if (!SystemAPI.TryGetSingleton(out PlaneConfigComponent planeConfig)) return;
@@ -29,7 +26,7 @@ public partial struct EnemySpawnerSystem : ISystem
 
         new EnemySpawnJob
         {
-            ecb = ecb,
+            ecb = GetEntityCommandBuffer(ref state),
             spawnPosition = new float3
             {
                 x = random.NextFloat(-planeSize + 1, planeSize - 1),
@@ -37,9 +34,10 @@ public partial struct EnemySpawnerSystem : ISystem
                 z = random.NextFloat(-planeSize + 1, planeSize - 1)
             },
             elapsedTime = SystemAPI.Time.ElapsedTime,
-        }.ScheduleParallel();
+        }.Schedule();
     }
 
+    [BurstCompile]
     private EntityCommandBuffer.ParallelWriter GetEntityCommandBuffer(ref SystemState state)
     {
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();

@@ -12,10 +12,9 @@ public partial struct ObstacleSpawnerSystem : ISystem
     private Random random;
     private float planeSize;
 
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        random = new Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
+        random = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue));
     }
 
     [BurstCompile]

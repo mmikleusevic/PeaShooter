@@ -1,21 +1,26 @@
+using Unity.Burst;
 using Unity.Mathematics;
 
+[BurstCompile]
 public static class MathExtensions
 {
-    private const float EPSILON = math.EPSILON;
+    private const float EPSILON = 1e-6f;
 
-    public static bool Approximately(float a, float b)
+    [BurstCompile]
+    public static bool Approximately(in float a, in float b)
     {
         return math.abs(a - b) < EPSILON;
     }
 
-    public static bool Approximately(double a, double b)
+    [BurstCompile]
+    public static bool Approximately(in double a, in double b)
     {
         return math.abs(a - b) < EPSILON;
     }
 
-    public static bool Approximately(float3 a, float3 b)
+    [BurstCompile]
+    public static bool Approximately(in float3 a, in float3 b)
     {
-        return a.x == b.x && a.y == b.y && a.z == b.z;
+        return math.all(math.abs(a - b) < EPSILON);
     }
 }

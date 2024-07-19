@@ -9,6 +9,7 @@ public partial struct EnemyMovementJob : IJobEntity
     [ReadOnly] public float3 PlayerPosition;
     [ReadOnly] public float DeltaTime;
 
+    [BurstCompile]
     void Execute(EnemyMovementAspect enemyMovement)
     {
         float3 enemyPosition = enemyMovement.transform.ValueRO.Position;

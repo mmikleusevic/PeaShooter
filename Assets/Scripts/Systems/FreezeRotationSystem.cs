@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
@@ -6,6 +7,7 @@ using Unity.Physics.Systems;
 [UpdateBefore(typeof(PhysicsSystemGroup))]
 public partial struct FreezeRotationSystem : ISystem
 {
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         FreezeRotationJob job = new FreezeRotationJob();

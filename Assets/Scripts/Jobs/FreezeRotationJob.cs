@@ -1,14 +1,16 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
 
 [BurstCompile]
 public partial struct FreezeRotationJob : IJobEntity
 {
+    [BurstCompile]
     public void Execute(ref PhysicsMass physicalMass, in FreezeRotationComponent freezeRotation)
     {
-        if (freezeRotation.flags.x) physicalMass.InverseInertia.x = 0f;
-        if (freezeRotation.flags.y) physicalMass.InverseInertia.y = 0f;
-        if (freezeRotation.flags.z) physicalMass.InverseInertia.z = 0f;
+        float3 inverseInertia = physicalMass.InverseInertia;
+        bool3 shouldFreeze = freezeRotation.flags & (inverseInertia != float3.zero);
+        physicalMass.InverseInertia = math.select(inverseInertia, float3.zero, shouldFreeze);
     }
 }
