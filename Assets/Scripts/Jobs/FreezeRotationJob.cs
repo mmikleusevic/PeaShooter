@@ -6,7 +6,6 @@ using Unity.Physics;
 [BurstCompile]
 public partial struct FreezeRotationJob : IJobEntity
 {
-    [BurstCompile]
     public void Execute(ref PhysicsMass physicalMass, in FreezeRotationComponent freezeRotation)
     {
         float3 inverseInertia = physicalMass.InverseInertia;

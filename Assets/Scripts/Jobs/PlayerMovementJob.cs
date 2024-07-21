@@ -7,7 +7,6 @@ public partial struct PlayerMovementJob : IJobEntity
 {
     public float DeltaTime;
 
-    [BurstCompile]
     void Execute(PlayerMovementAspect playerMovement)
     {
         float3 moveDirection = new float3(playerMovement.input.ValueRO.move.x, 0, playerMovement.input.ValueRO.move.y);

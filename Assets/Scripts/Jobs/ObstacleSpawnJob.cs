@@ -13,7 +13,6 @@ public partial struct ObstacleSpawnJob : IJobFor
 
     [ReadOnly] public Entity prefabToSpawn;
 
-    [BurstCompile]
     public void Execute(int index)
     {
         Entity spawnedEntity = commandBuffer.Instantiate(prefabToSpawn);

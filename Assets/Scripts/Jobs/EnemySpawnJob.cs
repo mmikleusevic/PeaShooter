@@ -11,7 +11,6 @@ public partial struct EnemySpawnJob : IJobEntity
 
     [ReadOnly] public double elapsedTime;
 
-    [BurstCompile]
     public void Execute([ChunkIndexInQuery] int chunkIndex, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime < elapsedTime)
