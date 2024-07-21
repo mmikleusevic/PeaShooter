@@ -45,6 +45,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 7716643268463715498, guid: 8a872ba0e53e4f045a1383efdd13dd8b, type: 3}
-  position: {x: 0, y: 0, z: 1}
-  rotation: {x: -0.00000003090862, y: 0.70710677, z: -0.70710677, w: -0.00000003090862}
-  planeSize: 25

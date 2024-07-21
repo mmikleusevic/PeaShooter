@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1087427213647041159}
   - component: {fileID: 6595272975192567742}
+  - component: {fileID: 8721726102638879527}
   m_Layer: 0
   m_Name: ObstacleSpawner
   m_TagString: Untagged
@@ -46,3 +47,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 5329689748517155252, guid: dae17e41b4e9bc44bb02b133944a341d, type: 3}
   numberToSpawn: 5
+--- !u!114 &8721726102638879527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5661090461581408269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e6b6a9e86304448a44c7e1e95f63f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimumPosition:
+    x: -24
+    y: 0
+    z: -24
+  maximumPosition:
+    x: 24
+    y: 0
+    z: 24

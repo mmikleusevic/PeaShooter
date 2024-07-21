@@ -12,7 +12,8 @@ public class FreezeRotationAuthoring : MonoBehaviour
     {
         public override void Bake(FreezeRotationAuthoring authoring)
         {
-            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            var entity = GetEntity(TransformUsageFlags.None);
+
             AddComponent(entity, new FreezeRotationComponent
             {
                 flags = authoring.flags

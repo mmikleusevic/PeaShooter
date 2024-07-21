@@ -4,4 +4,3 @@ public struct FreezeRotationComponent : IComponentData
 {
     public bool3 flags;
 }
-

@@ -2,7 +2,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 
 [BurstCompile]
-public static class MathExtensions
+public struct MathExtensions
 {
     private const float EPSILON = 1e-6f;
 
@@ -21,6 +21,6 @@ public static class MathExtensions
     [BurstCompile]
     public static bool Approximately(in float3 a, in float3 b)
     {
-        return math.all(math.abs(a - b) < EPSILON);
+        return math.lengthsq(a - b) < EPSILON * EPSILON;
     }
 }

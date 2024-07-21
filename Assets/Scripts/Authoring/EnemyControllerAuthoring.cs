@@ -9,7 +9,7 @@ public class EnemyControllerAuthoring : MonoBehaviour
     {
         public override void Bake(EnemyControllerAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new EnemyComponent
             {

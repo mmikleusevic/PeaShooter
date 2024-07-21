@@ -7,21 +7,20 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct EnemySpawnJob : IJobEntity
 {
-    public EntityCommandBuffer.ParallelWriter ecb;
+    public EntityCommandBuffer ecb;
 
-    [ReadOnly] public float3 spawnPosition;
     [ReadOnly] public double elapsedTime;
 
     [BurstCompile]
-    public void Execute([ChunkIndexInQuery] int chunkIndex, ref EnemySpawnerComponent enemySpawner)
+    public void Execute([ChunkIndexInQuery] int chunkIndex, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime < elapsedTime)
         {
-            Entity spawnedEntity = ecb.Instantiate(chunkIndex, enemySpawner.prefab);
+            Entity spawnedEntity = ecb.Instantiate(enemySpawner.prefab);
 
-            ecb.SetComponent(chunkIndex, spawnedEntity, new LocalTransform
+            ecb.SetComponent(spawnedEntity, new LocalTransform
             {
-                Position = spawnPosition,
+                Position = randomData.nextPosition,
                 Rotation = quaternion.identity,
                 Scale = 1f
             });

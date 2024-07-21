@@ -1,23 +1,15 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Random = Unity.Mathematics.Random;
+using Unity.Jobs;
 
 [BurstCompile]
 [UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
-    private Random random;
-    private float planeSize;
-
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        random = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue));
-
         state.RequireForUpdate<ObstacleSpawnerComponent>();
-        state.RequireForUpdate<PlaneConfigComponent>();
     }
 
     [BurstCompile]
@@ -25,31 +17,21 @@ public partial struct ObstacleSpawnerSystem : ISystem
     {
         state.Enabled = false;
 
-        PlaneConfigComponent planeConfig = SystemAPI.GetSingleton<PlaneConfigComponent>();
-        planeSize = planeConfig.planeSize;
+        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        Entity entity = SystemAPI.GetSingletonEntity<ObstacleSpawnerComponent>();
-
-        RefRO<ObstacleSpawnerComponent> spawner = SystemAPI.GetComponentRO<ObstacleSpawnerComponent>(entity);
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        for (int i = 0; i < spawner.ValueRO.numberToSpawn; i++)
+        foreach (var (randomData, spawner) in SystemAPI.Query<RandomDataComponent, ObstacleSpawnerComponent>())
         {
-            Entity spawnedEntity = ecb.Instantiate(spawner.ValueRO.prefab);
-
-            float3 spawnPosition = new float3(random.NextFloat(-planeSize, planeSize), 0,
-               random.NextFloat(-planeSize, planeSize));
-
-            ecb.SetComponent(spawnedEntity, new LocalTransform
+            ObstacleSpawnJob job = new ObstacleSpawnJob
             {
-                Position = spawnPosition,
-                Rotation = quaternion.identity,
-                Scale = 1f,
-            });
-        }
+                commandBuffer = ecb,
+                randomData = randomData,
+                prefabToSpawn = spawner.prefab,
+            };
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+            JobHandle jobHandle = job.Schedule(spawner.numberToSpawn, state.Dependency);
+
+            jobHandle.Complete();
+        }
     }
 }

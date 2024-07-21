@@ -11,7 +11,7 @@ public class PlayerControllerAuthoring : MonoBehaviour
     {
         public override void Bake(PlayerControllerAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new PlayerComponent
             {
