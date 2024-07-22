@@ -8,6 +8,12 @@ using Unity.Jobs;
 public partial struct EnemySpawnerSystem : ISystem
 {
     [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<PlayerComponent>();
+    }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();

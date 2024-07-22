@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateBefore(typeof(ObstacleSpawnerSystem))]
 public partial struct PlaneSpawnerSystem : ISystem
 {
     [BurstCompile]
