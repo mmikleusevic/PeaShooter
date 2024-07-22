@@ -4,6 +4,7 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateAfter(typeof(PlaneSpawnerSystem))]
+[UpdateAfter(typeof(ObstacleSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     [BurstCompile]
