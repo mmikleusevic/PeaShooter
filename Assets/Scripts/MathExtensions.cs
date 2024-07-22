@@ -23,4 +23,10 @@ public struct MathExtensions
     {
         return math.lengthsq(a - b) < EPSILON * EPSILON;
     }
+
+    [BurstCompile]
+    public static bool AreTooClose(in float3 a, in float3 b, float distance)
+    {
+        return math.distance(a, b) < distance;
+    }
 }

@@ -16,7 +16,7 @@ public class RandomDataAuthoring : MonoBehaviour
 
             AddComponent(entity, new RandomDataComponent
             {
-                value = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue)),
+                seed = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue)),
                 maximumPosition = authoring.maximumPosition,
                 minimumPosition = authoring.minimumPosition
             });

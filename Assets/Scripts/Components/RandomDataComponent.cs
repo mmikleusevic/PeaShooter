@@ -3,9 +3,9 @@ using Unity.Mathematics;
 
 public struct RandomDataComponent : IComponentData
 {
-    public Random value;
+    public Random seed;
 
     public float3 minimumPosition;
     public float3 maximumPosition;
-    public float3 nextPosition => value.NextFloat3(minimumPosition, maximumPosition);
+    public float3 nextPosition => seed.NextFloat3(minimumPosition, maximumPosition);
 }
