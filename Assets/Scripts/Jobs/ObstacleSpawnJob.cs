@@ -8,7 +8,7 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct ObstacleSpawnJob : IJobFor
 {
-    public EntityCommandBuffer commandBuffer;
+    public EntityCommandBuffer ecb;
     public RandomDataComponent randomData;
     public NativeList<float3> positionsOccupied;
 
@@ -17,10 +17,10 @@ public partial struct ObstacleSpawnJob : IJobFor
 
     public void Execute(int index)
     {
-        Entity spawnedEntity = commandBuffer.Instantiate(prefabToSpawn);
+        Entity spawnedEntity = ecb.Instantiate(prefabToSpawn);
         float3 newPosition = GetValidPosition();
 
-        commandBuffer.SetComponent(spawnedEntity, new LocalTransform
+        ecb.SetComponent(spawnedEntity, new LocalTransform
         {
             Position = newPosition,
             Rotation = quaternion.identity,

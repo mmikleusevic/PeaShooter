@@ -3,7 +3,6 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [BurstCompile]
-[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]

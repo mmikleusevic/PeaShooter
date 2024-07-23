@@ -6,12 +6,12 @@ using Unity.Mathematics;
 [BurstCompile]
 public partial struct PathfindingJob : IJobEntity
 {
-    [ReadOnly] public float3 position;
-    [ReadOnly] public float3 playerPosition;
+    [ReadOnly] public float2 position;
+    [ReadOnly] public float2 playerPosition;
 
-    public void Execute(ref PathfindingComponent pathfindingComponent)
+    public void Execute(ref PathfindingRequestComponent pathfindingComponent)
     {
-        pathfindingComponent.startPosition = position;
-        pathfindingComponent.endPosition = playerPosition;
+        pathfindingComponent.start = position;
+        pathfindingComponent.end = playerPosition;
     }
 }

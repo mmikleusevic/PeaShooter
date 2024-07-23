@@ -9,10 +9,10 @@ public class PathPositionAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new PathfindingComponent
+            AddComponent(entity, new PathfindingRequestComponent
             {
-                startPosition = default,
-                endPosition = default,
+                start = default,
+                end = default,
             });
         }
     }

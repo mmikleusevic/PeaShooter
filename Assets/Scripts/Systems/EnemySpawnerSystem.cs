@@ -3,14 +3,13 @@ using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateAfter(typeof(PlaneSpawnerSystem))]
-[UpdateAfter(typeof(ObstacleSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<ObstacleComponent>();
     }
 
     [BurstCompile]

@@ -6,7 +6,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
-[UpdateAfter(typeof(PlaneSpawnerSystem))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -21,24 +20,27 @@ public partial struct ObstacleSpawnerSystem : ISystem
         state.Enabled = false;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        NativeList<float3> positionsOccupied = new NativeList<float3>(Allocator.TempJob);
 
         foreach (var (randomData, spawner, transform) in SystemAPI.Query<RandomDataComponent, RefRO<ObstacleSpawnerComponent>, RefRO<LocalTransform>>())
         {
             ObstacleSpawnJob job = new ObstacleSpawnJob
             {
-                commandBuffer = ecb,
-                positionsOccupied = new NativeList<float3>(Allocator.TempJob),
+                ecb = ecb,
+                positionsOccupied = positionsOccupied,
                 randomData = randomData,
                 distance = transform.ValueRO.Scale,
                 prefabToSpawn = spawner.ValueRO.prefab,
             };
 
-            JobHandle jobHandle = job.Schedule(spawner.ValueRO.numberToSpawn, state.Dependency);
+            JobHandle spawnJobHandle = job.Schedule(spawner.ValueRO.numberToSpawn, state.Dependency);
+            spawnJobHandle.Complete();
 
-            jobHandle.Complete();
-
-            job.positionsOccupied.Dispose();
+            state.Dependency = spawnJobHandle;
         }
+
+        positionsOccupied.Dispose();
     }
 }
