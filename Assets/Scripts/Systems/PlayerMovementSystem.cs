@@ -22,7 +22,6 @@ public partial struct PlayerMovementSystem : ISystem
             DeltaTime = SystemAPI.Time.DeltaTime
         };
 
-        JobHandle handle = playerMovementJob.Schedule(state.Dependency);
-        state.Dependency = handle;
+        playerMovementJob.Schedule();
     }
 }

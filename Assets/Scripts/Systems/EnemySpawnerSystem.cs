@@ -24,7 +24,6 @@ public partial struct EnemySpawnerSystem : ISystem
             elapsedTime = SystemAPI.Time.ElapsedTime,
         };
 
-        JobHandle jobHandle = job.Schedule(state.Dependency);
-        state.Dependency = jobHandle;
+        job.Schedule();
     }
 }

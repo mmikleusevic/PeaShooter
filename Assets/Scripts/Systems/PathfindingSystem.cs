@@ -51,8 +51,7 @@ public partial struct PathfindingSystem : ISystem
                 },
             };
 
-            JobHandle handle = job.ScheduleParallel(state.Dependency);
-            state.Dependency = handle;
+            job.ScheduleParallel();
         }
 
         obstacles.Dispose();

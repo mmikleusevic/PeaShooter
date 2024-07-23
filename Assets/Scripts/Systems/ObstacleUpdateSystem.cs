@@ -15,8 +15,8 @@ public partial struct ObstacleUpdateSystem : ISystem
     {
         state.Enabled = false;
 
-        JobHandle job = new ObstacleUpdateJob().ScheduleParallel(state.Dependency);
+        ObstacleUpdateJob job = new ObstacleUpdateJob();
 
-        state.Dependency = job;
+        job.ScheduleParallel();
     }
 }

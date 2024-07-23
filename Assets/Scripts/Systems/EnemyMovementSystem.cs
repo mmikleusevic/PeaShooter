@@ -30,7 +30,6 @@ public partial struct EnemyMovementSystem : ISystem
             DeltaTime = deltaTime
         };
 
-        JobHandle handle = enemyMovementJob.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+        enemyMovementJob.ScheduleParallel();
     }
 }
