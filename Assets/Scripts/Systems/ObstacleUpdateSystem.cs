@@ -1,10 +1,10 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Jobs;
 
 [BurstCompile]
 public partial struct ObstacleUpdateSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ObstacleComponent>();

@@ -1,8 +1,8 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Jobs;
 
 [BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     [BurstCompile]

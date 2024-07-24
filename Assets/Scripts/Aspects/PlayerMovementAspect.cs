@@ -4,7 +4,7 @@ using Unity.Transforms;
 
 public readonly partial struct PlayerMovementAspect : IAspect
 {
-    public readonly RefRO<PlayerComponent> playerController;
+    public readonly RefRW<PlayerComponent> player;
     public readonly RefRO<InputComponent> input;
     public readonly RefRW<LocalTransform> transform;
     public readonly RefRW<PhysicsVelocity> physics;

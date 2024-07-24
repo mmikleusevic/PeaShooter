@@ -1,9 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
 using Unity.Physics.Systems;
-using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
@@ -14,22 +11,19 @@ public partial struct EnemyMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<EnemyComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
-
         float deltaTime = SystemAPI.Time.DeltaTime;
-        float3 playerPosition = SystemAPI.GetComponent<LocalTransform>(playerEntity).Position;
 
-        EnemyMovementJob enemyMovementJob = new EnemyMovementJob
+        EnemyMovementJob job = new EnemyMovementJob
         {
-            PlayerPosition = playerPosition,
-            DeltaTime = deltaTime
+            deltaTime = deltaTime
         };
 
-        enemyMovementJob.ScheduleParallel();
+        job.ScheduleParallel();
     }
 }

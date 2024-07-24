@@ -14,6 +14,9 @@ public class EnemyControllerAuthoring : MonoBehaviour
             AddComponent(entity, new EnemyComponent
             {
                 moveSpeed = authoring.speed,
+                position = default,
+                targetPosition = default,
+                currentPathIndex = 0
             });
         }
     }

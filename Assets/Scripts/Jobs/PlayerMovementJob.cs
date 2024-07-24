@@ -17,10 +17,11 @@ public partial struct PlayerMovementJob : IJobEntity
             playerMovement.transform.ValueRW.Rotation = math.slerp(
                 playerMovement.transform.ValueRO.Rotation,
                 targetRotation,
-                playerMovement.playerController.ValueRO.rotationSpeed * DeltaTime
+                playerMovement.player.ValueRO.rotationSpeed * DeltaTime
             );
         }
 
-        playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.playerController.ValueRO.moveSpeed * DeltaTime;
+        playerMovement.player.ValueRW.position = new float2(playerMovement.transform.ValueRO.Position.x, playerMovement.transform.ValueRO.Position.y);
+        playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.player.ValueRO.moveSpeed * DeltaTime;
     }
 }

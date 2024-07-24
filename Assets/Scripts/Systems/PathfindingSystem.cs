@@ -1,15 +1,12 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 [BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct PathfindingSystem : ISystem
 {
-    private EntityQuery obstacleQuery;
+    private NativeArray<ObstacleComponent> obstacles;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -17,43 +14,33 @@ public partial struct PathfindingSystem : ISystem
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<ObstacleComponent>();
-
-        obstacleQuery = new EntityQueryBuilder(Allocator.Persistent)
-            .WithAll<ObstacleComponent>()
-            .Build
-            (ref state);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        float2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
 
-        NativeArray<ObstacleComponent> obstacles = obstacleQuery.ToComponentDataArray<ObstacleComponent>(Allocator.Persistent);
-
-        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
-        LocalTransform playerTransform = SystemAPI.GetComponent<LocalTransform>(playerEntity);
-
-        foreach (var localTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<EnemyComponent>())
+        if (obstacles.IsEmpty())
         {
-            PathfindingJob job = new PathfindingJob
-            {
-                position = new float2
-                {
-                    x = localTransform.ValueRO.Position.x,
-                    y = localTransform.ValueRO.Position.z
-                },
-                playerPosition = new float2
-                {
-                    x = playerTransform.Position.x,
-                    y = playerTransform.Position.z
-                },
-            };
-
-            job.ScheduleParallel();
+            obstacles = SystemAPI.QueryBuilder()
+                .WithAll<ObstacleComponent>()
+                .Build()
+                .ToComponentDataArray<ObstacleComponent>(Allocator.Persistent);
         }
 
+        PathfindingJob job = new PathfindingJob
+        {
+            playerPosition = playerPosition,
+            obstacles = obstacles
+        };
+
+        job.ScheduleParallel();
+    }
+
+    [BurstCompile]
+    public void OnDestroy(ref SystemState state)
+    {
         obstacles.Dispose();
     }
 }

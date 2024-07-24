@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     [BurstCompile]
