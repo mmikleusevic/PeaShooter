@@ -26,6 +26,7 @@ partial struct PathfindingJob : IJobEntity
         }
     }
 
+    [BurstCompile]
     private NativeList<float2> FindPath(float2 start, float2 goal)
     {
         var result = new NativeList<float2>(Allocator.Temp);
@@ -91,11 +92,13 @@ partial struct PathfindingJob : IJobEntity
         return result;
     }
 
+    [BurstCompile]
     private float CalculateHCost(float2 from, float2 to)
     {
         return math.distance(from, to);
     }
 
+    [BurstCompile]
     private int GetLowestFCostIndex(NativeList<Node> openSet)
     {
         int lowestIndex = 0;
@@ -113,6 +116,7 @@ partial struct PathfindingJob : IJobEntity
         return lowestIndex;
     }
 
+    [BurstCompile]
     private void ReconstructPath(NativeList<float2> result, NativeHashMap<float2, Node> nodeMap, float2 current)
     {
         while (nodeMap.ContainsKey(current))
@@ -124,6 +128,7 @@ partial struct PathfindingJob : IJobEntity
         ReverseList(ref result);
     }
 
+    [BurstCompile]
     private bool IsWalkable(float2 position)
     {
         foreach (var obstacle in obstacles)
@@ -137,6 +142,7 @@ partial struct PathfindingJob : IJobEntity
         return true;
     }
 
+    [BurstCompile]
     private void ReverseList(ref NativeList<float2> list)
     {
         int count = list.Length;

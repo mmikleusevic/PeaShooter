@@ -30,6 +30,7 @@ public partial struct ObstacleSpawnJob : IJobFor
         positionsOccupied.Add(newPosition);
     }
 
+    [BurstCompile]
     private float3 GetValidPosition()
     {
         if (positionsOccupied.IsEmpty)
@@ -48,6 +49,7 @@ public partial struct ObstacleSpawnJob : IJobFor
         }
     }
 
+    [BurstCompile]
     private bool IsPositionValid(float3 candidatePosition)
     {
         foreach (float3 occupiedPosition in positionsOccupied)
