@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 
 [BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
 public partial struct ObstacleUpdateSystem : ISystem
 {
     [BurstCompile]
@@ -14,10 +15,19 @@ public partial struct ObstacleUpdateSystem : ISystem
     {
         state.Enabled = false;
 
-        ObstacleUpdateJob job = new ObstacleUpdateJob();
+        Entity entity = state.EntityManager.CreateEntity();
 
-        job.ScheduleParallel();
+        DynamicBuffer<ObstacleBuffer> buffer = state.EntityManager.AddBuffer<ObstacleBuffer>(entity);
 
-        state.World.CreateSystem<PathfindingSystem>();
+        ObstacleUpdateJob job = new ObstacleUpdateJob
+        {
+            buffer = buffer
+        };
+
+        job.Schedule();
+
+        SystemHandle pathfindingSystemHandle = state.World.GetOrCreateSystem<PathfindingSystem>();
+
+        state.WorldUnmanaged.ResolveSystemStateRef(pathfindingSystemHandle).Enabled = true;
     }
 }

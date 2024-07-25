@@ -1,25 +1,34 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
 [BurstCompile]
-[DisableAutoCreation]
-public partial struct PathfindingSystem : ISystem
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+public partial struct PathfindingSystem : ISystem, ISystemStartStop
 {
-    private NativeArray<ObstacleComponent> obstacles;
+    private BufferLookup<ObstacleBuffer> obstacleLookup;
+    private Entity obstacleBufferEntity;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        state.Enabled = false;
+
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<ObstacleComponent>();
+        state.RequireForUpdate<ObstacleBuffer>();
+    }
 
-        obstacles = SystemAPI.QueryBuilder()
-                .WithAll<ObstacleComponent>()
-                .Build()
-                .ToComponentDataArray<ObstacleComponent>(Allocator.Persistent);
+    public void OnStartRunning(ref SystemState state)
+    {
+        obstacleBufferEntity = SystemAPI.GetSingletonEntity<ObstacleBuffer>();
+        obstacleLookup = state.GetBufferLookup<ObstacleBuffer>(true);
+    }
+
+    public void OnStopRunning(ref SystemState state)
+    {
+
     }
 
     [BurstCompile]
@@ -27,18 +36,13 @@ public partial struct PathfindingSystem : ISystem
     {
         float2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
 
-        PathfindingJob job = new PathfindingJob
-        {
-            playerPosition = playerPosition,
-            obstacles = obstacles
-        };
+        //PathfindingJob job = new PathfindingJob
+        //{
+        //    playerPosition = playerPosition,
+        //    obstacleLookup = obstacleLookup,
+        //    obstacleBufferEntity = obstacleBufferEntity
+        //};
 
-        job.ScheduleParallel();
-    }
-
-    [BurstCompile]
-    public void OnDestroy(ref SystemState state)
-    {
-        obstacles.Dispose();
+        //job.ScheduleParallel();
     }
 }

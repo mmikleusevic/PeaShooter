@@ -2,6 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial class PlayerControllerSystem : SystemBase
 {
     private PlayerInput playerInput;
