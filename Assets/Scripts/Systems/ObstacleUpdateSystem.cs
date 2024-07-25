@@ -10,7 +10,6 @@ public partial struct ObstacleUpdateSystem : ISystem
         state.RequireForUpdate<ObstacleComponent>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         state.Enabled = false;
@@ -18,5 +17,7 @@ public partial struct ObstacleUpdateSystem : ISystem
         ObstacleUpdateJob job = new ObstacleUpdateJob();
 
         job.ScheduleParallel();
+
+        state.World.CreateSystem<PathfindingSystem>();
     }
 }

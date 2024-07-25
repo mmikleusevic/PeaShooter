@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [BurstCompile]
+[DisableAutoCreation]
 public partial struct PathfindingSystem : ISystem
 {
     private NativeArray<ObstacleComponent> obstacles;
@@ -14,20 +15,17 @@ public partial struct PathfindingSystem : ISystem
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<ObstacleComponent>();
+
+        obstacles = SystemAPI.QueryBuilder()
+                .WithAll<ObstacleComponent>()
+                .Build()
+                .ToComponentDataArray<ObstacleComponent>(Allocator.Persistent);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         float2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
-
-        if (obstacles.IsEmpty())
-        {
-            obstacles = SystemAPI.QueryBuilder()
-                .WithAll<ObstacleComponent>()
-                .Build()
-                .ToComponentDataArray<ObstacleComponent>(Allocator.Persistent);
-        }
 
         PathfindingJob job = new PathfindingJob
         {
