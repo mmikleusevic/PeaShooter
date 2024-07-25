@@ -5,12 +5,16 @@ using Unity.Entities;
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
 public partial struct ObstacleUpdateSystem : ISystem
 {
-    [BurstCompile]
+    private SystemHandle pathfindingSystemHandle;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ObstacleComponent>();
+
+        pathfindingSystemHandle = state.World.GetOrCreateSystem<PathfindingSystem>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         state.Enabled = false;
@@ -25,8 +29,6 @@ public partial struct ObstacleUpdateSystem : ISystem
         };
 
         job.Schedule();
-
-        SystemHandle pathfindingSystemHandle = state.World.GetOrCreateSystem<PathfindingSystem>();
 
         state.WorldUnmanaged.ResolveSystemStateRef(pathfindingSystemHandle).Enabled = true;
     }
