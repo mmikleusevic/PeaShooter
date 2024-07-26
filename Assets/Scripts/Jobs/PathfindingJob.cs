@@ -12,19 +12,19 @@ partial struct PathfindingJob : IJobEntity
 
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<Node> pathBuffer)
     {
-        pathBuffer.Clear();
-        NativeList<float2> path = FindPath(enemy.position, playerPosition);
+        //pathBuffer.Clear();
+        //NativeList<float2> path = FindPath(enemy.position, playerPosition);
 
-        if (path.IsCreated)
-        {
-            foreach (var node in path)
-            {
-                pathBuffer.Add(new Node { position = node });
-            }
+        //if (path.IsCreated)
+        //{
+        //    foreach (var node in path)
+        //    {
+        //        pathBuffer.Add(new Node { position = node });
+        //    }
 
-            path.Dispose();
-            enemy.currentPathIndex = 0;
-        }
+        //    path.Dispose();
+        //    enemy.currentPathIndex = 0;
+        //}
     }
 
     [BurstCompile]

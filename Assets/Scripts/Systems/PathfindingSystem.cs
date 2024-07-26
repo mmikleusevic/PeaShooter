@@ -23,7 +23,7 @@ public partial struct PathfindingSystem : ISystem, ISystemStartStop
     public void OnStartRunning(ref SystemState state)
     {
         obstacleBufferEntity = SystemAPI.GetSingletonEntity<ObstacleBuffer>();
-        obstacleLookup = state.GetBufferLookup<ObstacleBuffer>(true);
+        obstacleLookup = SystemAPI.GetBufferLookup<ObstacleBuffer>(true);
     }
 
     public void OnStopRunning(ref SystemState state)
@@ -36,13 +36,15 @@ public partial struct PathfindingSystem : ISystem, ISystemStartStop
     {
         float2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
 
-        //PathfindingJob job = new PathfindingJob
-        //{
-        //    playerPosition = playerPosition,
-        //    obstacleLookup = obstacleLookup,
-        //    obstacleBufferEntity = obstacleBufferEntity
-        //};
+        obstacleLookup.Update(ref state);
 
-        //job.ScheduleParallel();
+        PathfindingJob job = new PathfindingJob
+        {
+            playerPosition = playerPosition,
+            obstacleLookup = obstacleLookup,
+            obstacleBufferEntity = obstacleBufferEntity
+        };
+
+        job.ScheduleParallel();
     }
 }
