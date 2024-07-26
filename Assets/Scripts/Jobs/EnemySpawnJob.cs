@@ -10,18 +10,22 @@ public partial struct EnemySpawnJob : IJobEntity
     public EntityCommandBuffer ecb;
 
     [ReadOnly] public double elapsedTime;
+    [ReadOnly] public NativeList<ObstacleComponent> obstacles;
 
-    public void Execute([ChunkIndexInQuery] int chunkIndex, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
+    public void Execute(ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime < elapsedTime)
         {
             Entity spawnedEntity = ecb.Instantiate(enemySpawner.prefab);
 
+            float3 newPosition = default;
+            CheckObstacles.GetValidPosition(obstacles, ref randomData, enemySpawner.scale, ref newPosition);
+
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
-                Position = randomData.nextPosition,
+                Position = newPosition,
                 Rotation = quaternion.identity,
-                Scale = 1f
+                Scale = enemySpawner.scale
             });
 
             ecb.AddBuffer<Node>(spawnedEntity);

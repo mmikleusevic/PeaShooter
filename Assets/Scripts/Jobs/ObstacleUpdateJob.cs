@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -6,15 +7,12 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct ObstacleUpdateJob : IJobEntity
 {
-    public DynamicBuffer<ObstacleBuffer> buffer;
+    public NativeList<ObstacleComponent> obstacles;
 
     public void Execute(ref ObstacleComponent obstacleComponent, in LocalTransform transform)
     {
         obstacleComponent.position = new float2(transform.Position.x, transform.Position.z);
 
-        buffer.Add(new ObstacleBuffer
-        {
-            value = obstacleComponent
-        });
+        obstacles.Add(obstacleComponent);
     }
 }

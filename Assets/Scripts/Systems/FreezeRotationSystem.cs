@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Physics.Systems;
 
 [BurstCompile]
@@ -11,6 +12,7 @@ public partial struct FreezeRotationSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         FreezeRotationJob job = new FreezeRotationJob();
-        job.ScheduleParallel();
+        JobHandle handle = job.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
     }
 }

@@ -175,6 +175,10 @@ PrefabInstance:
       value: ObstacleSpawner
       objectReference: {fileID: 0}
     - target: {fileID: 6595272975192567742, guid: 9c1e4bfff3729924caf05f574e159593, type: 3}
+      propertyPath: scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6595272975192567742, guid: 9c1e4bfff3729924caf05f574e159593, type: 3}
       propertyPath: numberToSpawn
       value: 5
       objectReference: {fileID: 0}
@@ -192,8 +196,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
+      propertyPath: scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: moveSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
+      propertyPath: spawnRate
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5470900529460815494, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: m_Name

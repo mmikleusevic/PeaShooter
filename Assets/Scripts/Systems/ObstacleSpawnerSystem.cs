@@ -3,16 +3,20 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
-    [BurstCompile]
+    private SystemHandle pathfindingSystemHandle;
+    private NativeList<ObstacleComponent> obstacles;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ObstacleSpawnerComponent>();
+
+        pathfindingSystemHandle = state.World.GetOrCreateSystem<PathfindingSystem>();
+        obstacles = new NativeList<ObstacleComponent>(Allocator.Persistent);
     }
 
     [BurstCompile]
@@ -20,28 +24,45 @@ public partial struct ObstacleSpawnerSystem : ISystem
     {
         state.Enabled = false;
 
-        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         NativeList<float3> positionsOccupied = new NativeList<float3>(Allocator.TempJob);
 
-        foreach (var (randomData, spawner, transform) in SystemAPI.Query<RandomDataComponent, RefRO<ObstacleSpawnerComponent>, RefRO<LocalTransform>>())
+        ObstacleSpawnJob spawnJob = new ObstacleSpawnJob
         {
-            ObstacleSpawnJob job = new ObstacleSpawnJob
-            {
-                ecb = ecb,
-                positionsOccupied = positionsOccupied,
-                randomData = randomData,
-                distance = transform.ValueRO.Scale,
-                prefabToSpawn = spawner.ValueRO.prefab,
-            };
+            ecb = ecb,
+            positionsOccupied = positionsOccupied
+        };
 
-            JobHandle spawnJobHandle = job.Schedule(spawner.ValueRO.numberToSpawn, state.Dependency);
-            spawnJobHandle.Complete();
+        JobHandle spawnHandle = spawnJob.Schedule(state.Dependency);
+        spawnHandle.Complete();
 
-            state.Dependency = spawnJobHandle;
-        }
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+
+        ObstacleUpdateJob obstacleJob = new ObstacleUpdateJob
+        {
+            obstacles = obstacles
+        };
+
+        JobHandle obstacleHandle = obstacleJob.Schedule(state.Dependency);
+        state.Dependency = obstacleHandle;
+
+        Entity obstacleListEntity = state.EntityManager.CreateEntity();
+
+        state.EntityManager.AddComponentData(obstacleListEntity, new ObstacleListComponent
+        {
+            obstacles = obstacles
+        });
 
         positionsOccupied.Dispose();
+
+        state.WorldUnmanaged.ResolveSystemStateRef(pathfindingSystemHandle).Enabled = true;
+    }
+
+    [BurstCompile]
+    public void OnDestroy(ref SystemState state)
+    {
+        obstacles.Dispose();
     }
 }

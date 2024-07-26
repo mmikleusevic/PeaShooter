@@ -1,65 +1,32 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
-public partial struct ObstacleSpawnJob : IJobFor
+public partial struct ObstacleSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
-    public RandomDataComponent randomData;
     public NativeList<float3> positionsOccupied;
 
-    [ReadOnly] public float distance;
-    [ReadOnly] public Entity prefabToSpawn;
-
-    public void Execute(int index)
+    public void Execute(ref ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
     {
-        Entity spawnedEntity = ecb.Instantiate(prefabToSpawn);
-        float3 newPosition = GetValidPosition();
-
-        ecb.SetComponent(spawnedEntity, new LocalTransform
+        for (int i = 0; i < spawner.numberToSpawn; i++)
         {
-            Position = newPosition,
-            Rotation = quaternion.identity,
-            Scale = 1f,
-        });
+            Entity spawnedEntity = ecb.Instantiate(spawner.prefab);
+            float3 newPosition = default;
 
-        positionsOccupied.Add(newPosition);
-    }
+            CheckObstacles.GetValidPosition(positionsOccupied, ref randomData, spawner.scale, ref newPosition);
 
-    [BurstCompile]
-    private float3 GetValidPosition()
-    {
-        if (positionsOccupied.IsEmpty)
-        {
-            return randomData.nextPosition;
-        }
-
-        while (true)
-        {
-            float3 candidatePosition = randomData.nextPosition;
-
-            if (IsPositionValid(candidatePosition))
+            ecb.SetComponent(spawnedEntity, new LocalTransform
             {
-                return candidatePosition;
-            }
-        }
-    }
+                Position = newPosition,
+                Rotation = quaternion.identity,
+                Scale = spawner.scale,
+            });
 
-    [BurstCompile]
-    private bool IsPositionValid(float3 candidatePosition)
-    {
-        foreach (float3 occupiedPosition in positionsOccupied)
-        {
-            if (MathExtensions.AreTooClose(occupiedPosition, candidatePosition, distance))
-            {
-                return false;
-            }
+            positionsOccupied.Add(newPosition);
         }
-
-        return true;
     }
 }

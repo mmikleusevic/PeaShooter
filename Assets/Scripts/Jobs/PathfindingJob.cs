@@ -7,7 +7,7 @@ using Unity.Mathematics;
 partial struct PathfindingJob : IJobEntity
 {
     [ReadOnly] public float2 playerPosition;
-    [ReadOnly] public BufferLookup<ObstacleBuffer> obstacleLookup;
+    [ReadOnly] public NativeList<ObstacleComponent> obstacles;
     [ReadOnly] public Entity obstacleBufferEntity;
 
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<Node> pathBuffer)
@@ -132,11 +132,9 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private bool IsWalkable(float2 position)
     {
-        DynamicBuffer<ObstacleBuffer> obstacleBuffer = obstacleLookup[obstacleBufferEntity];
-
-        foreach (var obstacle in obstacleBuffer)
+        foreach (var obstacle in obstacles)
         {
-            if (math.distancesq(position, obstacle.value.position) <= obstacle.value.size.x * obstacle.value.size.y)
+            if (math.distancesq(position, obstacle.position) <= obstacle.size.x * obstacle.size.y)
             {
                 return false;
             }

@@ -1,12 +1,14 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct PathfindingSystem : ISystem, ISystemStartStop
 {
-    private BufferLookup<ObstacleBuffer> obstacleLookup;
+    private NativeList<ObstacleComponent> obstacles;
     private Entity obstacleBufferEntity;
 
     [BurstCompile]
@@ -17,13 +19,13 @@ public partial struct PathfindingSystem : ISystem, ISystemStartStop
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<ObstacleComponent>();
-        state.RequireForUpdate<ObstacleBuffer>();
+        state.RequireForUpdate<ObstacleListComponent>();
     }
 
     public void OnStartRunning(ref SystemState state)
     {
-        obstacleBufferEntity = SystemAPI.GetSingletonEntity<ObstacleBuffer>();
-        obstacleLookup = SystemAPI.GetBufferLookup<ObstacleBuffer>(true);
+        obstacleBufferEntity = SystemAPI.GetSingletonEntity<ObstacleListComponent>();
+        obstacles = SystemAPI.GetSingleton<ObstacleListComponent>().obstacles;
     }
 
     public void OnStopRunning(ref SystemState state)
@@ -36,15 +38,14 @@ public partial struct PathfindingSystem : ISystem, ISystemStartStop
     {
         float2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
 
-        obstacleLookup.Update(ref state);
-
         PathfindingJob job = new PathfindingJob
         {
             playerPosition = playerPosition,
-            obstacleLookup = obstacleLookup,
+            obstacles = obstacles,
             obstacleBufferEntity = obstacleBufferEntity
         };
 
-        job.ScheduleParallel();
+        JobHandle handle = job.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
     }
 }

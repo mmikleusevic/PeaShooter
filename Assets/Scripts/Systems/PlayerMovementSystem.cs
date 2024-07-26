@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Physics.Systems;
 
 [BurstCompile]
@@ -16,11 +17,12 @@ public partial struct PlayerMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        PlayerMovementJob playerMovementJob = new PlayerMovementJob
+        PlayerMovementJob job = new PlayerMovementJob
         {
             DeltaTime = SystemAPI.Time.DeltaTime
         };
 
-        playerMovementJob.Schedule();
+        JobHandle handle = job.Schedule(state.Dependency);
+        state.Dependency = handle;
     }
 }

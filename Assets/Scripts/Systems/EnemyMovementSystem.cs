@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Physics.Systems;
 
 [BurstCompile]
@@ -24,6 +25,7 @@ public partial struct EnemyMovementSystem : ISystem
             deltaTime = deltaTime
         };
 
-        job.ScheduleParallel();
+        JobHandle handle = job.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
     }
 }

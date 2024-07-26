@@ -27,7 +27,7 @@ public partial struct PlayerSpawnerSystem : ISystem
         {
             Position = spawner.ValueRO.position,
             Rotation = spawner.ValueRO.rotation,
-            Scale = 1f,
+            Scale = spawner.ValueRO.scale
         });
     }
 }
