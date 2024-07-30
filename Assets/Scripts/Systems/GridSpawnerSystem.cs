@@ -26,12 +26,12 @@ public partial struct GridSpawnerSystem : ISystem
 
         GridComponent grid = new GridComponent
         {
-            gridNodes = new NativeHashMap<int2, bool>(spawner.ValueRO.size.x * spawner.ValueRO.size.y, Allocator.Persistent)
+            gridNodes = new NativeHashMap<int2, bool>(math.square(spawner.ValueRO.size.x + spawner.ValueRO.size.y + 1), Allocator.Persistent)
         };
 
-        for (int i = -spawner.ValueRO.size.x + 1; i < spawner.ValueRO.size.x; i++)
+        for (int i = -spawner.ValueRO.size.x; i <= spawner.ValueRO.size.x; i++)
         {
-            for (int j = -spawner.ValueRO.size.y + 1; j < spawner.ValueRO.size.y; j++)
+            for (int j = -spawner.ValueRO.size.y; j <= spawner.ValueRO.size.y; j++)
             {
                 int2 position = new int2(i, j);
                 grid.gridNodes[position] = true;
@@ -44,14 +44,9 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        NativeArray<Entity> entities = state.GetEntityQuery(ComponentType.ReadOnly<GridComponent>()).ToEntityArray(Allocator.Temp);
-
-        foreach (var entity in entities)
+        foreach (var grid in SystemAPI.Query<GridComponent>())
         {
-            var gridComponent = state.EntityManager.GetComponentData<GridComponent>(entity);
-            gridComponent.gridNodes.Dispose();
+            grid.gridNodes.Dispose();
         }
-
-        entities.Dispose();
     }
 }
