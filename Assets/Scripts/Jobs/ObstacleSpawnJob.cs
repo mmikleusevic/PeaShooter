@@ -21,7 +21,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
             {
                 newPosition = randomData.nextPosition;
             }
-            while (!grid.gridNodes[newPosition]);
+            while (!IsValidPosition(newPosition, grid));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
@@ -32,5 +32,10 @@ public partial struct ObstacleSpawnJob : IJobEntity
 
             grid.gridNodes[newPosition] = false;
         }
+    }
+
+    private bool IsValidPosition(int2 position, GridComponent grid)
+    {
+        return grid.gridNodes[position] && position.x != 0 && position.y != 0;
     }
 }

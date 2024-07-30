@@ -8,10 +8,13 @@ using Unity.Physics.Systems;
 [UpdateBefore(typeof(PhysicsSystemGroup))]
 public partial struct PlayerMovementSystem : ISystem
 {
+    private GridSpawnerComponent gridSpawner;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<GridSpawnerComponent>();
     }
 
     [BurstCompile]
@@ -19,7 +22,8 @@ public partial struct PlayerMovementSystem : ISystem
     {
         PlayerMovementJob job = new PlayerMovementJob
         {
-            DeltaTime = SystemAPI.Time.DeltaTime
+            DeltaTime = SystemAPI.Time.DeltaTime,
+            gridSpawner = SystemAPI.GetSingleton<GridSpawnerComponent>()
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

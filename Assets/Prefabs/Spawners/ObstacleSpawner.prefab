@@ -60,8 +60,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minimumPosition:
-    x: -24
-    y: -24
+    x: -25
+    y: -25
   maximumPosition:
-    x: 24
-    y: 24
+    x: 25
+    y: 25

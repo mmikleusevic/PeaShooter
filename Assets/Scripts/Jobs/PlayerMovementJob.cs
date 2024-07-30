@@ -6,6 +6,7 @@ using Unity.Mathematics;
 public partial struct PlayerMovementJob : IJobEntity
 {
     public float DeltaTime;
+    public GridSpawnerComponent gridSpawner;
 
     void Execute(PlayerMovementAspect playerMovement)
     {
@@ -23,5 +24,6 @@ public partial struct PlayerMovementJob : IJobEntity
 
         playerMovement.player.ValueRW.position = new int2(math.round(playerMovement.input.ValueRO.move));
         playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.player.ValueRO.moveSpeed * DeltaTime;
+        playerMovement.transform.ValueRW.Position = math.clamp(playerMovement.transform.ValueRO.Position, -gridSpawner.size.x, gridSpawner.size.x);
     }
 }
