@@ -5,14 +5,14 @@ using Random = Unity.Mathematics.Random;
 
 public class RandomDataAuthoring : MonoBehaviour
 {
-    public float3 minimumPosition;
-    public float3 maximumPosition;
+    public int2 minimumPosition;
+    public int2 maximumPosition;
 
     public class RandomDataBaker : Baker<RandomDataAuthoring>
     {
         public override void Bake(RandomDataAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new RandomDataComponent
             {

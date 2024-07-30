@@ -1,5 +1,4 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
@@ -8,25 +7,19 @@ using Unity.Jobs;
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
-    private NativeList<ObstacleComponent> obstacles;
+    private GridComponent grid;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
-        state.RequireForUpdate<ObstacleComponent>();
-        state.RequireForUpdate<ObstacleListComponent>();
+        state.RequireForUpdate<GridComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (obstacles.IsEmpty)
-        {
-            ObstacleListComponent obstaclesList = SystemAPI.GetSingleton<ObstacleListComponent>();
-
-            obstacles = obstaclesList.obstacles;
-        }
+        GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
 
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
@@ -34,7 +27,7 @@ public partial struct EnemySpawnerSystem : ISystem
         EnemySpawnJob job = new EnemySpawnJob
         {
             ecb = ecb,
-            obstacles = obstacles,
+            grid = grid,
             elapsedTime = SystemAPI.Time.ElapsedTime,
         };
 

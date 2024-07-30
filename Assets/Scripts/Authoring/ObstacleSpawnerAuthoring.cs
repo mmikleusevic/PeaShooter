@@ -16,7 +16,6 @@ public class ObstacleSpawnerAuthoring : MonoBehaviour
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
                 numberToSpawn = authoring.numberToSpawn,
-                scale = authoring.prefab.transform.localScale.x
             });
         }
     }

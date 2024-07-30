@@ -15,7 +15,6 @@ public class EnemyControllerAuthoring : MonoBehaviour
             {
                 moveSpeed = authoring.speed,
                 position = default,
-                targetPosition = default,
                 currentPathIndex = 0
             });
         }

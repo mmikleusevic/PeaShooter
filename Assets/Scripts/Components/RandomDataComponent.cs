@@ -5,7 +5,7 @@ public struct RandomDataComponent : IComponentData
 {
     public Random seed;
 
-    public float3 minimumPosition;
-    public float3 maximumPosition;
-    public float3 nextPosition => seed.NextFloat3(minimumPosition, maximumPosition);
+    public int2 minimumPosition;
+    public int2 maximumPosition;
+    public int2 nextPosition => seed.NextInt2(minimumPosition, maximumPosition);
 }

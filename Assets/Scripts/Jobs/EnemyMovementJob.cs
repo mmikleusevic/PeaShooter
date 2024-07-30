@@ -15,10 +15,9 @@ public partial struct EnemyMovementJob : IJobEntity
             return;
         }
 
-        float2 targetPosition = pathBuffer[enemyMovement.enemy.ValueRO.currentPathIndex].position;
-        float2 currentPosition = enemyMovement.enemy.ValueRO.position;
-
-        float2 direction = targetPosition - currentPosition;
+        int2 targetPosition = pathBuffer[enemyMovement.enemy.ValueRO.currentPathIndex].position;
+        int2 currentPosition = enemyMovement.enemy.ValueRO.position;
+        float2 direction = (float2)(targetPosition - currentPosition);
         float distance = math.length(direction);
 
         if (distance < 0.01f)
@@ -28,22 +27,23 @@ public partial struct EnemyMovementJob : IJobEntity
             {
                 return;
             }
-
             targetPosition = pathBuffer[enemyMovement.enemy.ValueRW.currentPathIndex].position;
-            direction = targetPosition - currentPosition;
+            direction = (float2)(targetPosition - currentPosition);
             distance = math.length(direction);
         }
 
         if (distance > 0)
         {
-            float2 movement = math.normalize(direction) * enemyMovement.enemy.ValueRW.moveSpeed * deltaTime;
+            float2 normalizedDirection = math.normalize(direction);
+            float2 movement = normalizedDirection * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
+
             if (math.length(movement) > distance)
             {
                 movement = direction;
             }
 
-            enemyMovement.enemy.ValueRW.position += movement;
-            enemyMovement.physics.ValueRW.Linear = new float3(direction.x, 0, direction.y) * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
+            enemyMovement.enemy.ValueRW.position += (int2)math.round(movement);
+            enemyMovement.physics.ValueRW.Linear = new float3(normalizedDirection.x, 0, normalizedDirection.y) * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
         }
     }
 }

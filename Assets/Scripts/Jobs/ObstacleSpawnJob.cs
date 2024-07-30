@@ -1,5 +1,4 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -8,25 +7,30 @@ using Unity.Transforms;
 public partial struct ObstacleSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
-    public NativeList<float3> positionsOccupied;
+    public GridComponent grid;
 
     public void Execute(ref ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
     {
         for (int i = 0; i < spawner.numberToSpawn; i++)
         {
             Entity spawnedEntity = ecb.Instantiate(spawner.prefab);
-            float3 newPosition = default;
 
-            CheckObstacles.GetValidPosition(positionsOccupied, ref randomData, spawner.scale, ref newPosition);
+            int2 newPosition = default;
+
+            do
+            {
+                newPosition = randomData.nextPosition;
+            }
+            while (!grid.gridNodes[newPosition]);
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
-                Position = newPosition,
+                Position = new float3(newPosition.x, 0, newPosition.y),
                 Rotation = quaternion.identity,
-                Scale = spawner.scale,
+                Scale = 1f,
             });
 
-            positionsOccupied.Add(newPosition);
+            grid.gridNodes[newPosition] = false;
         }
     }
 }

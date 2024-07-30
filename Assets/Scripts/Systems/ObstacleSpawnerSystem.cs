@@ -1,22 +1,16 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateAfter(typeof(GridSpawnerSystem))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
-    private SystemHandle pathfindingSystemHandle;
-    private NativeList<ObstacleComponent> obstacles;
-
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ObstacleSpawnerComponent>();
-
-        pathfindingSystemHandle = state.World.GetOrCreateSystem<PathfindingSystem>();
-        obstacles = new NativeList<ObstacleComponent>(Allocator.Persistent);
+        state.RequireForUpdate<GridComponent>();
     }
 
     [BurstCompile]
@@ -24,45 +18,18 @@ public partial struct ObstacleSpawnerSystem : ISystem
     {
         state.Enabled = false;
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        NativeList<float3> positionsOccupied = new NativeList<float3>(Allocator.TempJob);
+        GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
 
         ObstacleSpawnJob spawnJob = new ObstacleSpawnJob
         {
             ecb = ecb,
-            positionsOccupied = positionsOccupied
+            grid = grid
         };
 
         JobHandle spawnHandle = spawnJob.Schedule(state.Dependency);
         spawnHandle.Complete();
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-
-        ObstacleUpdateJob obstacleJob = new ObstacleUpdateJob
-        {
-            obstacles = obstacles
-        };
-
-        JobHandle obstacleHandle = obstacleJob.Schedule(state.Dependency);
-        state.Dependency = obstacleHandle;
-
-        Entity obstacleListEntity = state.EntityManager.CreateEntity();
-
-        state.EntityManager.AddComponentData(obstacleListEntity, new ObstacleListComponent
-        {
-            obstacles = obstacles
-        });
-
-        positionsOccupied.Dispose();
-
-        state.WorldUnmanaged.ResolveSystemStateRef(pathfindingSystemHandle).Enabled = true;
-    }
-
-    [BurstCompile]
-    public void OnDestroy(ref SystemState state)
-    {
-        obstacles.Dispose();
     }
 }

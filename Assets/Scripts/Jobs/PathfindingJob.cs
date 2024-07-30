@@ -6,34 +6,34 @@ using Unity.Mathematics;
 [BurstCompile]
 partial struct PathfindingJob : IJobEntity
 {
-    [ReadOnly] public float2 playerPosition;
-    [ReadOnly] public NativeList<ObstacleComponent> obstacles;
-    [ReadOnly] public Entity obstacleBufferEntity;
+    [ReadOnly] public int2 playerPosition;
+    [ReadOnly] public GridComponent grid;
 
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<Node> pathBuffer)
     {
-        //pathBuffer.Clear();
-        //NativeList<float2> path = FindPath(enemy.position, playerPosition);
+        pathBuffer.Clear();
 
-        //if (path.IsCreated)
-        //{
-        //    foreach (var node in path)
-        //    {
-        //        pathBuffer.Add(new Node { position = node });
-        //    }
+        NativeList<int2> path = FindPath(enemy.position, playerPosition);
 
-        //    path.Dispose();
-        //    enemy.currentPathIndex = 0;
-        //}
+        if (path.IsCreated)
+        {
+            foreach (var node in path)
+            {
+                pathBuffer.Add(new Node { position = node });
+            }
+
+            path.Dispose();
+            enemy.currentPathIndex = 0;
+        }
     }
 
     [BurstCompile]
-    private NativeList<float2> FindPath(float2 start, float2 goal)
+    private NativeList<int2> FindPath(int2 start, int2 goal)
     {
-        var result = new NativeList<float2>(Allocator.Temp);
+        var result = new NativeList<int2>(Allocator.Temp);
         var openSet = new NativeList<Node>(Allocator.Temp);
-        var closedSet = new NativeHashSet<float2>(10, Allocator.Temp);
-        var nodeMap = new NativeHashMap<float2, Node>(100, Allocator.Temp);
+        var closedSet = new NativeHashSet<int2>(10, Allocator.Temp);
+        var nodeMap = new NativeHashMap<int2, Node>(100, Allocator.Temp);
 
         openSet.Add(new Node { position = start, gCost = 0, hCost = CalculateHCost(start, goal) });
         nodeMap.Add(start, openSet[0]);
@@ -58,12 +58,13 @@ partial struct PathfindingJob : IJobEntity
                 {
                     if (x == 0 && z == 0) continue;
 
-                    float2 neighborPos = current.position + new float2(x, z);
-                    if (closedSet.Contains(neighborPos) || !IsWalkable(neighborPos)) continue;
+                    int2 neighborPos = current.position + new int2(x, z);
+                    if (closedSet.Contains(neighborPos) || !grid.gridNodes[neighborPos]) continue;
 
-                    float tentativeGCost = current.gCost + math.distance(current.position, neighborPos);
+                    int tentativeGCost = current.gCost + (int)math.distance(current.position, neighborPos);
 
                     Node neighbor;
+
                     if (!nodeMap.TryGetValue(neighborPos, out neighbor))
                     {
                         neighbor = new Node
@@ -71,7 +72,7 @@ partial struct PathfindingJob : IJobEntity
                             position = neighborPos,
                             gCost = tentativeGCost,
                             hCost = CalculateHCost(neighborPos, goal),
-                            parentIndex = nodeMap[current.position].parentIndex
+                            lastNodeIndex = nodeMap[current.position].lastNodeIndex
                         };
                         openSet.Add(neighbor);
                         nodeMap.Add(neighborPos, neighbor);
@@ -79,7 +80,7 @@ partial struct PathfindingJob : IJobEntity
                     else if (tentativeGCost < neighbor.gCost)
                     {
                         neighbor.gCost = tentativeGCost;
-                        neighbor.parentIndex = nodeMap[current.position].parentIndex;
+                        neighbor.lastNodeIndex = nodeMap[current.position].lastNodeIndex;
                         nodeMap[neighborPos] = neighbor;
                     }
                 }
@@ -94,9 +95,9 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private float CalculateHCost(float2 from, float2 to)
+    private int CalculateHCost(int2 from, int2 to)
     {
-        return math.distance(from, to);
+        return (int)math.distance(from, to);
     }
 
     [BurstCompile]
@@ -118,7 +119,7 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private void ReconstructPath(NativeList<float2> result, NativeHashMap<float2, Node> nodeMap, float2 current)
+    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, Node> nodeMap, int2 current)
     {
         while (nodeMap.ContainsKey(current))
         {
@@ -130,26 +131,12 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private bool IsWalkable(float2 position)
-    {
-        foreach (var obstacle in obstacles)
-        {
-            if (math.distancesq(position, obstacle.position) <= obstacle.size.x * obstacle.size.y)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    [BurstCompile]
-    private void ReverseList(ref NativeList<float2> list)
+    private void ReverseList(ref NativeList<int2> list)
     {
         int count = list.Length;
         for (int i = 0; i < count / 2; i++)
         {
-            float2 temp = list[i];
+            int2 temp = list[i];
             list[i] = list[count - 1 - i];
             list[count - 1 - i] = temp;
         }

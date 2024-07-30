@@ -21,7 +21,7 @@ public partial struct PlayerMovementJob : IJobEntity
             );
         }
 
-        playerMovement.player.ValueRW.position = new float2(playerMovement.transform.ValueRO.Position.x, playerMovement.transform.ValueRO.Position.y);
+        playerMovement.player.ValueRW.position = new int2(math.round(playerMovement.input.ValueRO.move));
         playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.player.ValueRO.moveSpeed * DeltaTime;
     }
 }
