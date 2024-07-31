@@ -254,19 +254,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3404586489985712297, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: maximumPosition.x
-      value: 24
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -3404586489985712297, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: maximumPosition.y
-      value: 24
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -3404586489985712297, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: minimumPosition.x
-      value: -24
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: -3404586489985712297, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: minimumPosition.y
-      value: -24
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: scale
