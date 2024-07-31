@@ -44,9 +44,9 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        foreach (var grid in SystemAPI.Query<GridComponent>())
+        foreach (var grid in SystemAPI.Query<RefRW<GridComponent>>())
         {
-            grid.gridNodes.Dispose();
+            grid.ValueRW.gridNodes.Dispose();
         }
     }
 }

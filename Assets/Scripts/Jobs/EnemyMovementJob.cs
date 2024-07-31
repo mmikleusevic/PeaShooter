@@ -10,40 +10,26 @@ public partial struct EnemyMovementJob : IJobEntity
 
     void Execute(EnemyMovementAspect enemyMovement, in DynamicBuffer<Node> pathBuffer)
     {
-        if (pathBuffer.Length == 0 || enemyMovement.enemy.ValueRO.currentPathIndex >= pathBuffer.Length)
+        if (pathBuffer.Length == 0)
         {
+            enemyMovement.physics.ValueRW.Linear = float3.zero;
             return;
         }
 
-        int2 targetPosition = pathBuffer[enemyMovement.enemy.ValueRO.currentPathIndex].position;
-        int2 currentPosition = enemyMovement.enemy.ValueRO.position;
-        float2 direction = (float2)(targetPosition - currentPosition);
-        float distance = math.length(direction);
+        float3 currentPos3D = new float3(enemyMovement.transform.ValueRO.Position.x, 0, enemyMovement.transform.ValueRO.Position.z);
 
-        if (distance < 0.01f)
-        {
-            enemyMovement.enemy.ValueRW.currentPathIndex++;
-            if (enemyMovement.enemy.ValueRW.currentPathIndex >= pathBuffer.Length)
-            {
-                return;
-            }
-            targetPosition = pathBuffer[enemyMovement.enemy.ValueRW.currentPathIndex].position;
-            direction = (float2)(targetPosition - currentPosition);
-            distance = math.length(direction);
-        }
+        int nextPathIndex = math.min(enemyMovement.enemy.ValueRO.currentPathIndex + 1, pathBuffer.Length - 1);
+        float3 targetPos3D = new float3(pathBuffer[nextPathIndex].position.x, 0, pathBuffer[nextPathIndex].position.y);
 
-        if (distance > 0)
-        {
-            float2 normalizedDirection = math.normalize(direction);
-            float2 movement = normalizedDirection * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
+        float3 toTarget = targetPos3D - currentPos3D;
 
-            if (math.length(movement) > distance)
-            {
-                movement = direction;
-            }
+        float3 direction = math.normalize(toTarget);
+        float3 velocity = direction * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
 
-            enemyMovement.enemy.ValueRW.position += (int2)math.round(movement);
-            enemyMovement.physics.ValueRW.Linear = new float3(normalizedDirection.x, 0, normalizedDirection.y) * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
-        }
+        enemyMovement.physics.ValueRW.Linear = velocity;
+        enemyMovement.enemy.ValueRW.currentPathIndex = nextPathIndex;
+
+        enemyMovement.transform.ValueRW.Position = currentPos3D;
+        enemyMovement.enemy.ValueRW.position = new int2((int)math.round(enemyMovement.transform.ValueRO.Position.x), (int)math.round(enemyMovement.transform.ValueRO.Position.z));
     }
 }

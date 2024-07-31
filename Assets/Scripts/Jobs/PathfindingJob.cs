@@ -22,9 +22,10 @@ partial struct PathfindingJob : IJobEntity
                 pathBuffer.Add(new Node { position = node });
             }
 
-            path.Dispose();
             enemy.currentPathIndex = 0;
         }
+
+        path.Dispose();
     }
 
     [BurstCompile]
@@ -33,19 +34,18 @@ partial struct PathfindingJob : IJobEntity
         var result = new NativeList<int2>(Allocator.Temp);
         var openSet = new NativeList<Node>(Allocator.Temp);
         var closedSet = new NativeHashSet<int2>(10, Allocator.Temp);
-        var nodeMap = new NativeHashMap<int2, Node>(100, Allocator.Temp);
+        var cameFrom = new NativeHashMap<int2, Node>(100, Allocator.Temp);
 
         openSet.Add(new Node { position = start, gCost = 0, hCost = CalculateHCost(start, goal) });
-        nodeMap.Add(start, openSet[0]);
 
         while (openSet.Length > 0)
         {
             int currentIndex = GetLowestFCostIndex(openSet);
             var current = openSet[currentIndex];
 
-            if (math.distancesq(current.position, goal) < 0.01f)
+            if (current.position.Equals(goal))
             {
-                ReconstructPath(result, nodeMap, current.position);
+                ReconstructPath(result, cameFrom, current.position);
                 break;
             }
 
@@ -59,29 +59,42 @@ partial struct PathfindingJob : IJobEntity
                     if (x == 0 && z == 0) continue;
 
                     int2 neighborPos = current.position + new int2(x, z);
-                    if (closedSet.Contains(neighborPos) || !grid.gridNodes[neighborPos]) continue;
 
-                    int tentativeGCost = current.gCost + (int)math.distance(current.position, neighborPos);
+                    if (closedSet.Contains(neighborPos) || !grid.IsValidPosition(neighborPos)) continue;
 
-                    Node neighbor;
+                    int tentativeGCost = current.gCost + 1;
 
-                    if (!nodeMap.TryGetValue(neighborPos, out neighbor))
+                    bool inOpenSet = false;
+                    for (int i = 0; i < openSet.Length; i++)
                     {
-                        neighbor = new Node
+                        if (openSet[i].position.Equals(neighborPos))
+                        {
+                            inOpenSet = true;
+                            if (tentativeGCost < openSet[i].gCost)
+                            {
+                                openSet[i] = new Node
+                                {
+                                    position = neighborPos,
+                                    gCost = tentativeGCost,
+                                    hCost = CalculateHCost(neighborPos, goal)
+                                };
+
+                                cameFrom[neighborPos] = current;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!inOpenSet)
+                    {
+                        openSet.Add(new Node
                         {
                             position = neighborPos,
                             gCost = tentativeGCost,
                             hCost = CalculateHCost(neighborPos, goal),
-                            lastNodeIndex = nodeMap[current.position].lastNodeIndex
-                        };
-                        openSet.Add(neighbor);
-                        nodeMap.Add(neighborPos, neighbor);
-                    }
-                    else if (tentativeGCost < neighbor.gCost)
-                    {
-                        neighbor.gCost = tentativeGCost;
-                        neighbor.lastNodeIndex = nodeMap[current.position].lastNodeIndex;
-                        nodeMap[neighborPos] = neighbor;
+                        });
+
+                        cameFrom[neighborPos] = current;
                     }
                 }
             }
@@ -89,7 +102,7 @@ partial struct PathfindingJob : IJobEntity
 
         openSet.Dispose();
         closedSet.Dispose();
-        nodeMap.Dispose();
+        cameFrom.Dispose();
 
         return result;
     }
@@ -97,14 +110,14 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private int CalculateHCost(int2 from, int2 to)
     {
-        return (int)math.distance(from, to);
+        return math.abs(from.x - to.x) + math.abs(from.y - to.y); // Manhattan distance
     }
 
     [BurstCompile]
     private int GetLowestFCostIndex(NativeList<Node> openSet)
     {
         int lowestIndex = 0;
-        float lowestFCost = float.MaxValue;
+        int lowestFCost = int.MaxValue;
 
         for (int i = 0; i < openSet.Length; i++)
         {
@@ -119,14 +132,15 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, Node> nodeMap, int2 current)
+    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, Node> cameFrom, int2 current)
     {
-        while (nodeMap.ContainsKey(current))
+        while (cameFrom.ContainsKey(current))
         {
             result.Add(current);
-            current = nodeMap[current].position;
+            current = cameFrom[current].position;
         }
 
+        result.Add(current);
         ReverseList(ref result);
     }
 

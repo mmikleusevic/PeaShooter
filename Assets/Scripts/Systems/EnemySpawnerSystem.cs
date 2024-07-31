@@ -7,8 +7,6 @@ using Unity.Jobs;
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
-    private GridComponent grid;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {

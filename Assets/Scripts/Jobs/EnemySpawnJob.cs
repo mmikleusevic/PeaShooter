@@ -33,6 +33,8 @@ public partial struct EnemySpawnJob : IJobEntity
                 Scale = enemySpawner.scale
             });
 
+            ecb.AddBuffer<Node>(spawnedEntity);
+
             enemySpawner.nextSpawnTime = (float)elapsedTime + enemySpawner.spawnRate;
         }
     }

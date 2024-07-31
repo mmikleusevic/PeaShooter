@@ -9,7 +9,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
     public EntityCommandBuffer ecb;
     public GridComponent grid;
 
-    public void Execute(ref ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
+    public void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
     {
         for (int i = 0; i < spawner.numberToSpawn; i++)
         {
