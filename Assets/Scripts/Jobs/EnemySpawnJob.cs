@@ -33,6 +33,13 @@ public partial struct EnemySpawnJob : IJobEntity
                 Scale = enemySpawner.scale
             });
 
+            ecb.AddComponent(spawnedEntity, new EnemyComponent
+            {
+                moveSpeed = enemySpawner.speed,
+                position = newPosition,
+                currentPathIndex = 0
+            });
+
             ecb.AddBuffer<Node>(spawnedEntity);
 
             enemySpawner.nextSpawnTime = (float)elapsedTime + enemySpawner.spawnRate;
