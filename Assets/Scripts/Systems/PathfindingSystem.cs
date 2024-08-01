@@ -7,27 +7,40 @@ using Unity.Mathematics;
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct PathfindingSystem : ISystem
 {
+    private float timer;
+    private float targetTime;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<GridComponent>();
+
+        timer = 0.5f;
+        targetTime = timer;
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        int2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
-        GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
+        timer += SystemAPI.Time.DeltaTime;
 
-        PathfindingJob job = new PathfindingJob
+        if (timer >= targetTime)
         {
-            playerPosition = playerPosition,
-            grid = grid,
-        };
+            int2 playerPosition = SystemAPI.GetSingleton<PlayerComponent>().position;
+            GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
 
-        JobHandle handle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+            PathfindingJob job = new PathfindingJob
+            {
+                playerPosition = playerPosition,
+                grid = grid,
+            };
+
+            JobHandle handle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = handle;
+
+            timer = 0;
+        }
     }
 }
