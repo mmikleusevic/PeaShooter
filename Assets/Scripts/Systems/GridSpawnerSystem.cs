@@ -7,6 +7,8 @@ using Unity.Mathematics;
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 public partial struct GridSpawnerSystem : ISystem
 {
+    private GridComponent grid;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
@@ -24,7 +26,7 @@ public partial struct GridSpawnerSystem : ISystem
 
         Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 
-        GridComponent grid = new GridComponent
+        grid = new GridComponent
         {
             gridNodes = new NativeHashMap<int2, bool>(math.square(spawner.ValueRO.size.x + spawner.ValueRO.size.y + 1), Allocator.Persistent)
         };
@@ -44,9 +46,9 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        foreach (var grid in SystemAPI.Query<RefRW<GridComponent>>())
+        if (grid.gridNodes.IsCreated)
         {
-            grid.ValueRW.gridNodes.Dispose();
+            grid.gridNodes.Dispose();
         }
     }
 }

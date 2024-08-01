@@ -9,7 +9,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
     public EntityCommandBuffer ecb;
     public GridComponent grid;
 
-    public void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
+    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
     {
         for (int i = 0; i < spawner.numberToSpawn; i++)
         {
@@ -34,6 +34,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
         }
     }
 
+    [BurstCompile]
     private bool IsValidPosition(int2 position, GridComponent grid)
     {
         return grid.gridNodes[position] && position.x != 0 && position.y != 0;

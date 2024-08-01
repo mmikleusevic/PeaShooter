@@ -6,6 +6,9 @@ using Unity.Mathematics;
 [BurstCompile]
 partial struct PathfindingJob : IJobEntity
 {
+    private const int STRAIGHT_COST = 10;
+    private const int DIAGONAL_COST = 14;
+
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public GridComponent grid;
 
@@ -32,11 +35,14 @@ partial struct PathfindingJob : IJobEntity
     private NativeList<int2> FindPath(int2 start, int2 goal)
     {
         var result = new NativeList<int2>(Allocator.Temp);
+
+        if (start.Equals(goal)) return result;
+
         var openSet = new NativeList<Node>(Allocator.Temp);
         var closedSet = new NativeHashSet<int2>(10, Allocator.Temp);
         var cameFrom = new NativeHashMap<int2, Node>(100, Allocator.Temp);
 
-        openSet.Add(new Node { position = start, gCost = 0, hCost = CalculateHCost(start, goal) });
+        openSet.Add(new Node { position = start, gCost = 0, hCost = CalculateDistanceCost(start, goal) });
 
         while (openSet.Length > 0)
         {
@@ -54,15 +60,20 @@ partial struct PathfindingJob : IJobEntity
 
             for (int x = -1; x <= 1; x++)
             {
-                for (int z = -1; z <= 1; z++)
+                for (int y = -1; y <= 1; y++)
                 {
-                    if (x == 0 && z == 0) continue;
+                    if (x == 0 && y == 0) continue;
 
-                    int2 neighborPos = current.position + new int2(x, z);
+                    if (math.abs(x) == 1 && math.abs(y) == 1)
+                    {
+                        if (!grid.IsValidPosition(current.position + new int2(x, 0)) || !grid.IsValidPosition(current.position + new int2(0, y))) continue;
+                    }
+
+                    int2 neighborPos = current.position + new int2(x, y);
 
                     if (closedSet.Contains(neighborPos) || !grid.IsValidPosition(neighborPos)) continue;
 
-                    int tentativeGCost = current.gCost + 1;
+                    int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
 
                     bool inOpenSet = false;
                     for (int i = 0; i < openSet.Length; i++)
@@ -76,7 +87,7 @@ partial struct PathfindingJob : IJobEntity
                                 {
                                     position = neighborPos,
                                     gCost = tentativeGCost,
-                                    hCost = CalculateHCost(neighborPos, goal)
+                                    hCost = CalculateDistanceCost(neighborPos, goal)
                                 };
 
                                 cameFrom[neighborPos] = current;
@@ -91,7 +102,7 @@ partial struct PathfindingJob : IJobEntity
                         {
                             position = neighborPos,
                             gCost = tentativeGCost,
-                            hCost = CalculateHCost(neighborPos, goal),
+                            hCost = CalculateDistanceCost(neighborPos, goal),
                         });
 
                         cameFrom[neighborPos] = current;
@@ -108,9 +119,13 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private int CalculateHCost(int2 from, int2 to)
+    private int CalculateDistanceCost(int2 from, int2 to)
     {
-        return math.abs(from.x - to.x) + math.abs(from.y - to.y); // Manhattan distance
+        int xDistance = math.abs(from.x - to.x);
+        int yDistance = math.abs(from.y - to.y);
+        int remaining = math.abs(xDistance - yDistance);
+
+        return DIAGONAL_COST * math.min(xDistance, yDistance) + STRAIGHT_COST * remaining;
     }
 
     [BurstCompile]
@@ -134,25 +149,21 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, Node> cameFrom, int2 current)
     {
+        NativeList<int2> tempPath = new NativeList<int2>(Allocator.Temp);
+
         while (cameFrom.ContainsKey(current))
         {
-            result.Add(current);
+            tempPath.Add(current);
             current = cameFrom[current].position;
         }
 
-        result.Add(current);
-        ReverseList(ref result);
-    }
+        tempPath.Add(current);
 
-    [BurstCompile]
-    private void ReverseList(ref NativeList<int2> list)
-    {
-        int count = list.Length;
-        for (int i = 0; i < count / 2; i++)
+        for (int i = tempPath.Length - 1; i >= 0; i--)
         {
-            int2 temp = list[i];
-            list[i] = list[count - 1 - i];
-            list[count - 1 - i] = temp;
+            result.Add(tempPath[i]);
         }
+
+        tempPath.Dispose();
     }
 }

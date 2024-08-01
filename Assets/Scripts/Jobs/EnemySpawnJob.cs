@@ -12,7 +12,7 @@ public partial struct EnemySpawnJob : IJobEntity
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public GridComponent grid;
 
-    public void Execute(ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
+    private void Execute(ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime < elapsedTime)
         {
