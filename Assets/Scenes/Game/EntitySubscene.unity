@@ -96,7 +96,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000004, guid: 91c0c3327aafd4d4db2a785b1dc9c352, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -283,6 +283,10 @@ PrefabInstance:
     - target: {fileID: 5470900529460815494, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470900529460815494, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6876307726411754423, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: m_LocalPosition.x
