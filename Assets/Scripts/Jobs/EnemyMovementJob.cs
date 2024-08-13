@@ -23,7 +23,6 @@ public partial struct EnemyMovementJob : IJobEntity
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 
         enemyMovement.physics.ValueRW.Linear = direction * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
-        enemyMovement.transform.ValueRW.Position.y = 0;
         enemyMovement.enemy.ValueRW.position = new int2((int)math.round(enemyMovement.transform.ValueRO.Position.x), (int)math.round(enemyMovement.transform.ValueRO.Position.z));
 
         if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f)
