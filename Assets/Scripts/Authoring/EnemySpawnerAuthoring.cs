@@ -18,7 +18,7 @@ public class EnemySpawnerAuthoring : MonoBehaviour
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
                 nextSpawnTime = 0.0f,
                 spawnRate = authoring.spawnRate,
-                speed = authoring.speed,
+                moveSpeed = authoring.speed,
                 scale = authoring.prefab.transform.localScale.x
             });
         }

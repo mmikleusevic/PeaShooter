@@ -35,9 +35,9 @@ public partial struct EnemySpawnJob : IJobEntity
 
             ecb.AddComponent(spawnedEntity, new EnemyComponent
             {
-                moveSpeed = enemySpawner.speed,
+                moveSpeed = enemySpawner.moveSpeed,
                 position = newPosition,
-                currentPathIndex = 0
+                currentPathIndex = 0,
             });
 
             ecb.AddBuffer<Node>(spawnedEntity);

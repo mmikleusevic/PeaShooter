@@ -16,6 +16,46 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: -254772216101241291, guid: b44fd89ab64c5a34182fac3916d14fbc, type: 3}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_SphereRadius
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Capsule.Height
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Capsule.Radius
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Cylinder.Height
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Cylinder.Radius
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.x
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.y
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.z
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveCenter.y
+      value: 0.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveCenter.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4609366426220475273, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -60,12 +100,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5193947367459619922, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: damage
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7194990642786950497, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Name
-      value: BigBoss
+      value: PumpkinBoss
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7194990642786950497, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5284512839257604919}
   m_SourcePrefab: {fileID: 100100000, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+--- !u!1 &3638083039374000576 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7194990642786950497, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+  m_PrefabInstance: {fileID: 5883017098989509793}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-5284512839257604919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3638083039374000576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb82cb7a59c9e64383a41cdbc8efa49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPoints: 100

@@ -7,21 +7,28 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateBefore(typeof(PhysicsSystemGroup))]
-public partial struct CollisionDetectionSystem : ISystem
+public partial struct CollisionDamageSystem : ISystem
 {
     [BurstCompile]
     private void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SimulationSingleton>();
+        state.RequireForUpdate<PlayerHealthComponent>();
+        state.RequireForUpdate<EnemyDamageComponent>();
     }
 
     [BurstCompile]
     private void OnUpdate(ref SystemState state)
     {
-        CollisionEventJob job = new CollisionEventJob
+        if (SystemAPI.GetSingleton<PlayerHealthComponent>().isDead == true)
         {
-            PlayerLookup = SystemAPI.GetComponentLookup<PlayerComponent>(true),
-            EnemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true)
+            state.Enabled = false;
+        }
+
+        CollisionDamageJob job = new CollisionDamageJob
+        {
+            playerHealthLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(),
+            enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true)
         };
 
         SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();

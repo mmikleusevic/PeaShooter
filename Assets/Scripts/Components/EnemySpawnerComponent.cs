@@ -5,6 +5,6 @@ public struct EnemySpawnerComponent : IComponentData
     public Entity prefab;
     public float nextSpawnTime;
     public float spawnRate;
-    public float speed;
+    public float moveSpeed;
     public float scale;
 }

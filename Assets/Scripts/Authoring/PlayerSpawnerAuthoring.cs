@@ -1,6 +1,5 @@
 using Unity.Entities;
 using UnityEngine;
-
 public class PlayerSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
