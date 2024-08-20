@@ -5,8 +5,8 @@ using Unity.Physics;
 using Unity.Physics.Systems;
 
 [BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateBefore(typeof(PhysicsSystemGroup))]
+[UpdateInGroup(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(PhysicsSimulationGroup))]
 public partial struct CollisionDamageSystem : ISystem
 {
     [BurstCompile]
@@ -20,7 +20,7 @@ public partial struct CollisionDamageSystem : ISystem
     [BurstCompile]
     private void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.GetSingleton<PlayerHealthComponent>().isDead == true)
+        if (SystemAPI.GetSingleton<PlayerHealthComponent>().IsDead == true)
         {
             state.Enabled = false;
         }
@@ -28,7 +28,8 @@ public partial struct CollisionDamageSystem : ISystem
         CollisionDamageJob job = new CollisionDamageJob
         {
             playerHealthLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(),
-            enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true)
+            enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
+            deltaTime = SystemAPI.Time.DeltaTime
         };
 
         SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();

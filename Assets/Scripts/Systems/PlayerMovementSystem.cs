@@ -6,7 +6,6 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateBefore(typeof(PhysicsSystemGroup))]
-[UpdateAfter(typeof(CollisionDamageSystem))]
 public partial struct PlayerMovementSystem : ISystem
 {
     private GridSpawnerComponent gridSpawner;

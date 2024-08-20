@@ -2,13 +2,13 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
-using UnityEngine;
 
 [BurstCompile]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
     public ComponentLookup<PlayerHealthComponent> playerHealthLookup;
     [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
+    [ReadOnly] public float deltaTime;
 
     public void Execute(CollisionEvent collisionEvent)
     {
@@ -18,40 +18,29 @@ public struct CollisionDamageJob : ICollisionEventsJob
         Entity playerEntity = default;
         Entity enemyEntity = default;
 
-        bool isPlayerA = playerHealthLookup.HasComponent(entityA);
-        bool isEnemyA = enemyDamageLookup.HasComponent(entityA);
-        bool isPlayerB = playerHealthLookup.HasComponent(entityB);
-        bool isEnemyB = enemyDamageLookup.HasComponent(entityB);
+        bool isCollision = false;
 
-        bool haveCollided = false;
-
-        if (isPlayerA && isEnemyB)
+        if (playerHealthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB))
         {
             playerEntity = entityA;
             enemyEntity = entityB;
-            haveCollided = true;
+            isCollision = true;
         }
-        else if (isPlayerB && isEnemyA)
+        else if (playerHealthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA))
         {
             playerEntity = entityB;
             enemyEntity = entityA;
-            haveCollided = true;
+            isCollision = true;
         }
 
-        if (!haveCollided) return;
+        if (!isCollision) return;
 
         RefRW<PlayerHealthComponent> playerHealthComponent = playerHealthLookup.GetRefRW(playerEntity);
 
-        if (playerHealthComponent.ValueRO.isDead) return;
+        if (playerHealthComponent.ValueRO.IsDead) return;
 
         RefRO<EnemyDamageComponent> enemyDamageComponent = enemyDamageLookup.GetRefRO(enemyEntity);
 
-        playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damage;
-
-        if (playerHealthComponent.ValueRO.HitPoints <= 0)
-        {
-            playerHealthComponent.ValueRW.isDead = true;
-            Debug.Log("Player has died");
-        }
+        playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damage * deltaTime;
     }
 }
