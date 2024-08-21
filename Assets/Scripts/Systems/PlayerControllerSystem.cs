@@ -15,6 +15,8 @@ public partial class PlayerControllerSystem : SystemBase
         playerInput.Player.Movement.canceled += OnMovementCanceled;
     }
 
+    protected override void OnUpdate() { }
+
     private void OnMovementCanceled(InputAction.CallbackContext obj)
     {
         SetMovement(Vector2.zero);
@@ -34,15 +36,13 @@ public partial class PlayerControllerSystem : SystemBase
 
     private void SetMovement(Vector2 vector2)
     {
-        if (!SystemAPI.TryGetSingletonEntity<InputComponent>(out Entity player)) return;
+        SystemAPI.TryGetSingletonEntity<InputComponent>(out Entity playerEntity);
 
-        InputComponent input = SystemAPI.GetComponent<InputComponent>(player);
+        InputComponent input = SystemAPI.GetComponent<InputComponent>(playerEntity);
 
         input.move = vector2;
 
-        EntityManager.SetComponentData(player, input);
+        EntityManager.SetComponentData(playerEntity, input);
     }
-
-    protected override void OnUpdate() { }
 }
 

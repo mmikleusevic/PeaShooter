@@ -41,6 +41,6 @@ public struct CollisionDamageJob : ICollisionEventsJob
 
         RefRO<EnemyDamageComponent> enemyDamageComponent = enemyDamageLookup.GetRefRO(enemyEntity);
 
-        playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damage * deltaTime;
+        playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damagePerSecond * deltaTime;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
@@ -23,6 +24,7 @@ public partial struct CollisionDamageSystem : ISystem
         if (SystemAPI.GetSingleton<PlayerHealthComponent>().IsDead == true)
         {
             state.Enabled = false;
+            return;
         }
 
         CollisionDamageJob job = new CollisionDamageJob
