@@ -36,7 +36,13 @@ public partial class PlayerControllerSystem : SystemBase
 
     private void SetMovement(Vector2 vector2)
     {
-        SystemAPI.TryGetSingletonEntity<InputComponent>(out Entity playerEntity);
+        if (SystemAPI.GetSingleton<PlayerHealthComponent>().IsDead)
+        {
+            Enabled = false;
+            return;
+        }
+
+        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
 
         InputComponent input = SystemAPI.GetComponent<InputComponent>(playerEntity);
 

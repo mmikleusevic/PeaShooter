@@ -38,5 +38,6 @@ public partial struct CollisionDamageSystem : ISystem
 
         JobHandle handle = job.Schedule(simulationSingleton, state.Dependency);
         state.Dependency = handle;
+        state.Dependency.Complete();
     }
 }
