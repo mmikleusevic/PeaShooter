@@ -6,9 +6,10 @@ using Unity.Physics;
 [BurstCompile]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
-    public ComponentLookup<PlayerHealthComponent> playerHealthLookup;
     [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
     [ReadOnly] public float deltaTime;
+
+    public ComponentLookup<PlayerHealthComponent> playerHealthLookup;
 
     public void Execute(CollisionEvent collisionEvent)
     {

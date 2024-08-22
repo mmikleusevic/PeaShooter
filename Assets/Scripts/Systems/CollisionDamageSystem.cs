@@ -5,39 +5,39 @@ using Unity.Jobs;
 using Unity.Physics;
 using Unity.Physics.Systems;
 
-[BurstCompile]
 [UpdateInGroup(typeof(PhysicsSystemGroup))]
 [UpdateAfter(typeof(PhysicsSimulationGroup))]
-public partial struct CollisionDamageSystem : ISystem
+public partial class CollisionDamageSystem : SystemBase
 {
-    [BurstCompile]
-    private void OnCreate(ref SystemState state)
+    public event Action OnPlayerDied;
+
+    protected override void OnCreate()
     {
-        state.RequireForUpdate<SimulationSingleton>();
-        state.RequireForUpdate<PlayerHealthComponent>();
-        state.RequireForUpdate<EnemyDamageComponent>();
+        RequireForUpdate<SimulationSingleton>();
+        RequireForUpdate<PlayerHealthComponent>();
+        RequireForUpdate<EnemyDamageComponent>();
     }
 
-    [BurstCompile]
-    private void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
-        if (SystemAPI.GetSingleton<PlayerHealthComponent>().IsDead == true)
-        {
-            state.Enabled = false;
-            return;
-        }
-
         CollisionDamageJob job = new CollisionDamageJob
         {
-            playerHealthLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>(),
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
-            deltaTime = SystemAPI.Time.DeltaTime
+            deltaTime = SystemAPI.Time.DeltaTime,
+            playerHealthLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>()
         };
 
         SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();
 
-        JobHandle handle = job.Schedule(simulationSingleton, state.Dependency);
-        state.Dependency = handle;
-        state.Dependency.Complete();
+        JobHandle handle = job.Schedule(simulationSingleton, Dependency);
+        Dependency = handle;
+        Dependency.Complete();
+
+        if (SystemAPI.GetSingleton<PlayerHealthComponent>().IsDead == true)
+        {
+            Enabled = false;
+            OnPlayerDied?.Invoke();
+            return;
+        }
     }
 }
