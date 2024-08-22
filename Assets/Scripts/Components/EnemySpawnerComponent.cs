@@ -7,4 +7,5 @@ public struct EnemySpawnerComponent : IComponentData
     public float spawnRate;
     public float moveSpeed;
     public float scale;
+    public float enemyMoveTimerTarget;
 }

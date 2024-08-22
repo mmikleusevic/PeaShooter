@@ -6,6 +6,7 @@ public class EnemySpawnerAuthoring : MonoBehaviour
     [SerializeField] private GameObject prefab;
     [SerializeField] private float spawnRate;
     [SerializeField] private float speed;
+    [SerializeField] private float enemyMoveTimerTarget;
 
     public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
     {
@@ -16,10 +17,11 @@ public class EnemySpawnerAuthoring : MonoBehaviour
             AddComponent(entity, new EnemySpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                nextSpawnTime = 0.0f,
+                nextSpawnTime = authoring.spawnRate,
                 spawnRate = authoring.spawnRate,
                 moveSpeed = authoring.speed,
-                scale = authoring.prefab.transform.localScale.x
+                scale = authoring.prefab.transform.localScale.x,
+                enemyMoveTimerTarget = authoring.enemyMoveTimerTarget
             });
         }
     }

@@ -10,9 +10,10 @@ public partial struct EnemyMovementJob : IJobEntity
 
     void Execute(EnemyMovementAspect enemyMovement, in DynamicBuffer<Node> pathBuffer)
     {
-        if (pathBuffer.Length == 0)
+        if (pathBuffer.Length == 0 || enemyMovement.enemy.ValueRO.moveTimer < enemyMovement.enemy.ValueRO.moveTimerTarget)
         {
             enemyMovement.physics.ValueRW.Linear = float3.zero;
+            enemyMovement.enemy.ValueRW.moveTimer += deltaTime;
             return;
         }
 

@@ -22,7 +22,7 @@ public partial struct EnemyMovementSystem : ISystem
 
         EnemyMovementJob job = new EnemyMovementJob
         {
-            deltaTime = deltaTime,
+            deltaTime = deltaTime
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);

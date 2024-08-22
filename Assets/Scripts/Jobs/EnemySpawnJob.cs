@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [BurstCompile]
 public partial struct EnemySpawnJob : IJobEntity
@@ -38,11 +39,12 @@ public partial struct EnemySpawnJob : IJobEntity
                 moveSpeed = enemySpawner.moveSpeed,
                 position = newPosition,
                 currentPathIndex = 0,
+                moveTimerTarget = enemySpawner.enemyMoveTimerTarget
             });
 
             ecb.AddBuffer<Node>(spawnedEntity);
 
-            enemySpawner.nextSpawnTime = (float)elapsedTime + enemySpawner.spawnRate;
+            enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
         }
     }
 }

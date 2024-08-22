@@ -12,11 +12,11 @@ public partial class PlayerControllerSystem : SystemBase
     {
         playerInput = new PlayerInput();
         playerInput.Enable();
+        collisionDamageSystem = World.GetExistingSystemManaged<CollisionDamageSystem>();
+
         playerInput.Player.Movement.performed += OnMovementPerformed;
         playerInput.Player.Movement.canceled += OnMovementCanceled;
-
-        collisionDamageSystem = World.GetExistingSystemManaged<CollisionDamageSystem>();
-        collisionDamageSystem.OnPlayerDied += CollisionDamageSystem_OnPlayerDied;
+        collisionDamageSystem.OnPlayerDied += OnPlayerDied;
     }
 
     protected override void OnUpdate() { }
@@ -31,17 +31,15 @@ public partial class PlayerControllerSystem : SystemBase
         SetMovement(Vector2.zero);
     }
 
-    private void CollisionDamageSystem_OnPlayerDied()
+    private void OnPlayerDied()
     {
+        Disable();
         Enabled = false;
     }
 
     protected override void OnDestroy()
     {
-        playerInput.Player.Movement.performed -= OnMovementPerformed;
-        playerInput.Player.Movement.canceled -= OnMovementCanceled;
-        collisionDamageSystem.OnPlayerDied -= CollisionDamageSystem_OnPlayerDied;
-        playerInput.Disable();
+        Disable();
     }
 
     private void SetMovement(Vector2 vector2)
@@ -53,5 +51,13 @@ public partial class PlayerControllerSystem : SystemBase
         input.move = vector2;
 
         EntityManager.SetComponentData(playerEntity, input);
+    }
+
+    private void Disable()
+    {
+        playerInput.Player.Movement.performed -= OnMovementPerformed;
+        playerInput.Player.Movement.canceled -= OnMovementCanceled;
+        collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
+        playerInput.Disable();
     }
 }
