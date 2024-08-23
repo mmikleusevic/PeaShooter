@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: enemyMoveTimerTarget
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5470900529460815494, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: m_Name
