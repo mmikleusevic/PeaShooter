@@ -22,6 +22,7 @@ public partial class CollisionDamageSystem : SystemBase
         CollisionDamageJob job = new CollisionDamageJob
         {
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
+            activeForCollisionLookup = SystemAPI.GetComponentLookup<ActiveForCollisionComponent>(true),
             deltaTime = SystemAPI.Time.DeltaTime,
             playerHealthLookup = SystemAPI.GetComponentLookup<PlayerHealthComponent>()
         };

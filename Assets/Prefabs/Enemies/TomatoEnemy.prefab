@@ -13,6 +13,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4924459882607634458, guid: c60aa86a86c2dda478948112d85d5c4c, type: 3}
     - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_SphereRadius
       value: 0.47
       objectReference: {fileID: 0}
@@ -99,7 +103,7 @@ PrefabInstance:
     - target: {fileID: 7366305124181314534, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e0bc8473bd73ca64f8c1f66d6044b0e6, type: 2}
+      objectReference: {fileID: 2100000, guid: b8acf905ee3fe4044b068279e99089fb, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

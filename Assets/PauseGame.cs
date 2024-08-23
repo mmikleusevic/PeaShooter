@@ -8,12 +8,19 @@ public class PauseGame : MonoBehaviour
     private void Start()
     {
         collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
-        collisionDamageSystem.OnPlayerDied += OnPlayerDied;
+
+        if (collisionDamageSystem != null)
+        {
+            collisionDamageSystem.OnPlayerDied += OnPlayerDied;
+        }
     }
 
     private void OnDisable()
     {
-        collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
+        if (collisionDamageSystem != null)
+        {
+            collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
+        }
     }
 
     private void OnPlayerDied()

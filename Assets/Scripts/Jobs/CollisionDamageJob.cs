@@ -2,11 +2,13 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
+using UnityEngine;
 
 [BurstCompile]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
     [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
+    [ReadOnly] public ComponentLookup<ActiveForCollisionComponent> activeForCollisionLookup;
     [ReadOnly] public float deltaTime;
 
     public ComponentLookup<PlayerHealthComponent> playerHealthLookup;
@@ -21,13 +23,13 @@ public struct CollisionDamageJob : ICollisionEventsJob
 
         bool isCollision = false;
 
-        if (playerHealthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB))
+        if (playerHealthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB) && activeForCollisionLookup.HasComponent(entityB))
         {
             playerEntity = entityA;
             enemyEntity = entityB;
             isCollision = true;
         }
-        else if (playerHealthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA))
+        else if (playerHealthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA) && activeForCollisionLookup.HasComponent(entityA))
         {
             playerEntity = entityB;
             enemyEntity = entityA;
