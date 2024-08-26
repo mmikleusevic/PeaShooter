@@ -5,7 +5,7 @@ public class PauseGame : MonoBehaviour
 {
     private CollisionDamageSystem collisionDamageSystem;
 
-    private void Start()
+    private void OnEnable()
     {
         collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
 
