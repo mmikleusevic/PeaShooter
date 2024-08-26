@@ -29,7 +29,7 @@ public partial class MaterialChangerSystem : SystemBase
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         Entities
-            .WithoutBurst()           
+            .WithoutBurst()
             .WithNone<MaterialChangedComponent>()
             .ForEach((MaterialChangerComponent changer, ref MaterialMeshInfo materialMeshInfo, ref PhysicsCollider physicsCollider, in EnemyComponent enemyComponent, in Entity entity) =>
             {
