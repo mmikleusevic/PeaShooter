@@ -2,5 +2,5 @@ using Unity.Entities;
 
 public struct TargetComponent : IComponentData
 {
-    public Entity TargetEntity;
+    public Entity targetEntity;
 }
