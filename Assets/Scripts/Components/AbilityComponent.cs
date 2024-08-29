@@ -6,4 +6,5 @@ public struct AbilityComponent : IComponentData
     public float cooldownRemaining;
     public int damage;
     public float range;
+    public Entity projectileEntity;
 }

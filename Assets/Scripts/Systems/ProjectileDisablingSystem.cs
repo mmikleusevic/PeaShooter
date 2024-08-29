@@ -1,16 +1,22 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-public partial struct ProjectilePoolingSystem : ISystem
+public partial struct ProjectileDisablingSystem : ISystem
 {
     private BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton;
+    private EntityQuery projectilesQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+
+        projectilesQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<ProjectileComponent>()
+            .Build(ref state);
 
         state.RequireForUpdate<ProjectileComponent>();
     }
@@ -20,7 +26,7 @@ public partial struct ProjectilePoolingSystem : ISystem
     {
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        ProjectilePoolingJob job = new ProjectilePoolingJob
+        ProjectileDisablingJob job = new ProjectileDisablingJob
         {
             deltaTime = SystemAPI.Time.DeltaTime,
             ecb = ecb.AsParallelWriter()

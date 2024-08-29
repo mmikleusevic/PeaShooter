@@ -7,9 +7,13 @@ using Unity.Jobs;
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
+    private BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate<GridComponent>();
     }
@@ -19,7 +23,6 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         EnemySpawnJob job = new EnemySpawnJob
