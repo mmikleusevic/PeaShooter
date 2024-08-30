@@ -414,6 +414,10 @@ PrefabInstance:
       propertyPath: prefab
       value: 
       objectReference: {fileID: 4514804550613245317, guid: 86295daaa759ca448939df60ba3ec992, type: 3}
+    - target: {fileID: 7578609316540024887, guid: c6d2cfd4a9bf297499a71889c39a6ae2, type: 3}
+      propertyPath: projectilePrefab
+      value: 
+      objectReference: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

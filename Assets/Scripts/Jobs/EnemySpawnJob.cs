@@ -26,9 +26,11 @@ public partial struct EnemySpawnJob : IJobEntity
             }
             while (!grid.gridNodes[newPosition]);
 
+            float3 position = new float3(newPosition.x, 0, newPosition.y);
+
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
-                Position = new float3(newPosition.x, 0, newPosition.y),
+                Position = position,
                 Rotation = quaternion.identity,
                 Scale = enemySpawner.scale
             });
@@ -36,7 +38,9 @@ public partial struct EnemySpawnJob : IJobEntity
             ecb.AddComponent(spawnedEntity, new EnemyComponent
             {
                 moveSpeed = enemySpawner.moveSpeed,
-                position = newPosition,
+                gridPosition = newPosition,
+                position = position,
+                isFullySpawned = false,
                 currentPathIndex = 0,
                 moveTimerTarget = enemySpawner.enemyMoveTimerTarget
             });

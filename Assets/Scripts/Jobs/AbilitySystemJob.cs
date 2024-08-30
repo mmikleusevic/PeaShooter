@@ -8,8 +8,10 @@ using Unity.Transforms;
 public partial struct AbilitySystemJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
+    public Entity projectileEntity;
 
-    [ReadOnly] public Entity projectileEntity;
+    [ReadOnly] public ComponentLookup<EnemyComponent> enemyLookup;
+    [ReadOnly] public NativeArray<Entity> enemyEntities;
     [ReadOnly] public LocalTransform playerTransform;
     [ReadOnly] public float deltaTime;
 
@@ -17,19 +19,53 @@ public partial struct AbilitySystemJob : IJobEntity
     {
         if (ability.cooldownRemaining <= 0f)
         {
-            if (projectileEntity == Entity.Null)
+            EnemyComponent closestEnemy = default;
+            float closestDistance = float.MaxValue;
+
+            foreach (var enemyEntity in enemyEntities)
             {
-                projectileEntity = ecb.Instantiate(sortKey, ability.projectileEntity);
+                EnemyComponent enemy = enemyLookup[enemyEntity];
+
+                if (!enemy.isFullySpawned) continue;
+
+                float distance = math.distance(playerTransform.Position, enemy.position);
+
+                if (distance < ability.range && distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestEnemy = enemy;
+                }
+            }
+
+            if (closestDistance == float.MaxValue) return;
+
+            if (ability.hasProjectile)
+            {
+                if (projectileEntity == Entity.Null)
+                {
+                    projectileEntity = ecb.Instantiate(sortKey, ability.projectileEntity);
+                }
+                else
+                {
+                    ecb.SetComponentEnabled<ProjectileComponent>(sortKey, projectileEntity, true);
+                }
+
+                ecb.SetComponent(sortKey, projectileEntity, new LocalTransform
+                {
+                    Position = playerTransform.Position,
+                    Rotation = quaternion.identity,
+                    Scale = ability.projectileScale
+                });
+
+                ecb.AddComponent(sortKey, projectileEntity, new TargetComponent
+                {
+                    enemy = closestEnemy
+                });
             }
             else
             {
-                ecb.SetComponentEnabled<ProjectileComponent>(sortKey, projectileEntity, true);
+                //TODO: Need to think what to do with the non projectile based abilities
             }
-
-            ecb.SetComponent(sortKey, projectileEntity, new LocalTransform
-            {
-                Position = playerTransform.Position + math.forward(playerTransform.Rotation)
-            });
 
             ability.cooldownRemaining = ability.cooldown;
         }

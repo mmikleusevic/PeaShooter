@@ -7,26 +7,13 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct TargetingSystemJob : IJobEntity
 {
-    [ReadOnly] public ComponentLookup<LocalTransform> localTransforms;
-    [ReadOnly] public NativeArray<Entity> enemyEntities;
+    [ReadOnly] public float deltaTime;
 
-    private void Execute(ref TargetComponent target, in LocalTransform projectileTransform)
+    private void Execute(in TargetComponent target, in ProjectileComponent projectile, ref LocalTransform transform)
     {
-        Entity closestEnemy = Entity.Null;
-        float closestDistance = float.MaxValue;
+        float3 direction = math.normalize(target.enemy.position - transform.Position);
+        float3 newPosition = transform.Position + direction * projectile.speed * deltaTime;
 
-        foreach (var enemyEntity in enemyEntities)
-        {
-            float3 enemyPosition = localTransforms[enemyEntity].Position;
-            float distance = math.distance(projectileTransform.Position, enemyPosition);
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestEnemy = enemyEntity;
-            }
-        }
-
-        target.targetEntity = closestEnemy;
+        transform.Position = newPosition;
     }
 }

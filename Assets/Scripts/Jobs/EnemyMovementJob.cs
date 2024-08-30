@@ -14,6 +14,9 @@ public partial struct EnemyMovementJob : IJobEntity
         {
             enemyMovement.physics.ValueRW.Linear = float3.zero;
             enemyMovement.enemy.ValueRW.moveTimer += deltaTime;
+
+            if (enemyMovement.enemy.ValueRO.moveTimer >= enemyMovement.enemy.ValueRO.moveTimerTarget) enemyMovement.enemy.ValueRW.isFullySpawned = true;
+
             return;
         }
 
@@ -24,7 +27,8 @@ public partial struct EnemyMovementJob : IJobEntity
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 
         enemyMovement.physics.ValueRW.Linear = direction * enemyMovement.enemy.ValueRO.moveSpeed * deltaTime;
-        enemyMovement.enemy.ValueRW.position = new int2((int)math.round(enemyMovement.transform.ValueRO.Position.x), (int)math.round(enemyMovement.transform.ValueRO.Position.z));
+        enemyMovement.enemy.ValueRW.gridPosition = new int2((int)math.round(enemyMovement.transform.ValueRO.Position.x), (int)math.round(enemyMovement.transform.ValueRO.Position.z));
+        enemyMovement.enemy.ValueRW.position = enemyMovement.transform.ValueRO.Position;
 
         if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f)
         {

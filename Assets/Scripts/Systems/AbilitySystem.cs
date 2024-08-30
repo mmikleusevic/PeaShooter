@@ -7,16 +7,18 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct AbilitySystem : ISystem
 {
-    private BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton;
     private EntityQuery projectileEntityQuery;
+    private EntityQuery enemyEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-
         projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithDisabled<ProjectileComponent>()
+            .Build(ref state);
+
+        enemyEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<EnemyComponent>()
             .Build(ref state);
 
         state.RequireForUpdate<PlayerComponent>();
@@ -28,6 +30,7 @@ public partial struct AbilitySystem : ISystem
         Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
         LocalTransform playerTransform = SystemAPI.GetComponent<LocalTransform>(playerEntity);
 
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         NativeArray<Entity> projectileEntities = projectileEntityQuery.ToEntityArray(Allocator.Temp);
@@ -40,15 +43,20 @@ public partial struct AbilitySystem : ISystem
 
         projectileEntities.Dispose();
 
+        NativeArray<Entity> enemyEntities = enemyEntityQuery.ToEntityArray(Allocator.TempJob);
+
         AbilitySystemJob job = new AbilitySystemJob
         {
             ecb = ecb.AsParallelWriter(),
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(),
+            enemyEntities = enemyEntities,
             projectileEntity = projectileEntity,
             playerTransform = playerTransform,
             deltaTime = SystemAPI.Time.DeltaTime,
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+
+        state.Dependency = JobHandle.CombineDependencies(handle, enemyEntities.Dispose(handle));
     }
 }

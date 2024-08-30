@@ -7,4 +7,5 @@ public struct PlayerSpawnerComponent : IComponentData
     public float3 position;
     public quaternion rotation;
     public float scale;
+    public Entity projectilePrefab;
 }

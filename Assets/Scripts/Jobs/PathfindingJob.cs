@@ -16,7 +16,7 @@ partial struct PathfindingJob : IJobEntity
     {
         pathBuffer.Clear();
 
-        NativeList<int2> path = FindPath(enemy.position, playerPosition);
+        NativeList<int2> path = FindPath(enemy.gridPosition, playerPosition);
 
         if (path.IsCreated)
         {

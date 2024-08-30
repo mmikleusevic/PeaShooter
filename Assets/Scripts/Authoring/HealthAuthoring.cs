@@ -1,17 +1,17 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class EnemyHealthAuthoring : MonoBehaviour
+public class HealthAuthoring : MonoBehaviour
 {
     [SerializeField] private float hitPoints;
 
-    public class EnemyHealthBaker : Baker<EnemyHealthAuthoring>
+    public class HealthBaker : Baker<HealthAuthoring>
     {
-        public override void Bake(EnemyHealthAuthoring authoring)
+        public override void Bake(HealthAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new EnemyHealthComponent
+            AddComponent(entity, new HealthComponent
             {
                 HitPoints = authoring.hitPoints,
             });

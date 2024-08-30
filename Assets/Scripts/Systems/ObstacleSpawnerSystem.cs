@@ -7,6 +7,7 @@ using Unity.Jobs;
 [UpdateAfter(typeof(GridSpawnerSystem))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ObstacleSpawnerComponent>();

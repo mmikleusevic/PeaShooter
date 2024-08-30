@@ -6,43 +6,69 @@ using Unity.Physics;
 [BurstCompile]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
+    public ComponentLookup<ProjectileComponent> projectileLookup;
+    public ComponentLookup<HealthComponent> healthLookup;
+    public EntityCommandBuffer ecb;
+
     [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
     [ReadOnly] public ComponentLookup<ActiveForCollisionComponent> activeForCollisionLookup;
     [ReadOnly] public float deltaTime;
-
-    public ComponentLookup<PlayerHealthComponent> playerHealthLookup;
 
     public void Execute(CollisionEvent collisionEvent)
     {
         Entity entityA = collisionEvent.EntityA;
         Entity entityB = collisionEvent.EntityB;
 
-        Entity playerEntity = default;
-        Entity enemyEntity = default;
+        bool playerCollision = false;
 
-        bool isCollision = false;
-
-        if (playerHealthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB) && activeForCollisionLookup.HasComponent(entityB))
+        if (healthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB) && activeForCollisionLookup.HasComponent(entityB))
         {
-            playerEntity = entityA;
-            enemyEntity = entityB;
-            isCollision = true;
+            HandlePlayerCollision(playerCollision, entityA, entityB);
         }
-        else if (playerHealthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA) && activeForCollisionLookup.HasComponent(entityA))
+        else if (healthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA) && activeForCollisionLookup.HasComponent(entityA))
         {
-            playerEntity = entityB;
-            enemyEntity = entityA;
-            isCollision = true;
+            HandlePlayerCollision(playerCollision, entityB, entityA);
         }
 
-        if (!isCollision) return;
+        if (playerCollision) return;
 
-        RefRW<PlayerHealthComponent> playerHealthComponent = playerHealthLookup.GetRefRW(playerEntity);
+        if (projectileLookup.HasComponent(entityA) && healthLookup.HasComponent(entityB))
+        {
+            HandleProjectileCollision(entityA, entityB);
+        }
+        else if (projectileLookup.HasComponent(entityB) && healthLookup.HasComponent(entityA))
+        {
+            HandleProjectileCollision(entityB, entityA);
+        }
+    }
 
-        if (playerHealthComponent.ValueRO.IsDead) return;
+    private void HandlePlayerCollision(bool collision, Entity playerEntity, Entity enemyEntity)
+    {
+        collision = true;
 
+        RefRW<HealthComponent> playerHealthComponent = healthLookup.GetRefRW(playerEntity);
         RefRO<EnemyDamageComponent> enemyDamageComponent = enemyDamageLookup.GetRefRO(enemyEntity);
 
         playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damagePerSecond * deltaTime;
+
+        if (playerHealthComponent.ValueRW.HitPoints == 0)
+        {
+            ecb.AddComponent<PlayerDeadComponent>(playerEntity);
+        }
+    }
+
+    private void HandleProjectileCollision(Entity projectileEntity, Entity enemyEntity)
+    {
+        RefRW<HealthComponent> enemyHealthComponent = healthLookup.GetRefRW(enemyEntity);
+        RefRW<ProjectileComponent> projectileComponent = projectileLookup.GetRefRW(projectileEntity);
+
+        projectileComponent.ValueRW.hasCollidedWithEnemy = true;
+
+        enemyHealthComponent.ValueRW.HitPoints -= projectileComponent.ValueRO.damage;
+
+        if (enemyHealthComponent.ValueRW.HitPoints == 0)
+        {
+            ecb.DestroyEntity(enemyEntity);
+        }
     }
 }

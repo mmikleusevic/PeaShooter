@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5909921153106940650, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: hitPoints
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 75846107021596852, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -99,6 +103,10 @@ PrefabInstance:
     - target: {fileID: 5193947367459619922, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: damage
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: hitPoints
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7194990642786950497, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Name
