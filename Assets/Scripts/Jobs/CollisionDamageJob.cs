@@ -47,11 +47,14 @@ public struct CollisionDamageJob : ICollisionEventsJob
         collision = true;
 
         RefRW<HealthComponent> playerHealthComponent = healthLookup.GetRefRW(playerEntity);
+
+        if (playerHealthComponent.ValueRO.HitPoints == 0) return;
+
         RefRO<EnemyDamageComponent> enemyDamageComponent = enemyDamageLookup.GetRefRO(enemyEntity);
 
         playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.ValueRO.damagePerSecond * deltaTime;
 
-        if (playerHealthComponent.ValueRW.HitPoints == 0)
+        if (playerHealthComponent.ValueRO.HitPoints == 0)
         {
             ecb.AddComponent<PlayerDeadComponent>(playerEntity);
         }

@@ -8,8 +8,6 @@ using Unity.Physics.Systems;
 [UpdateBefore(typeof(PhysicsSystemGroup))]
 public partial struct PlayerMovementSystem : ISystem
 {
-    private GridSpawnerComponent gridSpawner;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {

@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 public partial class PlayerControllerSystem : SystemBase
 {
     private PlayerInput playerInput;
-    private CollisionDamageSystem collisionDamageSystem;
 
     protected override void OnCreate()
     {

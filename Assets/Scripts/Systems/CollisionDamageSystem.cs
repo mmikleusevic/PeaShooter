@@ -19,7 +19,7 @@ public partial class CollisionDamageSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        if (SystemAPI.TryGetSingleton(out PlayerDeadComponent playerDead))
+        if (SystemAPI.HasSingleton<PlayerDeadComponent>())
         {
             Enabled = false;
             OnPlayerDied?.Invoke();
