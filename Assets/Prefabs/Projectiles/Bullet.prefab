@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1bbefe9f0966e5241992de2fb47a49e0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MotionType: 0
-  m_Smoothing: 0
+  m_Smoothing: 1
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0
@@ -112,7 +112,7 @@ MonoBehaviour:
     y: 0
     z: 0
   m_GravityFactor: 0
-  m_OverrideDefaultMassDistribution: 1
+  m_OverrideDefaultMassDistribution: 0
   m_CenterOfMass:
     x: 0
     y: 0
@@ -124,9 +124,9 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_InertiaTensor:
-    x: 0.4
-    y: 0.4
-    z: 0.4
+    x: 1e+30
+    y: 1e+30
+    z: 1e+30
   m_WorldIndex: 0
   m_CustomTags:
     Tag00: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 1
-        Category02: 0
+        Category02: 1
         Category03: 0
         Category04: 0
         Category05: 0
@@ -293,6 +293,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 0
-  maxLifetime: 5
-  speed: 10
+  maxLifetime: 3
+  speed: 15
   damage: 10

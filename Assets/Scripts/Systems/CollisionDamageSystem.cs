@@ -34,6 +34,8 @@ public partial class CollisionDamageSystem : SystemBase
             projectileLookup = SystemAPI.GetComponentLookup<ProjectileComponent>(),
             healthLookup = SystemAPI.GetComponentLookup<HealthComponent>(),
             ecb = ecb,
+            targetLookup = SystemAPI.GetComponentLookup<TargetComponent>(true),
+            obstacleLookup = SystemAPI.GetComponentLookup<ObstacleComponent>(true),
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
             activeForCollisionLookup = SystemAPI.GetComponentLookup<ActiveForCollisionComponent>(true),
             deltaTime = SystemAPI.Time.DeltaTime

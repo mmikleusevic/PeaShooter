@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ProjectileAuthoring : MonoBehaviour
 {
-    [SerializeField] private float lifetime;
     [SerializeField] private float maxLifetime;
     [SerializeField] private float speed;
     [SerializeField] private float damage;
@@ -16,7 +15,7 @@ public class ProjectileAuthoring : MonoBehaviour
 
             AddComponent(entity, new ProjectileComponent
             {
-                hasCollidedWithEnemy = false,
+                hasCollided = false,
                 lifetime = authoring.maxLifetime,
                 maxLifetime = authoring.maxLifetime,
                 speed = authoring.speed,

@@ -30,6 +30,8 @@ public partial struct ObstacleSpawnJob : IJobEntity
                 Scale = 1f,
             });
 
+            ecb.AddComponent(spawnedEntity, new ObstacleComponent());
+
             grid.gridNodes[newPosition] = false;
         }
     }

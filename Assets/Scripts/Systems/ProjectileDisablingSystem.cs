@@ -1,20 +1,13 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
 public partial struct ProjectileDisablingSystem : ISystem
 {
-    private EntityQuery projectilesQuery;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        projectilesQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<ProjectileComponent>()
-            .Build(ref state);
-
         state.RequireForUpdate<ProjectileComponent>();
     }
 
@@ -27,6 +20,7 @@ public partial struct ProjectileDisablingSystem : ISystem
         ProjectileDisablingJob job = new ProjectileDisablingJob
         {
             deltaTime = SystemAPI.Time.DeltaTime,
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
             ecb = ecb.AsParallelWriter()
         };
 

@@ -20,6 +20,7 @@ public partial struct AbilitySystemJob : IJobEntity
         if (ability.cooldownRemaining <= 0f)
         {
             EnemyComponent closestEnemy = default;
+            Entity closestEnemyEntity = Entity.Null;
             float closestDistance = float.MaxValue;
 
             foreach (var enemyEntity in enemyEntities)
@@ -32,12 +33,13 @@ public partial struct AbilitySystemJob : IJobEntity
 
                 if (distance < ability.range && distance < closestDistance)
                 {
+                    closestEnemyEntity = enemyEntity;
                     closestDistance = distance;
                     closestEnemy = enemy;
                 }
             }
 
-            if (closestDistance == float.MaxValue) return;
+            if (closestEnemyEntity == Entity.Null) return;
 
             if (ability.hasProjectile)
             {
@@ -59,7 +61,8 @@ public partial struct AbilitySystemJob : IJobEntity
 
                 ecb.AddComponent(sortKey, projectileEntity, new TargetComponent
                 {
-                    enemy = closestEnemy
+                    enemy = closestEnemy,
+                    enemyEntity = closestEnemyEntity
                 });
             }
             else

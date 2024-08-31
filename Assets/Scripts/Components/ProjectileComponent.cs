@@ -6,5 +6,5 @@ public struct ProjectileComponent : IComponentData, IEnableableComponent
     public float damage;
     public float lifetime;
     public float maxLifetime;
-    public bool hasCollidedWithEnemy;
+    public bool hasCollided;
 }
