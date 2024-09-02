@@ -10,10 +10,10 @@ public partial struct ProjectileDisablingJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
 
-    [ReadOnly]public ComponentLookup<EnemyComponent> enemyLookup;
+    [ReadOnly] public ComponentLookup<EnemyComponent> enemyLookup;
     [ReadOnly] public float deltaTime;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, ref ProjectileComponent projectile, 
+    private void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, ref ProjectileComponent projectile,
         ref LocalTransform transform, ref PhysicsVelocity velocity, in TargetComponent target)
     {
         if (projectile.lifetime <= 0 || projectile.hasCollided || !enemyLookup.HasComponent(target.enemyEntity))

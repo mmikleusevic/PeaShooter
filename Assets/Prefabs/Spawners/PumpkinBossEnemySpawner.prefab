@@ -9,21 +9,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
-      propertyPath: speed
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: prefab
       value: 
       objectReference: {fileID: 8195218032290252790, guid: 5066047eedfc02a4897359c0c1a59166, type: 3}
-    - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
-      propertyPath: spawnRate
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5228838109035342092, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
-      propertyPath: enemyMoveTimerTarget
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5470900529460815494, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
       propertyPath: m_Name
       value: PumpkinBossEnemySpawner
@@ -68,8 +56,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6150799062168246601, guid: 8d496f66d6c39ca4e8133b8392567d47, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

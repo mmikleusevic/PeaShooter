@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae488e28973a15b45976db79134b2d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
-  spawnRate: 1
-  speed: 150
-  enemyMoveTimerTarget: 0
+  prefab: {fileID: 7761844706433445779, guid: ab10dc86a295bd54b809c2d9b6cf4ce0, type: 3}
+  spawnRate: 15
+  speed: 300
+  enemyMoveTimerTarget: 1.5
 --- !u!114 &-3404586489985712297
 MonoBehaviour:
   m_ObjectHideFlags: 0
