@@ -32,11 +32,12 @@ public class LevelManager : MonoBehaviour
     {
         currentSubSceneIndex = 0;
 
-        SceneManager.LoadScene(SceneEnums.Game.ToString(), LoadSceneMode.Single);
         UnloadSubScene();
+        SceneManager.LoadScene(SceneEnums.Game.ToString(), LoadSceneMode.Single);
+        LoadSubScene();
     }
 
-    public void LoadScene()
+    public void LoadWave()
     {
         UnloadSubScene();
         LoadSubScene();
@@ -55,10 +56,7 @@ public class LevelManager : MonoBehaviour
     {
         if (currentSubSceneIndex < entitySceneReferences.Count)
         {
-            currentSubSceneEntity = SceneSystem.LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySceneReferences[currentSubSceneIndex], new SceneSystem.LoadParameters
-            {
-                AutoLoad = true,
-            });
+            currentSubSceneEntity = SceneSystem.LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySceneReferences[currentSubSceneIndex]);
         }
     }
 
