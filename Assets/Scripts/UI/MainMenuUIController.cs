@@ -25,7 +25,7 @@ public class MainMenuUIController : MonoBehaviour
 
     private void PlayPressed()
     {
-        LevelManager.Instance.LoadStartingScene();
+        StartCoroutine(LevelManager.Instance.Load(SceneEnums.Game));
     }
 
     private void QuitPressed()

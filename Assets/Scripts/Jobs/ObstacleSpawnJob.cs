@@ -9,7 +9,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
     public EntityCommandBuffer ecb;
     public GridComponent grid;
 
-    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData)
+    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData, in Entity entity)
     {
         for (int i = 0; i < spawner.numberToSpawn; i++)
         {
@@ -34,6 +34,8 @@ public partial struct ObstacleSpawnJob : IJobEntity
 
             grid.gridNodes[newPosition] = false;
         }
+
+        ecb.DestroyEntity(entity);
     }
 
     [BurstCompile]

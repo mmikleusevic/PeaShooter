@@ -12,14 +12,11 @@ public partial struct PlayerSpawnerSystem : ISystem
         state.RequireForUpdate<PlayerSpawnerComponent>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        state.Enabled = false;
+        Entity playerSpawnerEntity = SystemAPI.GetSingletonEntity<PlayerSpawnerComponent>();
 
-        Entity entity = SystemAPI.GetSingletonEntity<PlayerSpawnerComponent>();
-
-        RefRO<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlayerSpawnerComponent>(entity);
+        RefRO<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlayerSpawnerComponent>(playerSpawnerEntity);
 
         Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 
@@ -29,5 +26,7 @@ public partial struct PlayerSpawnerSystem : ISystem
             Rotation = spawner.ValueRO.rotation,
             Scale = spawner.ValueRO.scale
         });
+
+        state.EntityManager.DestroyEntity(playerSpawnerEntity);
     }
 }

@@ -8,11 +8,13 @@ public class CameraDOTSFollow : MonoBehaviour
     private CinemachineVirtualCamera virtualCamera;
     private EntityManager entityManager;
     private Entity playerEntity;
+    private EntityQuery playerEntityQuery;
 
     private void Start()
     {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        playerEntityQuery = entityManager.CreateEntityQuery(typeof(PlayerComponent));
         playerEntity = GetPlayerEntity();
     }
 
@@ -44,11 +46,9 @@ public class CameraDOTSFollow : MonoBehaviour
 
     private Entity GetPlayerEntity()
     {
-        var entityQuery = entityManager.CreateEntityQuery(typeof(PlayerComponent));
-
-        if (entityQuery.CalculateEntityCount() > 0)
+        if (playerEntityQuery.CalculateEntityCount() > 0)
         {
-            return entityQuery.GetSingletonEntity();
+            return playerEntityQuery.GetSingletonEntity();
         }
 
         return Entity.Null;

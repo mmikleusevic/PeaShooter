@@ -18,29 +18,30 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        state.Enabled = false;
+        Entity gridSpawnerEntity = SystemAPI.GetSingletonEntity<GridSpawnerComponent>();
 
-        Entity entity = SystemAPI.GetSingletonEntity<GridSpawnerComponent>();
+        RefRO<GridSpawnerComponent> gridSpawner = SystemAPI.GetComponentRO<GridSpawnerComponent>(gridSpawnerEntity);
 
-        RefRO<GridSpawnerComponent> spawner = SystemAPI.GetComponentRO<GridSpawnerComponent>(entity);
-
-        Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
+        Entity spawnedEntity = state.EntityManager.Instantiate(gridSpawner.ValueRO.prefab);
 
         grid = new GridComponent
         {
-            gridNodes = new NativeHashMap<int2, bool>(math.square(spawner.ValueRO.size.x + spawner.ValueRO.size.y + 1), Allocator.Persistent)
+            gridNodes = new NativeHashMap<int2, bool>(math.square(gridSpawner.ValueRO.size.x + gridSpawner.ValueRO.size.y + 1), Allocator.Persistent)
         };
 
-        for (int i = -spawner.ValueRO.size.x; i <= spawner.ValueRO.size.x; i++)
+        for (int i = -gridSpawner.ValueRO.size.x; i <= gridSpawner.ValueRO.size.x; i++)
         {
-            for (int j = -spawner.ValueRO.size.y; j <= spawner.ValueRO.size.y; j++)
+            for (int j = -gridSpawner.ValueRO.size.y; j <= gridSpawner.ValueRO.size.y; j++)
             {
                 int2 position = new int2(i, j);
                 grid.gridNodes[position] = true;
             }
         }
 
+        grid.size = gridSpawner.ValueRO.size;
+
         state.EntityManager.AddComponentData(spawnedEntity, grid);
+        state.EntityManager.DestroyEntity(gridSpawnerEntity);
     }
 
     [BurstCompile]

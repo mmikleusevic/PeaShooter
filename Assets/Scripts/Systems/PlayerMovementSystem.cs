@@ -12,7 +12,6 @@ public partial struct PlayerMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
-        state.RequireForUpdate<GridSpawnerComponent>();
     }
 
     [BurstCompile]
@@ -20,8 +19,8 @@ public partial struct PlayerMovementSystem : ISystem
     {
         PlayerMovementJob job = new PlayerMovementJob
         {
-            DeltaTime = SystemAPI.Time.DeltaTime,
-            gridSpawner = SystemAPI.GetSingleton<GridSpawnerComponent>()
+            deltaTime = SystemAPI.Time.DeltaTime,
+            gridComponent = SystemAPI.GetSingleton<GridComponent>()
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

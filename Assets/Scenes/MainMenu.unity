@@ -212,6 +212,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3587949847665394280, guid: 8f67eaf1f0cdfb24fbc00a272d97c5ea, type: 3}
+      propertyPath: subScenes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3587949847665394280, guid: 8f67eaf1f0cdfb24fbc00a272d97c5ea, type: 3}
+      propertyPath: subScenes.Array.data[0]
+      value: 
+      objectReference: {fileID: 1215025091589925913, guid: 263976ee86255004e9da4bd6ae4e20e6, type: 3}
     - target: {fileID: 6869598285527751857, guid: 8f67eaf1f0cdfb24fbc00a272d97c5ea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

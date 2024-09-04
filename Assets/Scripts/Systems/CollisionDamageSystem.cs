@@ -17,6 +17,26 @@ public partial class CollisionDamageSystem : SystemBase
         RequireForUpdate<EnemyDamageComponent>();
     }
 
+    protected override void OnStartRunning()
+    {
+        base.OnStartRunning();
+
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.OnLoad += OnGameLoad;
+        }
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.OnLoad -= OnGameLoad;
+        }
+    }
+
     protected override void OnUpdate()
     {
         if (SystemAPI.HasSingleton<PlayerDeadComponent>())
@@ -45,5 +65,10 @@ public partial class CollisionDamageSystem : SystemBase
 
         JobHandle handle = job.Schedule(simulationSingleton, Dependency);
         Dependency = handle;
+    }
+
+    private void OnGameLoad()
+    {
+        Enabled = true;
     }
 }

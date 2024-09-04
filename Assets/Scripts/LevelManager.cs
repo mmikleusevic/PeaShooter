@@ -1,19 +1,12 @@
-using System.Collections.Generic;
-using Unity.Entities;
-using Unity.Entities.Serialization;
-using Unity.Scenes;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
-
-    [SerializeField] private List<EntitySceneReference> entitySceneReferences;
-
-    private Entity currentSubSceneEntity = Entity.Null;
-
-    private int currentSubSceneIndex = 0;
+    public event Action OnLoad;
 
     private void Awake()
     {
@@ -28,42 +21,14 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadStartingScene()
+    public IEnumerator Load(SceneEnums sceneEnum)
     {
-        currentSubSceneIndex = 0;
-
-        UnloadSubScene();
-        SceneManager.LoadScene(SceneEnums.Game.ToString(), LoadSceneMode.Single);
-        LoadSubScene();
-    }
-
-    public void LoadWave()
-    {
-        UnloadSubScene();
-        LoadSubScene();
-    }
-
-    public void LoadMainMenu()
-    {
-        UnloadSubScene();
-        SceneManager.LoadScene(SceneEnums.MainMenu.ToString(), LoadSceneMode.Single);
-
-        currentSubSceneEntity = Entity.Null;
-        currentSubSceneIndex = 0;
-    }
-
-    public void LoadSubScene()
-    {
-        if (currentSubSceneIndex < entitySceneReferences.Count)
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneEnum.ToString(), LoadSceneMode.Single);
+        while (!asyncOperation.isDone)
         {
-            currentSubSceneEntity = SceneSystem.LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySceneReferences[currentSubSceneIndex]);
+            yield return null;
         }
-    }
 
-    private void UnloadSubScene()
-    {
-        if (currentSubSceneEntity == Entity.Null) return;
-
-        SceneSystem.UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubSceneEntity, SceneSystem.UnloadParameters.DestroyMetaEntities);
+        OnLoad?.Invoke();
     }
 }

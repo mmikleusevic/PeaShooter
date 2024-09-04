@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class PauseGame : MonoBehaviour
+public class GameStateManager : MonoBehaviour
 {
     private CollisionDamageSystem collisionDamageSystem;
 
@@ -13,6 +13,11 @@ public class PauseGame : MonoBehaviour
         {
             collisionDamageSystem.OnPlayerDied += OnPlayerDied;
         }
+
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.OnLoad += OnGameLoad;
+        }
     }
 
     private void OnDisable()
@@ -21,6 +26,11 @@ public class PauseGame : MonoBehaviour
         {
             collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
         }
+
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.OnLoad -= OnGameLoad;
+        }
     }
 
     private void OnPlayerDied()
@@ -28,8 +38,18 @@ public class PauseGame : MonoBehaviour
         StopTheGame();
     }
 
+    private void OnGameLoad()
+    {
+        StartTheGame();
+    }
+
     private void StopTheGame()
     {
         Time.timeScale = 0;
+    }
+
+    private void StartTheGame()
+    {
+        Time.timeScale = 1;
     }
 }

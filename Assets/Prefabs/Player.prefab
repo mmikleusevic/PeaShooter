@@ -366,4 +366,4 @@ MonoBehaviour:
   range: 5
   projectilePrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
   hasProjectile: 1
-  projectileScale: 0.7
+  projectileScale: 0.5

@@ -14,11 +14,9 @@ public partial struct PlaneSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        state.Enabled = false;
+        Entity planeSpawnerEntity = SystemAPI.GetSingletonEntity<PlaneSpawnerComponent>();
 
-        Entity entity = SystemAPI.GetSingletonEntity<PlaneSpawnerComponent>();
-
-        RefRO<PlaneSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlaneSpawnerComponent>(entity);
+        RefRO<PlaneSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlaneSpawnerComponent>(planeSpawnerEntity);
 
         Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
 
@@ -28,5 +26,7 @@ public partial struct PlaneSpawnerSystem : ISystem
             Rotation = spawner.ValueRO.rotation,
             Scale = 1f,
         });
+
+        state.EntityManager.DestroyEntity(planeSpawnerEntity);
     }
 }
