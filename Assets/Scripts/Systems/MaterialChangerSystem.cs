@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Physics;
 using Unity.Rendering;
 using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
@@ -15,7 +14,9 @@ public partial class MaterialChangerSystem : SystemBase
     private void RegisterMaterial(Material material)
     {
         if (!materialMapping.ContainsKey(material))
+        {
             materialMapping[material] = hybridRendererSystem.RegisterMaterial(material);
+        }
     }
 
     protected override void OnStartRunning()
@@ -31,7 +32,7 @@ public partial class MaterialChangerSystem : SystemBase
         Entities
             .WithoutBurst()
             .WithNone<MaterialChangedComponent>()
-            .ForEach((MaterialChangerComponent changer, ref MaterialMeshInfo materialMeshInfo, ref PhysicsCollider physicsCollider, in EnemyComponent enemyComponent, in Entity entity) =>
+            .ForEach((MaterialChangerComponent changer, ref MaterialMeshInfo materialMeshInfo, in EnemyComponent enemyComponent, in Entity entity) =>
             {
                 if (enemyComponent.moveTimer > enemyComponent.moveTimerTarget)
                 {

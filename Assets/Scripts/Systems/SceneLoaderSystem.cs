@@ -1,18 +1,14 @@
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Entities.Serialization;
 using Unity.Scenes;
+using static Unity.Scenes.SceneSystem;
 
 public partial class SceneLoaderSystem : SystemBase
 {
-    private EntityQuery sceneEntitiesQuery;
+    private SubScene subscene;
     private Entity currentSceneEntity;
-    private int currentSceneIndex;
-
-    protected override void OnCreate()
-    {
-        sceneEntitiesQuery = GetEntityQuery(typeof(SceneLoader));
-    }
+    private bool load;
+    private bool unload;
+    private bool isUnloading;
 
     protected override void OnStartRunning()
     {
@@ -23,8 +19,11 @@ public partial class SceneLoaderSystem : SystemBase
             LevelManager.Instance.OnLoad += OnLoad;
         }
 
+        subscene = null;
         currentSceneEntity = Entity.Null;
-        currentSceneIndex = 0;
+        load = false;
+        unload = false;
+        isUnloading = false;
     }
 
     protected override void OnStopRunning()
@@ -37,46 +36,44 @@ public partial class SceneLoaderSystem : SystemBase
         }
     }
 
-    protected override void OnUpdate() { }  
-
-    private void UnloadSubScene()
+    protected override void OnUpdate()
     {
-        if (currentSceneEntity != Entity.Null)
+        if (unload)
         {
-            SceneSystem.UnloadScene(World.Unmanaged, currentSceneEntity, SceneSystem.UnloadParameters.DestroyMetaEntities);
-
-            currentSceneEntity = Entity.Null;
-        }
-    }
-    
-    public void LoadSubScene()
-    {
-        NativeArray<SceneLoader> sceneEntities = sceneEntitiesQuery.ToComponentDataArray<SceneLoader>(Allocator.Temp);
-
-        if (currentSceneIndex < sceneEntities.Length)
-        {
-            EntitySceneReference entitySceneReference = sceneEntities[currentSceneIndex].SceneReference;
-
-            currentSceneEntity = SceneSystem.LoadSceneAsync(World.Unmanaged, entitySceneReference, new SceneSystem.LoadParameters
+            if (IsSceneLoaded(World.Unmanaged, currentSceneEntity))
             {
-                Flags = SceneLoadFlags.BlockOnImport
-            });
+                if (isUnloading) return;
 
-            currentSceneIndex++;
+                UnloadScene(World.Unmanaged, currentSceneEntity, UnloadParameters.DestroyMetaEntities);
+
+                isUnloading = true;
+            }
+            else
+            {
+                currentSceneEntity = Entity.Null;
+                load = true;
+                unload = false;
+                isUnloading = false;
+            }
         }
-        else
+        if (load)
         {
-            LevelManager.Instance.Load(SceneEnums.Game);
+            load = false;
 
-            currentSceneIndex = 0;
+            if (subscene == null) return;
+
+            subscene.AutoLoadScene = true;
+
+            currentSceneEntity = LoadSceneAsync(World.Unmanaged, subscene.SceneGUID, new LoadParameters
+            {
+                Flags = SceneLoadFlags.BlockOnImport | SceneLoadFlags.BlockOnStreamIn | SceneLoadFlags.NewInstance
+            });
         }
-
-        sceneEntities.Dispose();
     }
 
-    private void OnLoad()
+    private void OnLoad(SubScene subscene)
     {
-        UnloadSubScene();
-        LoadSubScene();
+        this.subscene = subscene;
+        unload = true;
     }
 }

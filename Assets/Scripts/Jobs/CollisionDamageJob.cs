@@ -44,6 +44,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
         }
     }
 
+    [BurstCompile]
     private void HandlePlayerCollision(ref bool collision, Entity playerEntity, Entity enemyEntity)
     {
         collision = true;
@@ -62,6 +63,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
         }
     }
 
+    [BurstCompile]
     private void HandleProjectileCollision(Entity projectileEntity, Entity otherEntity)
     {
         RefRW<ProjectileComponent> projectileComponent = projectileLookup.GetRefRW(projectileEntity);

@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
 using Unity.Physics.Systems;
+using Unity.Scenes;
 
 [UpdateInGroup(typeof(PhysicsSystemGroup))]
 [UpdateAfter(typeof(PhysicsSimulationGroup))]
@@ -67,7 +68,7 @@ public partial class CollisionDamageSystem : SystemBase
         Dependency = handle;
     }
 
-    private void OnGameLoad()
+    private void OnGameLoad(SubScene subscene)
     {
         Enabled = true;
     }

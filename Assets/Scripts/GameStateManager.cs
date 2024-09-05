@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Scenes;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
@@ -38,7 +39,7 @@ public class GameStateManager : MonoBehaviour
         StopTheGame();
     }
 
-    private void OnGameLoad()
+    private void OnGameLoad(SubScene subscene)
     {
         StartTheGame();
     }

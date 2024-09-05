@@ -29,6 +29,6 @@ public partial struct ObstacleSpawnerSystem : ISystem
         };
 
         JobHandle spawnHandle = spawnJob.Schedule(state.Dependency);
-        spawnHandle.Complete();
+        state.Dependency = spawnHandle;
     }
 }
