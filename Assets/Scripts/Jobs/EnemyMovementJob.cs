@@ -8,7 +8,7 @@ public partial struct EnemyMovementJob : IJobEntity
 {
     [ReadOnly] public float deltaTime;
 
-    void Execute(EnemyMovementAspect enemyMovement, in DynamicBuffer<Node> pathBuffer)
+    void Execute(EnemyMovementAspect enemyMovement, in DynamicBuffer<NodeComponent> pathBuffer)
     {
         if (pathBuffer.Length == 0 || enemyMovement.enemy.ValueRO.moveTimer < enemyMovement.enemy.ValueRO.moveTimerTarget)
         {

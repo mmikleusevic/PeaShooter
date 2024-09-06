@@ -1,15 +1,21 @@
 using System;
 using System.Collections;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Unity.Scenes.SceneSystem;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
-    public event Action<SubScene> OnLoad;
-
+    public event Action OnLoaded;
     public SubScene[] subscenes;
+
+    private EntityManager entityManager;
+    private EntityQuery subSceneEntitiesQuery;
+    private Entity currentSceneEntity = Entity.Null;
     private int subsceneIndex;
 
     private void Awake()
@@ -25,47 +31,56 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        subSceneEntitiesQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<EnemyComponent, ProjectileComponent, GridComponent>()
+            .Build(entityManager);
+    }
+
     public IEnumerator LoadGameScene()
     {
         subsceneIndex = 0;
 
-        Scene currentScene = SceneManager.GetActiveScene();
+        entityManager.DestroyEntity(subSceneEntitiesQuery.ToEntityArray(Allocator.Temp));
 
-        OnLoad?.Invoke(subscenes[subsceneIndex]);
-
-        yield return StartCoroutine(UnloadLoad(currentScene, SceneEnums.Game));
+        UnloadSubScene();
+        yield return StartCoroutine(LoadSubScene());
+        yield return StartCoroutine(LoadScene(SceneEnums.Game));
     }
 
     public IEnumerator LoadMainMenu()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-
-        OnLoad?.Invoke(null);
-
-        yield return StartCoroutine(UnloadLoad(currentScene, SceneEnums.MainMenu));
-    }
-
-    private IEnumerator UnloadLoad(Scene currentScene, SceneEnums sceneEnum)
-    {
-        yield return StartCoroutine(LoadScene(sceneEnum));
-        yield return StartCoroutine(UnloadScene(currentScene));
-    }
-
-    private IEnumerator UnloadScene(Scene currentScene)
-    {
-        AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(currentScene);
-        while (!unloadOperation.isDone)
-        {
-            yield return null;
-        }
+        UnloadSubScene();
+        yield return StartCoroutine(LoadScene(SceneEnums.MainMenu));
     }
 
     private IEnumerator LoadScene(SceneEnums sceneEnum)
     {
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneEnum.ToString(), LoadSceneMode.Additive);
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneEnum.ToString(), LoadSceneMode.Single);
+
         while (!loadOperation.isDone)
         {
             yield return null;
         }
+
+        OnLoaded?.Invoke();
+    }
+
+    private void UnloadSubScene()
+    {
+        UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSceneEntity, UnloadParameters.DestroyMetaEntities);
+
+        currentSceneEntity = Entity.Null;
+    }
+
+    private IEnumerator LoadSubScene()
+    {
+        yield return currentSceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, subscenes[subsceneIndex].SceneGUID, new LoadParameters
+        {
+            Flags = SceneLoadFlags.BlockOnImport | SceneLoadFlags.BlockOnStreamIn
+        });
     }
 }

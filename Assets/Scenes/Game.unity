@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 160327280}
   - component: {fileID: 160327282}
   m_Layer: 5
-  m_Name: UIDocument
+  m_Name: UIGameOver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

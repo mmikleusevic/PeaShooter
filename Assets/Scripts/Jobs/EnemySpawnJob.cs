@@ -45,7 +45,7 @@ public partial struct EnemySpawnJob : IJobEntity
                 moveTimerTarget = enemySpawner.enemyMoveTimerTarget
             });
 
-            ecb.AddBuffer<Node>(spawnedEntity);
+            ecb.AddBuffer<NodeComponent>(spawnedEntity);
 
             enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
         }

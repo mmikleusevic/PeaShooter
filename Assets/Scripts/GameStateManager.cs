@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Scenes;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
@@ -14,11 +13,6 @@ public class GameStateManager : MonoBehaviour
         {
             collisionDamageSystem.OnPlayerDied += OnPlayerDied;
         }
-
-        if (LevelManager.Instance != null)
-        {
-            LevelManager.Instance.OnLoad += OnGameLoad;
-        }
     }
 
     private void OnDisable()
@@ -28,20 +22,12 @@ public class GameStateManager : MonoBehaviour
             collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
         }
 
-        if (LevelManager.Instance != null)
-        {
-            LevelManager.Instance.OnLoad -= OnGameLoad;
-        }
+        StartTheGame();
     }
 
     private void OnPlayerDied()
     {
         StopTheGame();
-    }
-
-    private void OnGameLoad(SubScene subscene)
-    {
-        StartTheGame();
     }
 
     private void StopTheGame()

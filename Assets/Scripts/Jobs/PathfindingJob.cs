@@ -12,7 +12,7 @@ partial struct PathfindingJob : IJobEntity
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public GridComponent grid;
 
-    public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<Node> pathBuffer)
+    public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
     {
         pathBuffer.Clear();
 
@@ -22,7 +22,7 @@ partial struct PathfindingJob : IJobEntity
         {
             foreach (var node in path)
             {
-                pathBuffer.Add(new Node { position = node });
+                pathBuffer.Add(new NodeComponent { position = node });
             }
 
             enemy.currentPathIndex = 0;
@@ -38,11 +38,11 @@ partial struct PathfindingJob : IJobEntity
 
         if (start.Equals(goal)) return result;
 
-        var openSet = new NativeList<Node>(Allocator.Temp);
+        var openSet = new NativeList<NodeComponent>(Allocator.Temp);
         var closedSet = new NativeHashSet<int2>(10, Allocator.Temp);
-        var cameFrom = new NativeHashMap<int2, Node>(100, Allocator.Temp);
+        var cameFrom = new NativeHashMap<int2, NodeComponent>(100, Allocator.Temp);
 
-        openSet.Add(new Node { position = start, gCost = 0, hCost = CalculateDistanceCost(start, goal) });
+        openSet.Add(new NodeComponent { position = start, gCost = 0, hCost = CalculateDistanceCost(start, goal) });
 
         while (openSet.Length > 0)
         {
@@ -83,7 +83,7 @@ partial struct PathfindingJob : IJobEntity
                             inOpenSet = true;
                             if (tentativeGCost < openSet[i].gCost)
                             {
-                                openSet[i] = new Node
+                                openSet[i] = new NodeComponent
                                 {
                                     position = neighborPos,
                                     gCost = tentativeGCost,
@@ -98,7 +98,7 @@ partial struct PathfindingJob : IJobEntity
 
                     if (!inOpenSet)
                     {
-                        openSet.Add(new Node
+                        openSet.Add(new NodeComponent
                         {
                             position = neighborPos,
                             gCost = tentativeGCost,
@@ -129,7 +129,7 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private int GetLowestFCostIndex(NativeList<Node> openSet)
+    private int GetLowestFCostIndex(NativeList<NodeComponent> openSet)
     {
         int lowestIndex = 0;
         int lowestFCost = int.MaxValue;
@@ -147,7 +147,7 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, Node> cameFrom, int2 current)
+    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, NodeComponent> cameFrom, int2 current)
     {
         NativeList<int2> tempPath = new NativeList<int2>(Allocator.Temp);
 
