@@ -23,7 +23,7 @@ public partial struct AbilitySystemJob : IJobEntity
             Entity closestEnemyEntity = Entity.Null;
             float closestDistance = float.MaxValue;
 
-            foreach (var enemyEntity in enemyEntities)
+            foreach (Entity enemyEntity in enemyEntities)
             {
                 EnemyComponent enemy = enemyLookup[enemyEntity];
 

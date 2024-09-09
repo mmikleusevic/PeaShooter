@@ -12,6 +12,7 @@ public partial struct PlayerMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<GridComponent>();
     }
 
     [BurstCompile]

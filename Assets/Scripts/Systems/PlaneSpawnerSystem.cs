@@ -1,8 +1,9 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Transforms;
+using Unity.Jobs;
 
 [BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct PlaneSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -14,19 +15,15 @@ public partial struct PlaneSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        Entity planeSpawnerEntity = SystemAPI.GetSingletonEntity<PlaneSpawnerComponent>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        RefRO<PlaneSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlaneSpawnerComponent>(planeSpawnerEntity);
-
-        Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
-
-        state.EntityManager.SetComponentData(spawnedEntity, new LocalTransform
+        PlaneSpawnJob job = new PlaneSpawnJob
         {
-            Position = spawner.ValueRO.position,
-            Rotation = spawner.ValueRO.rotation,
-            Scale = 1f,
-        });
+            ecb = ecb
+        };
 
-        state.EntityManager.DestroyEntity(planeSpawnerEntity);
+        JobHandle handle = job.Schedule(state.Dependency);
+        state.Dependency = handle;
     }
 }

@@ -1,29 +1,32 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
+using Unity.Transforms;
 
 [BurstCompile]
 public partial struct PlayerMovementJob : IJobEntity
 {
-    public float deltaTime;
-    public GridComponent gridComponent;
+    [ReadOnly] public float deltaTime;
+    [ReadOnly] public GridComponent gridComponent;
 
-    private void Execute(PlayerMovementAspect playerMovement)
+    private void Execute(ref PlayerComponent player, in InputComponent input, ref LocalTransform transform, ref PhysicsVelocity physics)
     {
-        float3 moveDirection = new float3(playerMovement.input.ValueRO.move.x, 0, playerMovement.input.ValueRO.move.y);
+        float3 moveDirection = new float3(input.move.x, 0, input.move.y);
 
         if (!MathExtensions.Approximately(moveDirection, 0))
         {
             quaternion targetRotation = quaternion.LookRotation(moveDirection, math.up());
-            playerMovement.transform.ValueRW.Rotation = math.slerp(
-                playerMovement.transform.ValueRO.Rotation,
+            transform.Rotation = math.slerp(
+                transform.Rotation,
                 targetRotation,
-                playerMovement.player.ValueRO.rotationSpeed * deltaTime
+                player.rotationSpeed * deltaTime
             );
         }
 
-        playerMovement.physics.ValueRW.Linear = moveDirection * playerMovement.player.ValueRO.moveSpeed * deltaTime;
-        playerMovement.transform.ValueRW.Position = math.clamp(playerMovement.transform.ValueRO.Position, -gridComponent.size.x, gridComponent.size.x);
-        playerMovement.player.ValueRW.position = new int2((int)math.round(playerMovement.transform.ValueRO.Position.x), (int)math.round(playerMovement.transform.ValueRO.Position.z));
+        physics.Linear = moveDirection * player.moveSpeed * deltaTime;
+        transform.Position = math.clamp(transform.Position, -gridComponent.size.x, gridComponent.size.x);
+        player.position = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
     }
 }

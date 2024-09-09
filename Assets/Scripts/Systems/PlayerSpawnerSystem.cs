@@ -1,6 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Transforms;
+using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
@@ -15,19 +15,15 @@ public partial struct PlayerSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        Entity playerSpawnerEntity = SystemAPI.GetSingletonEntity<PlayerSpawnerComponent>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        RefRO<PlayerSpawnerComponent> spawner = SystemAPI.GetComponentRO<PlayerSpawnerComponent>(playerSpawnerEntity);
-
-        Entity spawnedEntity = state.EntityManager.Instantiate(spawner.ValueRO.prefab);
-
-        state.EntityManager.SetComponentData(spawnedEntity, new LocalTransform
+        PlayerSpawnJob job = new PlayerSpawnJob
         {
-            Position = spawner.ValueRO.position,
-            Rotation = spawner.ValueRO.rotation,
-            Scale = spawner.ValueRO.scale
-        });
+            ecb = ecb
+        };
 
-        state.EntityManager.DestroyEntity(playerSpawnerEntity);
+        JobHandle handle = job.Schedule(state.Dependency);
+        state.Dependency = handle;
     }
 }

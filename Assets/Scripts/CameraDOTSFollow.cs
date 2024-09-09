@@ -1,4 +1,5 @@
 using Cinemachine;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -14,7 +15,9 @@ public class CameraDOTSFollow : MonoBehaviour
     {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        playerEntityQuery = entityManager.CreateEntityQuery(typeof(PlayerComponent));
+        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<PlayerComponent>()
+            .Build(entityManager);
         playerEntity = GetPlayerEntity();
     }
 

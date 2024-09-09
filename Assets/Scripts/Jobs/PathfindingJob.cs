@@ -6,8 +6,8 @@ using Unity.Mathematics;
 [BurstCompile]
 partial struct PathfindingJob : IJobEntity
 {
-    private const int STRAIGHT_COST = 10;
-    private const int DIAGONAL_COST = 14;
+    [ReadOnly] private const int STRAIGHT_COST = 10;
+    [ReadOnly] private const int DIAGONAL_COST = 14;
 
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public GridComponent grid;

@@ -5,7 +5,7 @@ public class GameStateManager : MonoBehaviour
 {
     private CollisionDamageSystem collisionDamageSystem;
 
-    private void OnEnable()
+    private void Start()
     {
         collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
 
@@ -15,7 +15,7 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (collisionDamageSystem != null)
         {

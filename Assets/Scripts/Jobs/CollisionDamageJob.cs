@@ -6,9 +6,9 @@ using Unity.Physics;
 [BurstCompile]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
+    public EntityCommandBuffer ecb;
     public ComponentLookup<ProjectileComponent> projectileLookup;
     public ComponentLookup<HealthComponent> healthLookup;
-    public EntityCommandBuffer ecb;
 
     [ReadOnly] public ComponentLookup<TargetComponent> targetLookup;
     [ReadOnly] public ComponentLookup<ObstacleComponent> obstacleLookup;

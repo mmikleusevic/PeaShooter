@@ -1,8 +1,12 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Physics.Systems;
 
 [BurstCompile]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateBefore(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(TargetingSystem))]
 public partial struct ProjectileDisablingSystem : ISystem
 {
     [BurstCompile]

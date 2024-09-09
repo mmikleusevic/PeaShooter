@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     private Button mainMenuButton;
     private VisualElement gameOverScreen;
 
-    private void OnEnable()
+    private void Start()
     {
         VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
 
@@ -24,19 +24,19 @@ public class UIController : MonoBehaviour
             collisionDamageSystem.OnPlayerDied += OnPlayerDied;
         }
 
-        playAgainButton.clicked += PlayAgainPressed;
-        mainMenuButton.clicked += MainMenuPressed;
+        if (playAgainButton != null) playAgainButton.clicked += PlayAgainPressed;
+        if (mainMenuButton != null) mainMenuButton.clicked += MainMenuPressed;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (collisionDamageSystem != null)
         {
             collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
         }
 
-        playAgainButton.clicked -= PlayAgainPressed;
-        mainMenuButton.clicked -= MainMenuPressed;
+        if (playAgainButton != null) playAgainButton.clicked -= PlayAgainPressed;
+        if (mainMenuButton != null) mainMenuButton.clicked -= MainMenuPressed;
     }
 
     private void OnPlayerDied()

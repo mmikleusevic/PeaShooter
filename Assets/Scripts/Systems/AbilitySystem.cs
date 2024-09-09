@@ -5,6 +5,7 @@ using Unity.Jobs;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct AbilitySystem : ISystem
 {
     private EntityQuery projectileEntityQuery;
@@ -48,7 +49,7 @@ public partial struct AbilitySystem : ISystem
         AbilitySystemJob job = new AbilitySystemJob
         {
             ecb = ecb.AsParallelWriter(),
-            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(),
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
             enemyEntities = enemyEntities,
             projectileEntity = projectileEntity,
             playerTransform = playerTransform,
