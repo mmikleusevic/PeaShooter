@@ -1,6 +1,6 @@
 using System.Collections;
 using Unity.Entities;
-using Unity.Scenes;
+using Unity.Entities.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static Unity.Scenes.SceneSystem;
@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    [SerializeField] private SubScene[] subscenes;
+    [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
 
     private Entity currentSubsceneEntity = Entity.Null;
     private int subsceneIndex;
@@ -74,13 +74,11 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator LoadSubScene()
     {
-        if (subsceneIndex >= subscenes.Length) subsceneIndex = 0;
+        if (subsceneIndex >= entitySubsceneReferences.Length) subsceneIndex = 0;
 
-        currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, subscenes[subsceneIndex].SceneGUID, new LoadParameters
+        yield return currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex], new LoadParameters
         {
             Flags = SceneLoadFlags.BlockOnStreamIn | SceneLoadFlags.BlockOnImport | SceneLoadFlags.NewInstance
         });
-
-        yield return new WaitUntil(() => IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity));
     }
 }

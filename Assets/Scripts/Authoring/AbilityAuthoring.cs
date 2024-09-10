@@ -5,8 +5,7 @@ public class AbilityAuthoring : MonoBehaviour
 {
     [SerializeField] private float cooldown;
     [SerializeField] private float range;
-    [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private bool hasProjectile;
+    [SerializeField] private GameObject projectilePrefab = null;
     [SerializeField] private float projectileScale;
 
     public class AbilityBaker : Baker<AbilityAuthoring>
@@ -21,7 +20,7 @@ public class AbilityAuthoring : MonoBehaviour
                 cooldownRemaining = 0f,
                 range = authoring.range,
                 projectileEntity = GetEntity(authoring.projectilePrefab, TransformUsageFlags.Dynamic),
-                hasProjectile = authoring.hasProjectile,
+                hasProjectile = authoring.projectilePrefab != null ? true : false,
                 projectileScale = authoring.projectileScale
             });
         }

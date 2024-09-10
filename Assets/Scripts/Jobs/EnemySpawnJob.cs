@@ -7,16 +7,16 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct EnemySpawnJob : IJobEntity
 {
-    public EntityCommandBuffer ecb;
+    public EntityCommandBuffer.ParallelWriter ecb;
 
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public GridComponent grid;
 
-    private void Execute(ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
+    private void Execute([ChunkIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime < elapsedTime)
         {
-            Entity spawnedEntity = ecb.Instantiate(enemySpawner.prefab);
+            Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
 
             int2 newPosition = default;
 
@@ -28,14 +28,14 @@ public partial struct EnemySpawnJob : IJobEntity
 
             float3 position = new float3(newPosition.x, 0, newPosition.y);
 
-            ecb.SetComponent(spawnedEntity, new LocalTransform
+            ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
             {
                 Position = position,
                 Rotation = quaternion.identity,
                 Scale = enemySpawner.scale
             });
 
-            ecb.AddComponent(spawnedEntity, new EnemyComponent
+            ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
             {
                 moveSpeed = enemySpawner.moveSpeed,
                 gridPosition = newPosition,
@@ -45,7 +45,7 @@ public partial struct EnemySpawnJob : IJobEntity
                 moveTimerTarget = enemySpawner.enemyMoveTimerTarget
             });
 
-            ecb.AddBuffer<NodeComponent>(spawnedEntity);
+            ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
 
             enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
         }

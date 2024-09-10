@@ -32,7 +32,7 @@ public class CameraDOTSFollow : MonoBehaviour
 
         if (entityManager.HasComponent<PlayerComponent>(playerEntity))
         {
-            LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
+            var playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
             Transform cameraTargetTransform = virtualCamera.Follow;
 
             if (cameraTargetTransform == null)

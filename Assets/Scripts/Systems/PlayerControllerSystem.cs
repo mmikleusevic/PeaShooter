@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,22 +11,25 @@ public partial class PlayerControllerSystem : SystemBase
     protected override void OnCreate()
     {
         playerInput = new PlayerInput();
-        playerInput.Enable();
 
+        playerInput.Enable();
         playerInput.Player.Movement.performed += OnMovementPerformed;
         playerInput.Player.Movement.canceled += OnMovementCanceled;
+
+        RequireForUpdate<PlayerComponent>();
+        RequireForUpdate<InputComponent>();
     }
 
     protected override void OnUpdate() { }
 
     private void OnMovementPerformed(InputAction.CallbackContext obj)
     {
-        SetMovement(playerInput.Player.Movement.ReadValue<Vector2>());
+        SetMovement(new float2(playerInput.Player.Movement.ReadValue<Vector2>()));
     }
 
     private void OnMovementCanceled(InputAction.CallbackContext obj)
     {
-        SetMovement(Vector2.zero);
+        SetMovement(float2.zero);
     }
 
     protected override void OnDestroy()
@@ -35,14 +39,12 @@ public partial class PlayerControllerSystem : SystemBase
         playerInput.Disable();
     }
 
-    private void SetMovement(Vector2 vector2)
+    private void SetMovement(float2 value)
     {
         Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
 
-        InputComponent input = SystemAPI.GetComponent<InputComponent>(playerEntity);
+        RefRW<InputComponent> input = SystemAPI.GetComponentRW<InputComponent>(playerEntity);
 
-        input.move = vector2;
-
-        EntityManager.SetComponentData(playerEntity, input);
+        input.ValueRW.move = value;
     }
 }

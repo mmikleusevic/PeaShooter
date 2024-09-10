@@ -24,7 +24,7 @@ public partial struct EnemySpawnerSystem : ISystem
 
         EnemySpawnJob job = new EnemySpawnJob
         {
-            ecb = ecb,
+            ecb = ecb.AsParallelWriter(),
             elapsedTime = SystemAPI.Time.ElapsedTime,
             grid = grid
         };

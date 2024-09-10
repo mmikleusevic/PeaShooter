@@ -17,12 +17,6 @@ public partial class MaterialChangerSystem : SystemBase
         base.OnCreate();
 
         materialMapping = new Dictionary<Material, BatchMaterialID>();
-    }
-
-    protected override void OnStartRunning()
-    {
-        base.OnStartRunning();
-
         hybridRendererSystem = World.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
     }
 
@@ -39,6 +33,8 @@ public partial class MaterialChangerSystem : SystemBase
 
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
+
+        EntityManager.CompleteAllTrackedJobs();
 
         Entities
             .WithoutBurst()

@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21d638322a8b5734ca6f03e5648013f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entitySceneReferences:
+  entitySubsceneReferences:
   - Id:
       GlobalId:
         SceneObjectIdentifier0: 102900000

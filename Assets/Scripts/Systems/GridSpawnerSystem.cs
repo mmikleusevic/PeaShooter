@@ -32,7 +32,6 @@ public partial struct GridSpawnerSystem : ISystem
         {
             this.gridComponent = gridComponent;
         }
-
     }
 
     [BurstCompile]

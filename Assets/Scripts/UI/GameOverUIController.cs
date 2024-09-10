@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 public class UIController : MonoBehaviour
 {
     private CollisionDamageSystem collisionDamageSystem;
+    private VisualElement gameOverScreen;
     private Button playAgainButton;
     private Button mainMenuButton;
-    private VisualElement gameOverScreen;
 
     private void Start()
     {

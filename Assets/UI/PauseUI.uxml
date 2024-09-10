@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=88932a4070dc743488908c2adac4d25c&amp;type=3#Style" />
+    <ui:VisualElement name="pauseElementUI" style="flex-grow: 1; align-items: stretch; justify-content: space-between; align-self: flex-end; flex-direction: column; flex-wrap: nowrap; position: absolute;">
+        <ui:Button text="Pause" parse-escape-sequences="true" display-tooltip-when-elided="true" name="pause" class="pause-style" />
+    </ui:VisualElement>
+    <ui:VisualElement name="pauseUI" style="flex-grow: 1; justify-content: space-between; align-items: auto; align-self: center; visibility: hidden;">
+        <ui:Button text="Resume" parse-escape-sequences="true" display-tooltip-when-elided="true" name="resume" class="button-style-positive" />
+        <ui:Button text="Restart" parse-escape-sequences="true" display-tooltip-when-elided="true" name="restart" class="button-style-neutral" />
+        <ui:Button text="Main Menu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="main-menu" class="button-style-negative" />
+    </ui:VisualElement>
+</ui:UXML>

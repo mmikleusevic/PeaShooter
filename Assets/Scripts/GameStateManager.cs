@@ -3,10 +3,19 @@ using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
+    public static GameStateManager Instance;
+
     private CollisionDamageSystem collisionDamageSystem;
 
-    private void Start()
+    private bool isDead = false;
+
+    private void Awake()
     {
+        Instance = this;
+    }
+
+    private void Start()
+    {      
         collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
 
         if (collisionDamageSystem != null)
@@ -22,21 +31,29 @@ public class GameStateManager : MonoBehaviour
             collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
         }
 
-        StartTheGame();
+        ResumeTheGame();
     }
 
     private void OnPlayerDied()
     {
-        StopTheGame();
+        isDead = true;
+        PauseTheGame();
     }
 
-    private void StopTheGame()
+    public void PauseTheGame()
     {
         Time.timeScale = 0;
     }
 
-    private void StartTheGame()
+    public void ResumeTheGame()
     {
-        Time.timeScale = 1;
+        if (isDead)
+        {
+            PauseTheGame();
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
     }
 }

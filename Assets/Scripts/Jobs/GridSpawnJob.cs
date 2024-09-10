@@ -8,7 +8,7 @@ public partial struct GridSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
 
-    private void Execute(in GridSpawnerComponent gridSpawnerComponent, in Entity spawnerEntity)
+    private void Execute(in GridSpawnerComponent gridSpawnerComponent, in Entity gridSpawner)
     {
         GridComponent gridComponent = new GridComponent
         {
@@ -29,6 +29,6 @@ public partial struct GridSpawnJob : IJobEntity
         Entity spawnedEntity = ecb.Instantiate(gridSpawnerComponent.prefab);
 
         ecb.AddComponent(spawnedEntity, gridComponent);
-        ecb.DestroyEntity(spawnerEntity);
+        ecb.DestroyEntity(gridSpawner);
     }
 }
