@@ -38,7 +38,7 @@ public class LevelManager : MonoBehaviour
 
     public IEnumerator LoadMainMenu()
     {
-        StartCoroutine(UnloadSubScene());
+        yield return StartCoroutine(UnloadSubScene());
         yield return StartCoroutine(LoadScene(SceneEnums.MainMenu));
     }
 
@@ -76,9 +76,11 @@ public class LevelManager : MonoBehaviour
     {
         if (subsceneIndex >= entitySubsceneReferences.Length) subsceneIndex = 0;
 
-        yield return currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex], new LoadParameters
+        currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex], new LoadParameters
         {
-            Flags = SceneLoadFlags.BlockOnStreamIn | SceneLoadFlags.BlockOnImport | SceneLoadFlags.NewInstance
+            Flags = SceneLoadFlags.BlockOnImport
         });
+
+        yield return new WaitUntil(() => IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity));
     }
 }

@@ -6,7 +6,7 @@ public class EventSystemManager : MonoBehaviour
 {
     private void Awake()
     {
-        if (FindObjectOfType<EventSystem>() == null)
+        if (FindFirstObjectByType<EventSystem>() == null)
         {
             gameObject.AddComponent<EventSystem>();
             gameObject.AddComponent<InputSystemUIInputModule>();

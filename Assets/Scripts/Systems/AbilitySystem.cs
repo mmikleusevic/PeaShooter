@@ -8,12 +8,17 @@ using Unity.Transforms;
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct AbilitySystem : ISystem
 {
+    private EntityQuery playerEntityQuery;
     private EntityQuery projectileEntityQuery;
     private EntityQuery enemyEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<PlayerComponent, LocalTransform>()
+            .Build(ref state);
+
         projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithDisabled<ProjectileComponent>()
             .Build(ref state);
@@ -22,14 +27,14 @@ public partial struct AbilitySystem : ISystem
             .WithAll<EnemyComponent>()
             .Build(ref state);
 
-        state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate(playerEntityQuery);
+        state.RequireForUpdate(enemyEntityQuery);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
-        LocalTransform playerTransform = SystemAPI.GetComponent<LocalTransform>(playerEntity);
+        LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);

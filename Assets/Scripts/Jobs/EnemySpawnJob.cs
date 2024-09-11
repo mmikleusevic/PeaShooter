@@ -14,40 +14,39 @@ public partial struct EnemySpawnJob : IJobEntity
 
     private void Execute([ChunkIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
-        if (enemySpawner.nextSpawnTime < elapsedTime)
+        if (enemySpawner.nextSpawnTime >= elapsedTime) return;
+
+        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
+
+        int2 newPosition = default;
+
+        do
         {
-            Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
-
-            int2 newPosition = default;
-
-            do
-            {
-                newPosition = randomData.nextPosition;
-            }
-            while (!grid.gridNodes[newPosition]);
-
-            float3 position = new float3(newPosition.x, 0, newPosition.y);
-
-            ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
-            {
-                Position = position,
-                Rotation = quaternion.identity,
-                Scale = enemySpawner.scale
-            });
-
-            ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
-            {
-                moveSpeed = enemySpawner.moveSpeed,
-                gridPosition = newPosition,
-                position = position,
-                isFullySpawned = false,
-                currentPathIndex = 0,
-                moveTimerTarget = enemySpawner.enemyMoveTimerTarget
-            });
-
-            ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
-
-            enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
+            newPosition = randomData.nextPosition;
         }
+        while (!grid.gridNodes[newPosition]);
+
+        float3 position = new float3(newPosition.x, 0, newPosition.y);
+
+        ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
+        {
+            Position = position,
+            Rotation = quaternion.identity,
+            Scale = enemySpawner.scale
+        });
+
+        ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
+        {
+            moveSpeed = enemySpawner.moveSpeed,
+            gridPosition = newPosition,
+            position = position,
+            isFullySpawned = false,
+            currentPathIndex = 0,
+            moveTimerTarget = enemySpawner.enemyMoveTimerTarget
+        });
+
+        ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
+
+        enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    public class PlayerBaker : Baker<PlayerSpawnerAuthoring>
+    public class PlayerSpawnerBaker : Baker<PlayerSpawnerAuthoring>
     {
         public override void Bake(PlayerSpawnerAuthoring authoring)
         {

@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine.InputSystem;
 public partial class PlayerControllerSystem : SystemBase
 {
     private PlayerInput playerInput;
+    private EntityQuery inputEntityQuery;
 
     protected override void OnCreate()
     {
@@ -16,8 +18,11 @@ public partial class PlayerControllerSystem : SystemBase
         playerInput.Player.Movement.performed += OnMovementPerformed;
         playerInput.Player.Movement.canceled += OnMovementCanceled;
 
-        RequireForUpdate<PlayerComponent>();
-        RequireForUpdate<InputComponent>();
+        inputEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAllRW<InputComponent>()
+            .Build(EntityManager);
+
+        RequireForUpdate(inputEntityQuery);
     }
 
     protected override void OnUpdate() { }
@@ -41,9 +46,7 @@ public partial class PlayerControllerSystem : SystemBase
 
     private void SetMovement(float2 value)
     {
-        Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerComponent>();
-
-        RefRW<InputComponent> input = SystemAPI.GetComponentRW<InputComponent>(playerEntity);
+        RefRW<InputComponent> input = inputEntityQuery.GetSingletonRW<InputComponent>();
 
         input.ValueRW.move = value;
     }

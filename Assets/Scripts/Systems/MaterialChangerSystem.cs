@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Rendering;
@@ -31,10 +32,7 @@ public partial class MaterialChangerSystem : SystemBase
     {
         if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
-
-        EntityManager.CompleteAllTrackedJobs();
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         Entities
             .WithoutBurst()
@@ -55,6 +53,9 @@ public partial class MaterialChangerSystem : SystemBase
                 }
             })
             .Run();
+
+        ecb.Playback(EntityManager);
+        ecb.Dispose();
     }
 
     private void RegisterMaterial(Material material)

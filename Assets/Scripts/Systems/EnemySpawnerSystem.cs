@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
@@ -7,17 +8,22 @@ using Unity.Jobs;
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
+    private EntityQuery gridEntityQuery;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<GridComponent>()
+            .Build(ref state);
+
         state.RequireForUpdate<PlayerComponent>();
-        state.RequireForUpdate<GridComponent>();
+        state.RequireForUpdate(gridEntityQuery);
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
+        GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);

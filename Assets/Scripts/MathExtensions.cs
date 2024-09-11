@@ -21,7 +21,7 @@ public struct MathExtensions
     [BurstCompile]
     public static bool Approximately(in float3 a, in float3 b)
     {
-        return math.lengthsq(a - b) < EPSILON * EPSILON;
+        return math.lengthsq(a - b) < EPSILON;
     }
 
     [BurstCompile]

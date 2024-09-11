@@ -5,7 +5,7 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
 
-    public class PlaneSpawnerAuthoringBaker : Baker<PlaneSpawnerAuthoring>
+    public class PlaneSpawnerBaker : Baker<PlaneSpawnerAuthoring>
     {
         public override void Bake(PlaneSpawnerAuthoring authoring)
         {

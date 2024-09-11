@@ -14,10 +14,12 @@ public class CameraDOTSFollow : MonoBehaviour
     private void Start()
     {
         virtualCamera = GetComponent<CinemachineVirtualCamera>();
+
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithAll<PlayerComponent>()
             .Build(entityManager);
+
         playerEntity = GetPlayerEntity();
     }
 

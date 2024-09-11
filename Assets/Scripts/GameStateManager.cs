@@ -15,13 +15,15 @@ public class GameStateManager : MonoBehaviour
     }
 
     private void Start()
-    {      
+    {
         collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
 
         if (collisionDamageSystem != null)
         {
             collisionDamageSystem.OnPlayerDied += OnPlayerDied;
         }
+
+        ResumeTheGame();
     }
 
     private void OnDestroy()
@@ -30,8 +32,6 @@ public class GameStateManager : MonoBehaviour
         {
             collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
         }
-
-        ResumeTheGame();
     }
 
     private void OnPlayerDied()
