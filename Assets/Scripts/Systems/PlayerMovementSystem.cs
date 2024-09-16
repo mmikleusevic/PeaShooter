@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
@@ -6,13 +7,19 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateBefore(typeof(PhysicsSystemGroup))]
+[WithAll(typeof(PlayerComponent))]
 public partial struct PlayerMovementSystem : ISystem
 {
+    private EntityQuery gridEntityQuery;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<PlayerComponent>();
-        state.RequireForUpdate<GridComponent>();
+        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<GridComponent>()
+            .Build(ref state);
+
+        state.RequireForUpdate(gridEntityQuery);
     }
 
     [BurstCompile]
@@ -21,7 +28,7 @@ public partial struct PlayerMovementSystem : ISystem
         PlayerMovementJob job = new PlayerMovementJob
         {
             deltaTime = SystemAPI.Time.DeltaTime,
-            gridComponent = SystemAPI.GetSingleton<GridComponent>()
+            gridComponent = gridEntityQuery.GetSingleton<GridComponent>(),
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

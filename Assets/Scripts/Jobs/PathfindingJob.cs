@@ -8,7 +8,6 @@ partial struct PathfindingJob : IJobEntity
 {
     [ReadOnly] private const int STRAIGHT_COST = 10;
     [ReadOnly] private const int DIAGONAL_COST = 14;
-
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public GridComponent grid;
 

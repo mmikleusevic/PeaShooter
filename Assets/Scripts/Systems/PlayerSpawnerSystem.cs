@@ -3,7 +3,10 @@ using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateAfter(typeof(GridSpawnerSystem))]
+[WithAll(typeof(PlayerSpawnerComponent))]
+
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -11,11 +14,10 @@ public partial struct PlayerSpawnerSystem : ISystem
     {
         state.RequireForUpdate<PlayerSpawnerComponent>();
     }
-
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         PlayerSpawnJob job = new PlayerSpawnJob

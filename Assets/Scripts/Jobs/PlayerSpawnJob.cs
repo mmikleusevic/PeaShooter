@@ -7,7 +7,7 @@ public partial struct PlayerSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
 
-    private void Execute(in PlayerSpawnerComponent playerSpawner, in Entity spawnerEntity)
+    private void Execute(in PlayerSpawnerComponent playerSpawner, Entity spawnerEntity)
     {
         Entity spawnedEntity = ecb.Instantiate(playerSpawner.prefab);
 

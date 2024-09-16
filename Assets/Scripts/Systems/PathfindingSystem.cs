@@ -6,13 +6,13 @@ using Unity.Mathematics;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+[WithAll(typeof(EnemyComponent))]
 public partial struct PathfindingSystem : ISystem
 {
     private EntityQuery playerEntityQuery;
     private EntityQuery gridEntityQuery;
     private float timer;
     private float targetTime;
-
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)

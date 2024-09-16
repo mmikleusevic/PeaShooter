@@ -46,6 +46,8 @@ public partial class PlayerControllerSystem : SystemBase
 
     private void SetMovement(float2 value)
     {
+        if (inputEntityQuery.CalculateEntityCount() == 0) return;
+
         RefRW<InputComponent> input = inputEntityQuery.GetSingletonRW<InputComponent>();
 
         input.ValueRW.move = value;

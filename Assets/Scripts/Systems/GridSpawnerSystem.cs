@@ -4,6 +4,8 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateBefore(typeof(BeginInitializationEntityCommandBufferSystem))]
+[WithAll(typeof(GridSpawnerComponent))]
 public partial struct GridSpawnerSystem : ISystem
 {
     private GridComponent gridComponent;
@@ -13,11 +15,9 @@ public partial struct GridSpawnerSystem : ISystem
     {
         state.RequireForUpdate<GridSpawnerComponent>();
     }
-
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         GridSpawnJob job = new GridSpawnJob

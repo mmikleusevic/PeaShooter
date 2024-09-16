@@ -4,8 +4,9 @@ using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
+[WithAll(typeof(EnemySpawnerComponent))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -25,7 +26,7 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         EnemySpawnJob job = new EnemySpawnJob

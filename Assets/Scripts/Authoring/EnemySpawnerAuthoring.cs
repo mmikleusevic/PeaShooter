@@ -14,6 +14,8 @@ public class EnemySpawnerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
+            DependsOn(authoring.prefab);
+
             AddComponent(entity, new EnemySpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),

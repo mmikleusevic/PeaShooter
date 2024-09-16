@@ -1,4 +1,3 @@
-using System.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using UnityEngine;
@@ -27,52 +26,45 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadGameScene()
+    public void LoadGameScene()
     {
         subsceneIndex = 0;
 
-        yield return StartCoroutine(UnloadSubScene());
-        StartCoroutine(LoadSubScene());
-        yield return StartCoroutine(LoadScene(SceneEnums.Game));
+        UnloadSubScene();
+        LoadScene(SceneEnums.Game);
+        LoadSubScene();
     }
 
-    public IEnumerator LoadMainMenu()
+    public void LoadMainMenu()
     {
-        yield return StartCoroutine(UnloadSubScene());
-        yield return StartCoroutine(LoadScene(SceneEnums.MainMenu));
+        UnloadSubScene();
+        LoadScene(SceneEnums.MainMenu);
     }
 
     public void LoadNewSubScene()
     {
         subsceneIndex++;
 
-        StartCoroutine(UnloadSubScene());
-        StartCoroutine(LoadSubScene());
+        UnloadSubScene();
+        LoadSubScene();
     }
 
-    private IEnumerator LoadScene(SceneEnums sceneEnum)
+    private void LoadScene(SceneEnums sceneEnum)
     {
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneEnum.ToString(), LoadSceneMode.Single);
-
-        while (!loadOperation.isDone)
-        {
-            yield return null;
-        }
+        SceneManager.LoadScene(sceneEnum.ToString(), LoadSceneMode.Single);
     }
 
-    private IEnumerator UnloadSubScene()
+    private void UnloadSubScene()
     {
         if (currentSubsceneEntity != Entity.Null && IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity))
         {
             UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity, UnloadParameters.DestroyMetaEntities);
 
-            yield return new WaitUntil(() => !IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity));
-
             currentSubsceneEntity = Entity.Null;
         }
     }
 
-    private IEnumerator LoadSubScene()
+    private void LoadSubScene()
     {
         if (subsceneIndex >= entitySubsceneReferences.Length) subsceneIndex = 0;
 
@@ -80,7 +72,5 @@ public class LevelManager : MonoBehaviour
         {
             Flags = SceneLoadFlags.BlockOnImport
         });
-
-        yield return new WaitUntil(() => IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity));
     }
 }

@@ -6,6 +6,7 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateBefore(typeof(PhysicsSystemGroup))]
+[WithAll(typeof(EnemyComponent))]
 public partial struct EnemyMovementSystem : ISystem
 {
     [BurstCompile]

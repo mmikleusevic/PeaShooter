@@ -62,6 +62,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 5558545a5f0089e46b3e967a4e819149, type: 2}
+  - {fileID: 2100000, guid: 3d74406b12637b2408fa1ea0a1724c9a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -365,5 +366,4 @@ MonoBehaviour:
   cooldown: 1
   range: 5
   projectilePrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
-  hasProjectile: 1
   projectileScale: 0.5

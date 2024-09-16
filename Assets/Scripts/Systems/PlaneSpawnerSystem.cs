@@ -3,7 +3,9 @@ using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateBefore(typeof(GridSpawnerSystem))]
+[WithAll(typeof(PlaneSpawnerComponent))]
 public partial struct PlaneSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -11,11 +13,10 @@ public partial struct PlaneSpawnerSystem : ISystem
     {
         state.RequireForUpdate<PlaneSpawnerComponent>();
     }
-
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         PlaneSpawnJob job = new PlaneSpawnJob

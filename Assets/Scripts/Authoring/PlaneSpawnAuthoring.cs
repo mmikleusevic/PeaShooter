@@ -11,6 +11,8 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
+            DependsOn(authoring.prefab);
+
             AddComponent(entity, new PlaneSpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),

@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(AbilitySystem))]
+[WithAll(typeof(TargetComponent))]
 public partial struct TargetingSystem : ISystem
 {
     [BurstCompile]

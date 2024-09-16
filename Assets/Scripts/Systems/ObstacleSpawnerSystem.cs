@@ -1,34 +1,41 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateAfter(typeof(GridSpawnerSystem))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
+[WithAll(typeof(ObstacleSpawnerComponent))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
+    private EntityQuery gridEntityQuery;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<GridComponent>()
+            .Build(ref state);
+
+        state.RequireForUpdate(gridEntityQuery);
         state.RequireForUpdate<ObstacleSpawnerComponent>();
-        state.RequireForUpdate<GridComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        GridComponent grid = SystemAPI.GetSingleton<GridComponent>();
+        GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
-        ObstacleSpawnJob spawnJob = new ObstacleSpawnJob
+        ObstacleSpawnJob job = new ObstacleSpawnJob
         {
             ecb = ecb,
             grid = grid
         };
 
-        JobHandle spawnHandle = spawnJob.Schedule(state.Dependency);
+        JobHandle spawnHandle = job.Schedule(state.Dependency);
         state.Dependency = spawnHandle;
     }
 }

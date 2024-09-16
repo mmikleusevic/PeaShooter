@@ -1,18 +1,23 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
-using Unity.Physics.Systems;
 
-[UpdateInGroup(typeof(PhysicsSystemGroup))]
-[UpdateAfter(typeof(PhysicsSimulationGroup))]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateAfter(typeof(PlayerMovementSystem))]
 public partial class CollisionDamageSystem : SystemBase
 {
     public event Action OnPlayerDied;
+    private EntityQuery playerEntityQuery;
 
     protected override void OnCreate()
     {
-        RequireForUpdate<SimulationSingleton>();
+        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+           .WithAll<SimulationSingleton>()
+           .Build(EntityManager);
+
+        RequireForUpdate(playerEntityQuery);
         RequireForUpdate<HealthComponent>();
         RequireForUpdate<EnemyDamageComponent>();
     }
@@ -25,14 +30,14 @@ public partial class CollisionDamageSystem : SystemBase
             return;
         }
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginFixedStepSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
         CollisionDamageJob job = new CollisionDamageJob
         {
+            ecb = ecb,
             projectileLookup = SystemAPI.GetComponentLookup<ProjectileComponent>(),
             healthLookup = SystemAPI.GetComponentLookup<HealthComponent>(),
-            ecb = ecb,
             targetLookup = SystemAPI.GetComponentLookup<TargetComponent>(true),
             obstacleLookup = SystemAPI.GetComponentLookup<ObstacleComponent>(true),
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
@@ -40,7 +45,7 @@ public partial class CollisionDamageSystem : SystemBase
             deltaTime = SystemAPI.Time.DeltaTime
         };
 
-        SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();
+        SimulationSingleton simulationSingleton = playerEntityQuery.GetSingleton<SimulationSingleton>();
 
         JobHandle handle = job.Schedule(simulationSingleton, Dependency);
         Dependency = handle;

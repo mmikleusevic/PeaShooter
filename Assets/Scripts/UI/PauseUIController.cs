@@ -53,13 +53,13 @@ public class PauseUIController : MonoBehaviour
     private void OnRestart()
     {
         HideAll();
-        StartCoroutine(LevelManager.Instance.LoadGameScene());
+        LevelManager.Instance.LoadGameScene();
     }
 
     private void OnMainMenu()
     {
         HideAll();
-        StartCoroutine(LevelManager.Instance.LoadMainMenu());
+        LevelManager.Instance.LoadMainMenu();
     }
 
     private void HideAll()

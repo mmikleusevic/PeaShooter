@@ -46,13 +46,13 @@ public class UIController : MonoBehaviour
 
     private void PlayAgainPressed()
     {
-        StartCoroutine(LevelManager.Instance.LoadGameScene());
+        LevelManager.Instance.LoadGameScene();
         HideUI();
     }
 
     private void MainMenuPressed()
     {
-        StartCoroutine(LevelManager.Instance.LoadMainMenu());
+        LevelManager.Instance.LoadMainMenu();
         HideUI();
     }
 

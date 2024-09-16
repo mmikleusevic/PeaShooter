@@ -12,6 +12,8 @@ public class ObstacleSpawnerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
+            DependsOn(authoring.prefab);
+
             AddComponent(entity, new ObstacleSpawnerComponent
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
