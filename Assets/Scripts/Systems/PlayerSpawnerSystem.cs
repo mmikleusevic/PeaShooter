@@ -14,6 +14,7 @@ public partial struct PlayerSpawnerSystem : ISystem
     {
         state.RequireForUpdate<PlayerSpawnerComponent>();
     }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {

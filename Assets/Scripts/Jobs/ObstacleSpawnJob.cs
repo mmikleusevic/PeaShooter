@@ -1,7 +1,9 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
 public partial struct ObstacleSpawnJob : IJobEntity
@@ -9,8 +11,12 @@ public partial struct ObstacleSpawnJob : IJobEntity
     public EntityCommandBuffer ecb;
     public GridComponent grid;
 
+    [ReadOnly] public uint seed;
+
     private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData, Entity entity)
     {
+        randomData.seed = new Random(seed);
+
         for (int i = 0; i < spawner.numberToSpawn; i++)
         {
             Entity spawnedEntity = ecb.Instantiate(spawner.prefab);

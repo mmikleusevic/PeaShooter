@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
@@ -32,7 +33,8 @@ public partial struct ObstacleSpawnerSystem : ISystem
         ObstacleSpawnJob job = new ObstacleSpawnJob
         {
             ecb = ecb,
-            grid = grid
+            grid = grid,
+            seed = (uint)Time.realtimeSinceStartup * 1000
         };
 
         JobHandle spawnHandle = job.Schedule(state.Dependency);

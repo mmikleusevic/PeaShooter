@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
 public partial struct EnemySpawnJob : IJobEntity
@@ -11,10 +12,13 @@ public partial struct EnemySpawnJob : IJobEntity
 
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public GridComponent grid;
+    [ReadOnly] public uint seed;
 
     private void Execute([ChunkIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
         if (enemySpawner.nextSpawnTime >= elapsedTime) return;
+
+        randomData.seed = new Random(seed);
 
         Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
 

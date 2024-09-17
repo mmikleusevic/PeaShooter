@@ -35,9 +35,7 @@ public partial class MaterialChangerSystem : SystemBase
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
         Entities
-            .WithDeferredPlaybackSystem<BeginSimulationEntityCommandBufferSystem>()
             .WithoutBurst()
-            .WithStructuralChanges()
             .WithNone<MaterialChangedComponent>()
             .ForEach((MaterialChangerComponent changer, in DynamicBuffer<LinkedEntityGroup> linkedEntityGroup, in EnemyComponent enemyComponent, in Entity entity) =>
             {

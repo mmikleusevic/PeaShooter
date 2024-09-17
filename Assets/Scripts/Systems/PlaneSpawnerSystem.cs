@@ -13,6 +13,7 @@ public partial struct PlaneSpawnerSystem : ISystem
     {
         state.RequireForUpdate<PlaneSpawnerComponent>();
     }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {

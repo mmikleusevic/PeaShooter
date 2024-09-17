@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
@@ -22,6 +23,7 @@ public partial struct EnemySpawnerSystem : ISystem
         state.RequireForUpdate(gridEntityQuery);
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
@@ -33,7 +35,8 @@ public partial struct EnemySpawnerSystem : ISystem
         {
             ecb = ecb.AsParallelWriter(),
             elapsedTime = SystemAPI.Time.ElapsedTime,
-            grid = grid
+            grid = grid,
+            seed = (uint)Time.realtimeSinceStartup * 1000
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

@@ -13,9 +13,8 @@ public class LevelManager : MonoBehaviour
 
     private EntityManager entityManager;
     private EntityQuery gridEntityQuery;
-    private EntityQuery linkedEntityQuery;
-    private EntityQuery sceneEntityQuery;
     private Entity currentSubsceneEntity = Entity.Null;
+
     private int subsceneIndex;
 
     private void Awake()
@@ -37,16 +36,6 @@ public class LevelManager : MonoBehaviour
 
         gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithAll<GridComponent>()
-            .Build(entityManager);
-
-        linkedEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAny<LinkedEntityGroup>()
-            .WithNone<Prefab>()
-            .Build(entityManager);
-
-        sceneEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAny<SceneTag>()
-            .WithNone<Prefab>()
             .Build(entityManager);
     }
 
@@ -104,44 +93,12 @@ public class LevelManager : MonoBehaviour
     {
         entityManager.CompleteAllTrackedJobs();
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
         if (gridEntityQuery.HasSingleton<GridComponent>())
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
             gridComponent.gridNodes.Dispose();
 
-            ecb.DestroyEntity(gridEntityQuery, EntityQueryCaptureMode.AtRecord);
+            entityManager.DestroyEntity(gridEntityQuery);
         }
-
-        NativeArray<Entity> entities = linkedEntityQuery.ToEntityArray(Allocator.Temp);
-
-        foreach (Entity entity in entities)
-        {
-            if (entityManager.HasComponent<LinkedEntityGroup>(entity))
-            {
-                DynamicBuffer<LinkedEntityGroup> linkedEntities = entityManager.GetBuffer<LinkedEntityGroup>(entity);
-
-                foreach (var linkedEntity in linkedEntities)
-                {
-                    if (entityManager.Exists(linkedEntity.Value))
-                    {
-                        ecb.DestroyEntity(linkedEntity.Value);
-                    }
-                }
-            }
-
-            if (entityManager.Exists(entity))
-            {
-                ecb.DestroyEntity(entity);
-            }
-        }
-
-        ecb.DestroyEntity(sceneEntityQuery, EntityQueryCaptureMode.AtRecord);
-
-        ecb.Playback(entityManager);
-
-        entities.Dispose();
-        ecb.Dispose();
     }
 }

@@ -14,6 +14,8 @@ public partial struct ProjectileDisablingSystem : ISystem
     {
         state.RequireForUpdate<ProjectileComponent>();
     }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();

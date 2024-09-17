@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using Random = Unity.Mathematics.Random;
 
 public struct RandomDataComponent : IComponentData
 {
