@@ -9,15 +9,15 @@ using Unity.Physics;
 public partial class CollisionDamageSystem : SystemBase
 {
     public event Action OnPlayerDied;
-    private EntityQuery playerEntityQuery;
+    private EntityQuery simulationEntityQuery;
 
     protected override void OnCreate()
     {
-        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+        simulationEntityQuery = new EntityQueryBuilder(Allocator.Temp)
            .WithAll<SimulationSingleton>()
            .Build(EntityManager);
 
-        RequireForUpdate(playerEntityQuery);
+        RequireForUpdate(simulationEntityQuery);
         RequireForUpdate<HealthComponent>();
         RequireForUpdate<EnemyDamageComponent>();
     }
@@ -45,7 +45,7 @@ public partial class CollisionDamageSystem : SystemBase
             deltaTime = SystemAPI.Time.DeltaTime
         };
 
-        SimulationSingleton simulationSingleton = playerEntityQuery.GetSingleton<SimulationSingleton>();
+        SimulationSingleton simulationSingleton = simulationEntityQuery.GetSingleton<SimulationSingleton>();
 
         JobHandle handle = job.Schedule(simulationSingleton, Dependency);
         Dependency = handle;

@@ -1,20 +1,25 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateBefore(typeof(BeginInitializationEntityCommandBufferSystem))]
-[WithAll(typeof(GridSpawnerComponent))]
 public partial struct GridSpawnerSystem : ISystem
 {
-    private GridComponent gridComponent;
+    private EntityQuery gridEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<GridComponent>()
+            .Build(ref state);
+
         state.RequireForUpdate<GridSpawnerComponent>();
     }
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
@@ -22,24 +27,22 @@ public partial struct GridSpawnerSystem : ISystem
 
         GridSpawnJob job = new GridSpawnJob
         {
-            ecb = ecb,
+            ecb = ecb
         };
 
-        JobHandle handle = job.Schedule(state.Dependency);
-        state.Dependency = handle;
-
-        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent))
-        {
-            this.gridComponent = gridComponent;
-        }
+        JobHandle jobHandle = job.Schedule(state.Dependency);
+        state.Dependency = jobHandle;
     }
 
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        if (gridComponent.gridNodes.IsCreated)
+        if (gridEntityQuery.HasSingleton<GridComponent>())
         {
+            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
             gridComponent.gridNodes.Dispose();
+
+            state.EntityManager.DestroyEntity(gridEntityQuery);
         }
     }
 }

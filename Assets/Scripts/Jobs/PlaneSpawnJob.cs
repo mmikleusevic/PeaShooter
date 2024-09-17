@@ -18,6 +18,8 @@ public partial struct PlaneSpawnJob : IJobEntity
             Scale = 1f
         });
 
+        ecb.AddComponent(spawnedEntity, new PlaneComponent());
+
         ecb.DestroyEntity(spawnerEntity);
     }
 }
