@@ -18,6 +18,7 @@ public partial class MaterialChangerSystem : SystemBase
 
         materialMapping = new Dictionary<Material, BatchMaterialID>();
         hybridRendererSystem = World.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
+        RequireForUpdate<EnemyComponent>();
     }
 
     protected override void OnStopRunning()

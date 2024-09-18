@@ -6,7 +6,6 @@ using Unity.Mathematics;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-[WithAll(typeof(EnemyComponent))]
 public partial struct PathfindingSystem : ISystem
 {
     private EntityQuery playerEntityQuery;

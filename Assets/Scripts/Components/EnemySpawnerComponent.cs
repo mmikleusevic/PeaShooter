@@ -8,4 +8,5 @@ public struct EnemySpawnerComponent : IComponentData
     public float moveSpeed;
     public float scale;
     public float enemyMoveTimerTarget;
+    public double startTime;
 }

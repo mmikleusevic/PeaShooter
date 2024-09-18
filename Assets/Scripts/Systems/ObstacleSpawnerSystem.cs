@@ -2,11 +2,11 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
-[WithAll(typeof(ObstacleSpawnerComponent))]
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -30,11 +30,13 @@ public partial struct ObstacleSpawnerSystem : ISystem
 
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
+        uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
+
         ObstacleSpawnJob job = new ObstacleSpawnJob
         {
             ecb = ecb,
             grid = grid,
-            seed = (uint)Time.realtimeSinceStartup * 1000
+            seed = seed
         };
 
         JobHandle spawnHandle = job.Schedule(state.Dependency);

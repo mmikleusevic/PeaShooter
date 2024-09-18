@@ -5,7 +5,6 @@ using Unity.Jobs;
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateBefore(typeof(GridSpawnerSystem))]
-[WithAll(typeof(PlaneSpawnerComponent))]
 public partial struct PlaneSpawnerSystem : ISystem
 {
     [BurstCompile]

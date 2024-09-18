@@ -23,6 +23,7 @@ public partial class PlayerControllerSystem : SystemBase
             .Build(EntityManager);
 
         RequireForUpdate(inputEntityQuery);
+        RequireForUpdate<PlayerComponent>();
     }
 
     protected override void OnUpdate() { }

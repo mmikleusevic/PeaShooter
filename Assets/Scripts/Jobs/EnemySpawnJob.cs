@@ -10,15 +10,19 @@ public partial struct EnemySpawnJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
 
-    [ReadOnly] public double elapsedTime;
     [ReadOnly] public GridComponent grid;
+    [ReadOnly] public double elapsedTime;
     [ReadOnly] public uint seed;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
+    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
     {
-        if (enemySpawner.nextSpawnTime >= elapsedTime) return;
+        if (enemySpawner.startTime == 0) enemySpawner.startTime = elapsedTime;
 
-        randomData.seed = new Random(seed);
+        double localElapsedTime = elapsedTime - enemySpawner.startTime;
+
+        if (enemySpawner.nextSpawnTime >= localElapsedTime) return;
+
+        randomData.seed = new Random((uint)(seed + sortKey));
 
         Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
 

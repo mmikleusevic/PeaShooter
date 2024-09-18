@@ -7,7 +7,6 @@ using Unity.Transforms;
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(EnemySpawnerSystem))]
-[WithAll(typeof(AbilityComponent))]
 public partial struct AbilitySystem : ISystem
 {
     private EntityQuery playerEntityQuery;
@@ -31,6 +30,7 @@ public partial struct AbilitySystem : ISystem
 
         state.RequireForUpdate(playerEntityQuery);
         state.RequireForUpdate(enemyEntityQuery);
+        state.RequireForUpdate<AbilityComponent>();
     }
 
     [BurstCompile]

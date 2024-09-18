@@ -4,8 +4,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
 
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateAfter(typeof(PlayerMovementSystem))]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial class CollisionDamageSystem : SystemBase
 {
     public event Action OnPlayerDied;

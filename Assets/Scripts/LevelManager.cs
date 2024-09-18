@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
     {
         subsceneIndex = 0;
 
-        CleanupScene();
+        CleanupSubscene();
         UnloadSubScene();
         LoadScene(SceneEnums.Game);
         LoadSubScene();
@@ -51,7 +51,7 @@ public class LevelManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        CleanupScene();
+        CleanupSubscene();
         UnloadSubScene();
         LoadScene(SceneEnums.MainMenu);
     }
@@ -89,7 +89,7 @@ public class LevelManager : MonoBehaviour
         });
     }
 
-    private void CleanupScene()
+    private void CleanupSubscene()
     {
         entityManager.CompleteAllTrackedJobs();
 

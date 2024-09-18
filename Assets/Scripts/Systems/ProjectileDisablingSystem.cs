@@ -6,7 +6,6 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(PhysicsSystemGroup))]
-[WithAll(typeof(ProjectileComponent))]
 public partial struct ProjectileDisablingSystem : ISystem
 {
     [BurstCompile]

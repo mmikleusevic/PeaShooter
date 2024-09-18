@@ -2,12 +2,12 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
-[WithAll(typeof(EnemySpawnerComponent))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -21,6 +21,7 @@ public partial struct EnemySpawnerSystem : ISystem
 
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate(gridEntityQuery);
+        state.RequireForUpdate<EnemySpawnerComponent>();
     }
 
     [BurstCompile]
@@ -31,12 +32,14 @@ public partial struct EnemySpawnerSystem : ISystem
         BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
+        uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
+
         EnemySpawnJob job = new EnemySpawnJob
         {
             ecb = ecb.AsParallelWriter(),
             elapsedTime = SystemAPI.Time.ElapsedTime,
             grid = grid,
-            seed = (uint)Time.realtimeSinceStartup * 1000
+            seed = seed
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

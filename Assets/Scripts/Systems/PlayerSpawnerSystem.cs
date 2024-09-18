@@ -5,7 +5,6 @@ using Unity.Jobs;
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(GridSpawnerSystem))]
-[WithAll(typeof(PlayerSpawnerComponent))]
 
 public partial struct PlayerSpawnerSystem : ISystem
 {

@@ -4,9 +4,14 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-[WithAll(typeof(TargetComponent))]
 public partial struct TargetingSystem : ISystem
 {
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<TargetComponent>();
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {

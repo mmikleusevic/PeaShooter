@@ -7,7 +7,6 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateBefore(typeof(PhysicsSystemGroup))]
-[WithAll(typeof(PlayerComponent))]
 public partial struct PlayerMovementSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -20,6 +19,7 @@ public partial struct PlayerMovementSystem : ISystem
             .Build(ref state);
 
         state.RequireForUpdate(gridEntityQuery);
+        state.RequireForUpdate<PlayerComponent>();
     }
 
     [BurstCompile]
