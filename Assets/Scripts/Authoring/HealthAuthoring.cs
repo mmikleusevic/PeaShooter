@@ -4,6 +4,7 @@ using UnityEngine;
 public class HealthAuthoring : MonoBehaviour
 {
     [SerializeField] private float hitPoints;
+    [SerializeField] private Vector3 healthBarOffset;
 
     public class HealthBaker : Baker<HealthAuthoring>
     {
@@ -14,6 +15,12 @@ public class HealthAuthoring : MonoBehaviour
             AddComponent(entity, new HealthComponent
             {
                 HitPoints = authoring.hitPoints,
+                maxHitPoints = authoring.hitPoints
+            });
+
+            AddComponent(entity, new HealthBarOffset
+            {
+                value = authoring.healthBarOffset
             });
         }
     }

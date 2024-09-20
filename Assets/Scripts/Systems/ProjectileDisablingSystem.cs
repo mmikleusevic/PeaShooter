@@ -6,6 +6,7 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(TargetingSystem))]
 public partial struct ProjectileDisablingSystem : ISystem
 {
     [BurstCompile]
@@ -17,7 +18,7 @@ public partial struct ProjectileDisablingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         ProjectileDisablingJob job = new ProjectileDisablingJob

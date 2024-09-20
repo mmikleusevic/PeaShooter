@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
 
 [RequireMatchingQueriesForUpdate]
-[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+[UpdateInGroup(typeof(PresentationSystemGroup), OrderFirst = true)]
 public partial class MaterialChangerSystem : SystemBase
 {
     private Dictionary<Material, BatchMaterialID> materialMapping;
@@ -32,7 +32,7 @@ public partial class MaterialChangerSystem : SystemBase
     {
         if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
         Entities

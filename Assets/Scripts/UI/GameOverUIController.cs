@@ -1,10 +1,8 @@
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class UIController : MonoBehaviour
 {
-    private CollisionDamageSystem collisionDamageSystem;
     private VisualElement gameOverScreen;
     private Button playAgainButton;
     private Button mainMenuButton;
@@ -17,11 +15,9 @@ public class UIController : MonoBehaviour
         mainMenuButton = uiVisualELement.Q<Button>("main-menu");
         gameOverScreen = uiVisualELement.Q<VisualElement>("ui");
 
-        collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
-
-        if (collisionDamageSystem != null)
+        if (GameStateManager.Instance != null)
         {
-            collisionDamageSystem.OnPlayerDied += OnPlayerDied;
+            GameStateManager.Instance.OnPlayerDied += OnPlayerDied;
         }
 
         if (playAgainButton != null) playAgainButton.clicked += PlayAgainPressed;
@@ -30,9 +26,9 @@ public class UIController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (collisionDamageSystem != null)
+        if (GameStateManager.Instance != null)
         {
-            collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
+            GameStateManager.Instance.OnPlayerDied -= OnPlayerDied;
         }
 
         if (playAgainButton != null) playAgainButton.clicked -= PlayAgainPressed;

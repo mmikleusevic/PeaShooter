@@ -1,9 +1,11 @@
 ﻿using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Physics.Systems;
 
 [BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateAfter(typeof(PhysicsSystemGroup))]
 public partial struct TargetingSystem : ISystem
 {
     [BurstCompile]

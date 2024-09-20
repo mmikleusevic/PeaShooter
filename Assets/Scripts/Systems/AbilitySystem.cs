@@ -5,8 +5,7 @@ using Unity.Jobs;
 using Unity.Transforms;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateAfter(typeof(EnemySpawnerSystem))]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct AbilitySystem : ISystem
 {
     private EntityQuery playerEntityQuery;
@@ -38,7 +37,7 @@ public partial struct AbilitySystem : ISystem
     {
         LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
-        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         NativeArray<Entity> projectileEntities = projectileEntityQuery.ToEntityArray(Allocator.Temp);

@@ -10,11 +10,11 @@ public partial struct EnemyMovementJob : IJobEntity
 {
     [ReadOnly] public float deltaTime;
 
-    void Execute(ref EnemyComponent enemy, in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform, ref PhysicsVelocity physics)
+    void Execute(ref EnemyComponent enemy, in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform, ref PhysicsVelocity velocity)
     {
         if (pathBuffer.Length == 0 || enemy.moveTimer < enemy.moveTimerTarget)
         {
-            physics.Linear = float3.zero;
+            velocity.Linear = float3.zero;
             enemy.moveTimer += deltaTime;
 
             if (enemy.moveTimer >= enemy.moveTimerTarget) enemy.isFullySpawned = true;
@@ -28,7 +28,7 @@ public partial struct EnemyMovementJob : IJobEntity
 
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 
-        physics.Linear = direction * enemy.moveSpeed * deltaTime;
+        velocity.Linear = direction * enemy.moveSpeed * deltaTime;
         enemy.gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
         enemy.position = transform.Position;
 

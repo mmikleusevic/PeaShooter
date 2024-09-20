@@ -3,6 +3,7 @@ using Unity.Mathematics;
 
 public struct HealthComponent : IComponentData
 {
+    public float maxHitPoints;
     private float hitPoints;
 
     public float HitPoints

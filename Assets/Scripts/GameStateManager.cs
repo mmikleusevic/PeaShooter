@@ -1,13 +1,17 @@
+using System;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
+    public event Action OnPlayerDied;
 
-    private CollisionDamageSystem collisionDamageSystem;
+    private EntityQuery playerDeadEntityQuery;
 
     private bool isDead = false;
+    public bool IsDead => IsDead;
 
     private void Awake()
     {
@@ -16,26 +20,28 @@ public class GameStateManager : MonoBehaviour
 
     private void Start()
     {
-        collisionDamageSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<CollisionDamageSystem>();
+        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        if (collisionDamageSystem != null)
-        {
-            collisionDamageSystem.OnPlayerDied += OnPlayerDied;
-        }
+        playerDeadEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<PlayerDeadComponent>()
+            .Build(entityManager);
 
         ResumeTheGame();
     }
 
-    private void OnDestroy()
+    private void Update()
     {
-        if (collisionDamageSystem != null)
+        if (playerDeadEntityQuery.CalculateEntityCount() > 0)
         {
-            collisionDamageSystem.OnPlayerDied -= OnPlayerDied;
+            if (isDead) return;
+
+            PlayerDied();
         }
     }
 
-    private void OnPlayerDied()
+    private void PlayerDied()
     {
+        OnPlayerDied?.Invoke();
         isDead = true;
         PauseTheGame();
     }

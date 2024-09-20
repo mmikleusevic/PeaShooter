@@ -68,6 +68,8 @@ public struct CollisionDamageJob : ICollisionEventsJob
     {
         RefRW<ProjectileComponent> projectileComponent = projectileLookup.GetRefRW(projectileEntity);
 
+        if (projectileComponent.ValueRW.hasCollided) return;
+
         projectileComponent.ValueRW.hasCollided = true;
 
         if (obstacleLookup.HasComponent(otherEntity)) return;
@@ -76,7 +78,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
         {
             RefRO<TargetComponent> targetComponent = targetLookup.GetRefRO(projectileEntity);
 
-            if (targetComponent.ValueRO.enemyEntity == otherEntity)
+            if (targetComponent.ValueRO.enemyEntity == otherEntity && healthLookup.HasComponent(otherEntity))
             {
                 RefRW<HealthComponent> enemyHealthComponent = healthLookup.GetRefRW(otherEntity);
 
