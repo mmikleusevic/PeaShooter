@@ -12,7 +12,7 @@ public partial struct GridSpawnJob : IJobEntity
     {
         GridComponent gridComponent = new GridComponent
         {
-            gridNodes = new NativeHashMap<int2, bool>(math.square(gridSpawnerComponent.size.x + gridSpawnerComponent.size.y + 1), Allocator.Persistent)
+            gridNodes = new NativeHashMap<int2, byte>(math.square(gridSpawnerComponent.size.x + gridSpawnerComponent.size.y + 1), Allocator.Persistent)
         };
 
         for (int i = -gridSpawnerComponent.size.x; i <= gridSpawnerComponent.size.x; i++)
@@ -20,7 +20,7 @@ public partial struct GridSpawnJob : IJobEntity
             for (int j = -gridSpawnerComponent.size.y; j <= gridSpawnerComponent.size.y; j++)
             {
                 int2 position = new int2(i, j);
-                gridComponent.gridNodes[position] = true;
+                gridComponent.gridNodes[position] = 1;
             }
         }
 

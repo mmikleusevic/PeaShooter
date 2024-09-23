@@ -9,5 +9,5 @@ public struct EnemyComponent : IComponentData
     public int currentPathIndex;
     public float moveTimer;
     public float moveTimerTarget;
-    public bool isFullySpawned;
+    public byte isFullySpawned;
 }

@@ -27,7 +27,7 @@ public partial struct AbilitySystemJob : IJobEntity
             {
                 EnemyComponent enemy = enemyLookup[enemyEntity];
 
-                if (!enemy.isFullySpawned) continue;
+                if (enemy.isFullySpawned == 0) continue;
 
                 float distance = math.distance(playerTransform.Position, enemy.position);
 
@@ -41,7 +41,7 @@ public partial struct AbilitySystemJob : IJobEntity
 
             if (closestEnemyEntity == Entity.Null) return;
 
-            if (ability.hasProjectile)
+            if (ability.hasProjectile == 1)
             {
                 if (projectileEntity == Entity.Null)
                 {

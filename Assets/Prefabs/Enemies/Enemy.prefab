@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5193947367459619922}
   - component: {fileID: 7388270657966168480}
   - component: {fileID: 6892551124217724450}
+  - component: {fileID: 2583445254961524156}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -322,3 +323,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitPoints: 10
+  healthBarOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &2583445254961524156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7194990642786950497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1538a77897d614ca6493f0bc054b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldown: 0
+  value: 0

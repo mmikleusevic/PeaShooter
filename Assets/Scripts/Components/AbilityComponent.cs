@@ -6,6 +6,6 @@ public struct AbilityComponent : IComponentData
     public float cooldownRemaining;
     public float range;
     public Entity projectileEntity;
-    public bool hasProjectile;
+    public byte hasProjectile;
     public float projectileScale;
 }

@@ -65,12 +65,12 @@ partial struct PathfindingJob : IJobEntity
 
                     if (math.abs(x) == 1 && math.abs(y) == 1)
                     {
-                        if (!grid.IsValidPosition(current.position + new int2(x, 0)) || !grid.IsValidPosition(current.position + new int2(0, y))) continue;
+                        if (grid.IsValidPosition(current.position + new int2(x, 0)) == 0 || grid.IsValidPosition(current.position + new int2(0, y)) == 0) continue;
                     }
 
                     int2 neighborPos = current.position + new int2(x, y);
 
-                    if (closedSet.Contains(neighborPos) || !grid.IsValidPosition(neighborPos)) continue;
+                    if (closedSet.Contains(neighborPos) || grid.IsValidPosition(neighborPos) == 0) continue;
 
                     int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
 

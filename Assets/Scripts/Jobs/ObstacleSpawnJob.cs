@@ -38,7 +38,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
 
             ecb.AddComponent(spawnedEntity, new ObstacleComponent());
 
-            grid.gridNodes[newPosition] = false;
+            grid.gridNodes[newPosition] = 0;
         }
 
         ecb.DestroyEntity(entity);
@@ -47,6 +47,6 @@ public partial struct ObstacleSpawnJob : IJobEntity
     [BurstCompile]
     private bool IsValidPosition(int2 position, GridComponent grid)
     {
-        return grid.gridNodes[position] && position.x != 0 && position.y != 0;
+        return grid.gridNodes[position] == 1 && position.x != 0 && position.y != 0;
     }
 }

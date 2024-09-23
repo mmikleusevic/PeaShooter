@@ -15,10 +15,10 @@ public partial struct ProjectileDisablingJob : IJobEntity
     private void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, ref ProjectileComponent projectile,
         ref LocalTransform transform, in TargetComponent target)
     {
-        if (projectile.lifetime <= 0 || projectile.hasCollided || !enemyLookup.HasComponent(target.enemyEntity))
+        if (projectile.lifetime <= 0 || projectile.hasCollided == 1 || !enemyLookup.HasComponent(target.enemyEntity))
         {
             ecb.SetComponentEnabled<ProjectileComponent>(sortKey, entity, false);
-            projectile.hasCollided = false;
+            projectile.hasCollided = 0;
             projectile.lifetime = projectile.maxLifetime;
 
             //Don't want to destroy projectiles so I'll just move them out of sight

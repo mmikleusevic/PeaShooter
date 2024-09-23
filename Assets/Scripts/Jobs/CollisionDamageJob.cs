@@ -68,9 +68,9 @@ public struct CollisionDamageJob : ICollisionEventsJob
     {
         RefRW<ProjectileComponent> projectileComponent = projectileLookup.GetRefRW(projectileEntity);
 
-        if (projectileComponent.ValueRW.hasCollided) return;
+        if (projectileComponent.ValueRW.hasCollided == 1) return;
 
-        projectileComponent.ValueRW.hasCollided = true;
+        projectileComponent.ValueRW.hasCollided = 1;
 
         if (obstacleLookup.HasComponent(otherEntity)) return;
 
@@ -86,7 +86,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
 
                 if (enemyHealthComponent.ValueRW.HitPoints == 0)
                 {
-                    ecb.DestroyEntity(otherEntity);
+                    ecb.AddComponent(otherEntity, new EnemyDeadComponent());
                 }
             }
         }

@@ -17,7 +17,7 @@ public partial struct EnemyMovementJob : IJobEntity
             velocity.Linear = float3.zero;
             enemy.moveTimer += deltaTime;
 
-            if (enemy.moveTimer >= enemy.moveTimerTarget) enemy.isFullySpawned = true;
+            if (enemy.moveTimer >= enemy.moveTimerTarget) enemy.isFullySpawned = 1;
 
             return;
         }

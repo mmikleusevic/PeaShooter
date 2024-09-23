@@ -20,7 +20,7 @@ public class AbilityAuthoring : MonoBehaviour
                 cooldownRemaining = 0f,
                 range = authoring.range,
                 projectileEntity = GetEntity(authoring.projectilePrefab, TransformUsageFlags.Dynamic),
-                hasProjectile = authoring.projectilePrefab != null ? true : false,
+                hasProjectile = (byte)(authoring.projectilePrefab != null ? 1 : 0),
                 projectileScale = authoring.projectileScale
             });
         }

@@ -15,7 +15,7 @@ public class ProjectileAuthoring : MonoBehaviour
 
             AddComponent(entity, new ProjectileComponent
             {
-                hasCollided = false,
+                hasCollided = 0,
                 lifetime = authoring.maxLifetime,
                 maxLifetime = authoring.maxLifetime,
                 speed = authoring.speed,

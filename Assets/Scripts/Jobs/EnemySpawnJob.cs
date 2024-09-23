@@ -32,7 +32,7 @@ public partial struct EnemySpawnJob : IJobEntity
         {
             newPosition = randomData.nextPosition;
         }
-        while (!grid.gridNodes[newPosition]);
+        while (grid.gridNodes[newPosition] == 0);
 
         float3 position = new float3(newPosition.x, 0, newPosition.y);
 
@@ -48,7 +48,7 @@ public partial struct EnemySpawnJob : IJobEntity
             moveSpeed = enemySpawner.moveSpeed,
             gridPosition = newPosition,
             position = position,
-            isFullySpawned = false,
+            isFullySpawned = 0,
             currentPathIndex = 0,
             moveTimerTarget = enemySpawner.enemyMoveTimerTarget
         });
