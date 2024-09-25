@@ -29,8 +29,12 @@ public partial struct PlayerExperienceSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
         PlayerExperienceJob job = new PlayerExperienceJob
         {
+            ecb = ecb,
             experienceLookup = SystemAPI.GetComponentLookup<PlayerExperienceComponent>(),
             playerEntity = playerEntityQuery.GetSingletonEntity(),
             levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>()

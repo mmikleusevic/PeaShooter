@@ -6,21 +6,20 @@ using Unity.Mathematics;
 [BurstCompile]
 public partial struct PlayerExperienceJob : IJobEntity
 {
+    public EntityCommandBuffer ecb;
     public ComponentLookup<PlayerExperienceComponent> experienceLookup;
 
     [ReadOnly] public Entity playerEntity;
     [ReadOnly] public LevelsComponent levelsComponent;
 
-    private void Execute(ref EnemyExperienceWorthComponent experienceComponent, in EnemyDeadComponent enemyDeadComponent)
+    private void Execute(ref EnemyExperienceWorthComponent experienceComponent, in EnemyDeadComponent enemyDeadComponent, in Entity entity)
     {
-        if (experienceComponent.isGranted == 1) return;
-
-        experienceComponent.isGranted = 1;
-
         RefRW<PlayerExperienceComponent> playerComponentRW = experienceLookup.GetRefRW(playerEntity);
 
         uint maxEXP = levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
         uint currentEXP = playerComponentRW.ValueRW.points + experienceComponent.value;
+
+        ecb.RemoveComponent<EnemyExperienceWorthComponent>(entity);
 
         if (currentEXP == maxEXP) return;
 

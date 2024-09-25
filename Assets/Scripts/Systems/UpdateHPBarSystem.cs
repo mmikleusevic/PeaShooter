@@ -1,13 +1,13 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.UI;
 
 [BurstCompile]
-[UpdateInGroup(typeof(PhysicsSystemGroup), OrderLast = true)]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(PlayerExperienceSystem))]
 public partial struct UpdateHPBarSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

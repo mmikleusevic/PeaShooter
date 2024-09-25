@@ -14,7 +14,6 @@ public class ExperienceWorthAuthoring : MonoBehaviour
 
             AddComponent(entity, new EnemyExperienceWorthComponent
             {
-                isGranted = authoring.cooldown,
                 value = authoring.value,
             });
         }
