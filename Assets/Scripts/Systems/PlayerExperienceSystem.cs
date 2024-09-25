@@ -5,9 +5,10 @@ using Unity.Jobs;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-public partial struct ExperienceSystem : ISystem
+public partial struct PlayerExperienceSystem : ISystem
 {
     private EntityQuery playerEntityQuery;
+    private EntityQuery levelsEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -16,17 +17,23 @@ public partial struct ExperienceSystem : ISystem
             .WithAll<PlayerComponent>()
             .Build(state.EntityManager);
 
+        levelsEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<LevelsComponent>()
+            .Build(state.EntityManager);
+
         state.RequireForUpdate(playerEntityQuery);
+        state.RequireForUpdate(levelsEntityQuery);
         state.RequireForUpdate<EnemyDeadComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        ExperienceJob job = new ExperienceJob
+        PlayerExperienceJob job = new PlayerExperienceJob
         {
-            playerLookup = SystemAPI.GetComponentLookup<PlayerComponent>(),
-            playerEntity = playerEntityQuery.GetSingletonEntity()
+            experienceLookup = SystemAPI.GetComponentLookup<PlayerExperienceComponent>(),
+            playerEntity = playerEntityQuery.GetSingletonEntity(),
+            levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>()
         };
 
         JobHandle jobHandle = job.Schedule(state.Dependency);

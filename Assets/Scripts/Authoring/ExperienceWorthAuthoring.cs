@@ -1,18 +1,18 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class ExperienceAuthoring : MonoBehaviour
+public class ExperienceWorthAuthoring : MonoBehaviour
 {
     [SerializeField][Range(0, 1)] private byte cooldown;
     [SerializeField] private uint value;
 
-    public class ExperienceBaker : Baker<ExperienceAuthoring>
+    public class ExperienceWorthBaker : Baker<ExperienceWorthAuthoring>
     {
-        public override void Bake(ExperienceAuthoring authoring)
+        public override void Bake(ExperienceWorthAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new ExperienceComponent
+            AddComponent(entity, new EnemyExperienceWorthComponent
             {
                 isGranted = authoring.cooldown,
                 value = authoring.value,

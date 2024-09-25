@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using UnityEngine;
@@ -11,8 +10,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
 
-    private EntityManager entityManager;
-    private EntityQuery gridEntityQuery;
+    private IMemoryCleaner[] memoryCleaners;
     private Entity currentSubsceneEntity = Entity.Null;
 
     private int subsceneIndex;
@@ -32,11 +30,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(entityManager);
+        memoryCleaners = GetComponentsInChildren<IMemoryCleaner>();
     }
 
     public void LoadGameScene()
@@ -91,14 +85,11 @@ public class LevelManager : MonoBehaviour
 
     private void CleanupSubscene()
     {
-        entityManager.CompleteAllTrackedJobs();
+        World.DefaultGameObjectInjectionWorld.EntityManager.CompleteAllTrackedJobs();
 
-        if (gridEntityQuery.HasSingleton<GridComponent>())
+        foreach (IMemoryCleaner cleaner in memoryCleaners)
         {
-            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
-            gridComponent.gridNodes.Dispose();
-
-            entityManager.DestroyEntity(gridEntityQuery);
+            cleaner.Cleanup();
         }
     }
 }
