@@ -1,0 +1,38 @@
+using Unity.Burst;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+
+[BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateAfter(typeof(EnemySpawnerSystem))]
+public partial struct InstantiateOrPoolHealthBarSystem : ISystem
+{
+    [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<HealthComponent>();
+        state.RequireForUpdate<UIPrefabs>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+        foreach (var (health, transform, healthBarOffset, entity) in SystemAPI.Query<RefRO<HealthComponent>, RefRO<LocalTransform>, RefRO<HealthBarOffset>>()
+            .WithNone<HealthBarUIReference, PlayerComponent>()
+            .WithEntityAccess())
+        {
+            float3 spawnPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;
+
+            GameObject newHealthBar = HealthBarPoolManager.Instance.GetHealthBar(spawnPosition);
+
+            ecb.AddComponent(entity, new HealthBarUIReference
+            {
+                value = newHealthBar
+            });
+        }
+    }
+}
