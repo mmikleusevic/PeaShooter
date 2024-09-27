@@ -1,46 +1,74 @@
-using Unity.Burst;
+using System;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
+using Unity.Mathematics;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-public partial struct PlayerExperienceSystem : ISystem
+public partial class PlayerExperienceSystem : SystemBase
 {
-    private EntityQuery playerEntityQuery;
+    public event Action<uint, uint> OnGainedExp;
+    public event Action OnLevelUp;
+
+    private EntityQuery playerExperienceEntityQuery;
     private EntityQuery levelsEntityQuery;
 
-    [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    protected override void OnCreate()
     {
-        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent>()
-            .Build(state.EntityManager);
+        base.OnCreate();
+
+        playerExperienceEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAllRW<PlayerExperienceComponent>()
+            .Build(EntityManager);
 
         levelsEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithAll<LevelsComponent>()
-            .Build(state.EntityManager);
+            .Build(EntityManager);
 
-        state.RequireForUpdate(playerEntityQuery);
-        state.RequireForUpdate(levelsEntityQuery);
-        state.RequireForUpdate<EnemyDeadComponent>();
+        RequireForUpdate(playerExperienceEntityQuery);
+        RequireForUpdate(levelsEntityQuery);
+        RequireForUpdate<EnemyDeadComponent>();
     }
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
         EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-        PlayerExperienceJob job = new PlayerExperienceJob
+        LevelsComponent levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>();
+        RefRW<PlayerExperienceComponent> playerExperience = playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
+
+        foreach (var (experienceComponent, enemyDeadComponent, entity) in SystemAPI.Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
+            .WithEntityAccess())
         {
-            ecb = ecb,
-            experienceLookup = SystemAPI.GetComponentLookup<PlayerExperienceComponent>(),
-            playerEntity = playerEntityQuery.GetSingletonEntity(),
-            levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>()
-        };
+            uint maxEXP = levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
+            uint currentEXP = playerExperience.ValueRO.points + experienceComponent.ValueRO.value;
 
-        JobHandle jobHandle = job.Schedule(state.Dependency);
-        state.Dependency = jobHandle;
+            ecb.RemoveComponent<EnemyExperienceWorthComponent>(entity);
+
+            if (currentEXP == maxEXP) return;
+
+            uint playerExp = math.min(currentEXP, maxEXP);
+
+            playerExperience.ValueRW.points = playerExp;
+
+            int currentLevel = playerExperience.ValueRO.currentLevel;
+            uint currentLevelMaxEXP = levelsComponent.levels.Value.experience[currentLevel - 1];
+
+            if (playerExp >= currentLevelMaxEXP)
+            {
+                playerExperience.ValueRW.currentLevel++;
+
+                int newCurrentLevel = playerExperience.ValueRW.currentLevel;
+                uint newCurrentLevelMaxEXP = levelsComponent.levels.Value.experience[newCurrentLevel - 1];
+
+                OnGainedExp?.Invoke(playerExp, newCurrentLevelMaxEXP);
+                OnLevelUp?.Invoke();
+            }
+            else
+            {
+                OnGainedExp?.Invoke(playerExp, currentLevelMaxEXP);
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class UIController : MonoBehaviour
+public class GameOverUIController : MonoBehaviour
 {
     private VisualElement gameOverScreen;
     private Button playAgainButton;
