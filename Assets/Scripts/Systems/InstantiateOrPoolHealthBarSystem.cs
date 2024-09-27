@@ -3,9 +3,10 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.UI;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 [UpdateAfter(typeof(EnemySpawnerSystem))]
 public partial struct InstantiateOrPoolHealthBarSystem : ISystem
 {
@@ -33,6 +34,17 @@ public partial struct InstantiateOrPoolHealthBarSystem : ISystem
             {
                 value = newHealthBar
             });
+
+            SetHealthBar(newHealthBar, health.ValueRO);
         }
+    }
+
+    [BurstCompile]
+    public void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
+    {
+        var hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
+        hpBarSlider.minValue = 0;
+        hpBarSlider.maxValue = health.maxHitPoints;
+        hpBarSlider.value = health.HitPoints;
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Rendering;
 using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
@@ -18,6 +17,7 @@ public partial class MaterialChangerSystem : SystemBase
 
         materialMapping = new Dictionary<Material, BatchMaterialID>();
         hybridRendererSystem = World.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
+
         RequireForUpdate<EnemyComponent>();
     }
 
@@ -35,28 +35,25 @@ public partial class MaterialChangerSystem : SystemBase
         BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-        Entities
-            .WithoutBurst()
-            .WithNone<MaterialChangedComponent>()
-            .ForEach((MaterialChangerComponent changer, in DynamicBuffer<LinkedEntityGroup> linkedEntityGroup, in EnemyComponent enemyComponent, in Entity entity) =>
+        foreach (var (changer, linkedEntityGroup, enemyComponent, entity) in SystemAPI.Query<MaterialChangerComponent, DynamicBuffer<LinkedEntityGroup>, RefRO<EnemyComponent>>()
+            .WithEntityAccess().WithNone<MaterialChangedComponent>())
+        {
+            if (enemyComponent.ValueRO.moveTimer >= enemyComponent.ValueRO.moveTimerTarget)
             {
-                if (enemyComponent.moveTimer > enemyComponent.moveTimerTarget)
-                {
-                    Entity materialEntity = linkedEntityGroup[1].Value;
-                    MaterialMeshInfo materialMeshInfo = SystemAPI.GetComponent<MaterialMeshInfo>(materialEntity);
+                Entity materialEntity = linkedEntityGroup[1].Value;
+                MaterialMeshInfo materialMeshInfo = SystemAPI.GetComponent<MaterialMeshInfo>(materialEntity);
 
-                    Material material = changer.material;
+                Material material = changer.material;
 
-                    RegisterMaterial(changer.material);
+                RegisterMaterial(changer.material);
 
-                    materialMeshInfo.MaterialID = materialMapping[material];
+                materialMeshInfo.MaterialID = materialMapping[material];
 
-                    ecb.AddComponent(entity, typeof(MaterialChangedComponent));
-                    ecb.AddComponent(entity, typeof(ActiveForCollisionComponent));
-                    ecb.SetComponent(materialEntity, materialMeshInfo);
-                }
-            })
-            .Run();
+                ecb.AddComponent(entity, typeof(MaterialChangedComponent));
+                ecb.AddComponent(entity, typeof(ActiveForCollisionComponent));
+                ecb.SetComponent(materialEntity, materialMeshInfo);
+            }
+        }
     }
 
     private void RegisterMaterial(Material material)

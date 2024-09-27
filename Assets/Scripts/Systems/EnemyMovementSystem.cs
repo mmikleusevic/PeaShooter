@@ -4,7 +4,8 @@ using Unity.Jobs;
 using Unity.Physics.Systems;
 
 [BurstCompile]
-[UpdateInGroup(typeof(PhysicsSystemGroup))]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateAfter(typeof(PhysicsSystemGroup))]
 public partial struct EnemyMovementSystem : ISystem
 {
     [BurstCompile]

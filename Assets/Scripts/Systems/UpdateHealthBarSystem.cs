@@ -34,7 +34,7 @@ public partial struct UpdateHealthBarValueSystem : ISystem
     }
 
     [BurstCompile]
-    private void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
+    public void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
     {
         var hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
         hpBarSlider.minValue = 0;

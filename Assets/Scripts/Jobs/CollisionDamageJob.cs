@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Physics;
 
 [BurstCompile]
+[WithNone(typeof(PlayerDeadComponent))]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
     public EntityCommandBuffer ecb;
