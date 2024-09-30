@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 public class ExperienceUIController : MonoBehaviour
 {
     private PlayerExperienceSystem playerExperienceSystem;
-    private ProgressBar progressBar;
+    private ProgressBar experienceBar;
 
     private void Awake()
     {
@@ -27,13 +27,13 @@ public class ExperienceUIController : MonoBehaviour
     private void Start()
     {
         VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-        progressBar = uiVisualELement.Q<ProgressBar>("experience");
+        experienceBar = uiVisualELement.Q<ProgressBar>("experience");
     }
 
     private void SetProgressBar(uint currentEXP, uint maxEXP)
     {
-        progressBar.value = currentEXP;
-        progressBar.highValue = maxEXP;
-        progressBar.title = progressBar.value + "/" + progressBar.highValue;
+        experienceBar.value = currentEXP;
+        experienceBar.highValue = maxEXP;
+        experienceBar.title = "EXP: " + experienceBar.value + "/" + experienceBar.highValue;
     }
 }
