@@ -485,7 +485,7 @@ PrefabInstance:
     - target: {fileID: 884590535726902007, guid: 29e9cc6b51082394da65d3a495d211f2, type: 3}
       propertyPath: hpBarPrefab
       value: 
-      objectReference: {fileID: 684881366927375913, guid: d5000a1fb1130e54ca73e21477b37ba9, type: 3}
+      objectReference: {fileID: 3057557230959584855, guid: aab4e1b21e5fea644aad9a08d25b656c, type: 3}
     - target: {fileID: 2859643969635770922, guid: 29e9cc6b51082394da65d3a495d211f2, type: 3}
       propertyPath: m_Name
       value: UIPrefabs

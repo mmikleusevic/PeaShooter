@@ -40,9 +40,9 @@ public partial struct InstantiateOrPoolHealthBarSystem : ISystem
     }
 
     [BurstCompile]
-    public void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
+    public void SetHealthBar(GameObject healthBarObject, HealthComponent health)
     {
-        var hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
+        Slider hpBarSlider = healthBarObject.GetComponent<Slider>();
         hpBarSlider.minValue = 0;
         hpBarSlider.maxValue = health.maxHitPoints;
         hpBarSlider.value = health.HitPoints;
