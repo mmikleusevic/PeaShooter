@@ -7,6 +7,7 @@ public class EnemySpawnerAuthoring : MonoBehaviour
     [SerializeField] private float spawnRate;
     [SerializeField] private float speed;
     [SerializeField] private float enemyMoveTimerTarget;
+    [SerializeField] private float destroySpawnerTimerTarget;
 
     public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
     {
@@ -23,7 +24,8 @@ public class EnemySpawnerAuthoring : MonoBehaviour
                 spawnRate = authoring.spawnRate,
                 moveSpeed = authoring.speed,
                 scale = authoring.prefab.transform.localScale.x,
-                enemyMoveTimerTarget = authoring.enemyMoveTimerTarget
+                enemyMoveTimerTarget = authoring.enemyMoveTimerTarget,
+                destroySpawnerTimerTarget = authoring.destroySpawnerTimerTarget
             });
         }
     }

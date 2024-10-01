@@ -12,8 +12,9 @@ public partial struct TargetingSystemJob : IJobEntity
     private void Execute(in TargetComponent target, in ProjectileComponent projectile, ref LocalTransform transform)
     {
         float3 direction = math.normalize(target.enemy.position - transform.Position);
-        float3 newPosition = transform.Position + direction * projectile.speed * deltaTime;
+        float3 newPosition = transform.Position + direction;
+        float factor = projectile.speed * deltaTime;
 
-        transform.Position = newPosition;
+        transform.Position = math.lerp(transform.Position, newPosition, factor);
     }
 }

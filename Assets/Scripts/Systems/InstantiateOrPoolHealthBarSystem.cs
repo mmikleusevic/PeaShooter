@@ -24,6 +24,7 @@ public partial struct InstantiateOrPoolHealthBarSystem : ISystem
 
         foreach (var (health, transform, healthBarOffset, entity) in SystemAPI.Query<RefRO<HealthComponent>, RefRO<LocalTransform>, RefRO<HealthBarOffset>>()
             .WithNone<HealthBarUIReference, PlayerComponent>()
+            .WithAll<MaterialChangedComponent>()
             .WithEntityAccess())
         {
             float3 spawnPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;

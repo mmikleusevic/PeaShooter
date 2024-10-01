@@ -15,7 +15,7 @@ public partial struct EnemySpawnJob : IJobEntity
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public uint seed;
 
-    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData)
+    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner, ref RandomDataComponent randomData, in Entity entity)
     {
         if (enemySpawner.startTime == 0) enemySpawner.startTime = elapsedTime;
 
@@ -55,6 +55,11 @@ public partial struct EnemySpawnJob : IJobEntity
         });
 
         ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
+
+        if (localElapsedTime >= enemySpawner.destroySpawnerTimerTarget)
+        {
+            ecb.DestroyEntity(sortKey, entity);
+        }
 
         enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
     }

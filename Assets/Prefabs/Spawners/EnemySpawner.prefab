@@ -49,6 +49,7 @@ MonoBehaviour:
   spawnRate: 15
   speed: 300
   enemyMoveTimerTarget: 1.5
+  destroySpawnerTimerTarget: 60
 --- !u!114 &-3404586489985712297
 MonoBehaviour:
   m_ObjectHideFlags: 0

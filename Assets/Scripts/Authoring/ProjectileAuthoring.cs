@@ -11,7 +11,7 @@ public class ProjectileAuthoring : MonoBehaviour
     {
         public override void Bake(ProjectileAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 
             AddComponent(entity, new ProjectileComponent
             {

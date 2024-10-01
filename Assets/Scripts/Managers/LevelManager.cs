@@ -54,7 +54,6 @@ public class LevelManager : MonoBehaviour
     {
         subsceneIndex++;
 
-        UnloadSubScene();
         LoadSubScene();
     }
 
@@ -75,7 +74,7 @@ public class LevelManager : MonoBehaviour
 
     private void LoadSubScene()
     {
-        if (subsceneIndex >= entitySubsceneReferences.Length) subsceneIndex = 0;
+        if (subsceneIndex >= entitySubsceneReferences.Length) return;
 
         currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex], new LoadParameters
         {
