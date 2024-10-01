@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 505303326600515927}
   - component: {fileID: 5457214693885456958}
   m_Layer: 0
-  m_Name: LevelsSpawner
+  m_Name: Levels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
