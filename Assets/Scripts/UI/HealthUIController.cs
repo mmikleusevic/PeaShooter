@@ -15,6 +15,12 @@ public class HealthUIController : MonoBehaviour
         if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged += OnHealthChanged;
     }
 
+    private void Start()
+    {
+        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
+        healthBar = uiVisualELement.Q<ProgressBar>("health");
+    }
+
     private void OnDestroy()
     {
         if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged -= OnHealthChanged;
@@ -23,12 +29,6 @@ public class HealthUIController : MonoBehaviour
     private void OnHealthChanged(float currentHP)
     {
         SetProgressBar(currentHP);
-    }
-
-    private void Start()
-    {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-        healthBar = uiVisualELement.Q<ProgressBar>("health");
     }
 
     private void SetProgressBar(float currentHP)

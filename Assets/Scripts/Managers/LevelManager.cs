@@ -1,3 +1,4 @@
+using System;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using UnityEngine;
@@ -7,6 +8,7 @@ using static Unity.Scenes.SceneSystem;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
+    public event Action<int> OnSubSceneLoaded;
 
     [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
 
@@ -80,6 +82,8 @@ public class LevelManager : MonoBehaviour
         {
             Flags = SceneLoadFlags.BlockOnImport
         });
+
+        OnSubSceneLoaded?.Invoke(subsceneIndex);
     }
 
     private void CleanupSubscene()
