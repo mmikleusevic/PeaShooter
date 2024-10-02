@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ExperienceWorthAuthoring : MonoBehaviour
 {
-    [SerializeField][Range(0, 1)] private byte cooldown;
     [SerializeField] private uint value;
 
     public class ExperienceWorthBaker : Baker<ExperienceWorthAuthoring>

@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &259764283674076889
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_ShapeType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_SphereRadius
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Capsule.Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Capsule.Radius
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Cylinder.Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Cylinder.Radius
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.x
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveSize.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_CylinderSideCount
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveCenter.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveCenter.y
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveCenter.z
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveOrientation.Value.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_PrimitiveOrientation.Value.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: value
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: cooldown
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3110060693954028518, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5193947367459619922, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: damage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: hitPoints
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: healthBarOffset.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7194990642786950497, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Name
+      value: AsparagusBossEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7366305124181314534, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b8acf905ee3fe4044b068279e99089fb, type: 2}
+    - target: {fileID: 7388270657966168480, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: material
+      value: 
+      objectReference: {fileID: 2100000, guid: 5558545a5f0089e46b3e967a4e819149, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
