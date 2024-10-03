@@ -17,11 +17,9 @@ public partial class PlayerHealthSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
-
         foreach (var playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
             .WithChangeFilter<HealthComponent>()
+            .WithNone<PlayerDeadComponent>()
             .WithAll<PlayerComponent>())
         {
             OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);

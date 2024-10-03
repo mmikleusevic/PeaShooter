@@ -10,4 +10,5 @@ public struct EnemyComponent : IComponentData
     public float moveTimer;
     public float moveTimerTarget;
     public byte isFullySpawned;
+    public float timeOfLastPathfinding;
 }

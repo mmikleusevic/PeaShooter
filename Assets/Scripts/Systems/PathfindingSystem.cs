@@ -10,8 +10,7 @@ public partial struct PathfindingSystem : ISystem
 {
     private EntityQuery playerEntityQuery;
     private EntityQuery gridEntityQuery;
-    private float timer;
-    private float targetTime;
+    private EntityQuery inputEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -24,8 +23,9 @@ public partial struct PathfindingSystem : ISystem
             .WithAll<GridComponent>()
             .Build(ref state);
 
-        timer = 0.5f;
-        targetTime = timer;
+        inputEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<InputComponent>()
+            .Build(ref state);
 
         state.RequireForUpdate(playerEntityQuery);
         state.RequireForUpdate(gridEntityQuery);
@@ -35,23 +35,19 @@ public partial struct PathfindingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        timer += SystemAPI.Time.DeltaTime;
+        int2 playerPosition = playerEntityQuery.GetSingleton<PlayerComponent>().position;
+        GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
-        if (timer >= targetTime)
+        PathfindingJob job = new PathfindingJob
         {
-            int2 playerPosition = playerEntityQuery.GetSingleton<PlayerComponent>().position;
-            GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
+            elapsedTime = (float)SystemAPI.Time.ElapsedTime,
+            defaultMoveSpeed = 100f,
+            playerPosition = playerPosition,
+            grid = grid,
+            input = inputEntityQuery.GetSingleton<InputComponent>()
+        };
 
-            PathfindingJob job = new PathfindingJob
-            {
-                playerPosition = playerPosition,
-                grid = grid,
-            };
-
-            JobHandle handle = job.ScheduleParallel(state.Dependency);
-            state.Dependency = handle;
-
-            timer = 0;
-        }
+        JobHandle handle = job.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
     }
 }

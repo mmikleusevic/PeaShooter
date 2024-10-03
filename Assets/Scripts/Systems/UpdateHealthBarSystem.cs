@@ -19,6 +19,8 @@ public partial struct UpdateHealthBarValueSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
+
         foreach (var (health, healthBarUI) in SystemAPI.Query<RefRO<HealthComponent>, HealthBarUIReference>()
             .WithChangeFilter<HealthComponent>())
         {

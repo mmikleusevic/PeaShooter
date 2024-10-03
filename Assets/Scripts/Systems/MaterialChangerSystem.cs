@@ -36,7 +36,8 @@ public partial class MaterialChangerSystem : SystemBase
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
         foreach (var (changer, linkedEntityGroup, enemyComponent, entity) in SystemAPI.Query<MaterialChangerComponent, DynamicBuffer<LinkedEntityGroup>, RefRO<EnemyComponent>>()
-            .WithEntityAccess().WithNone<MaterialChangedComponent>())
+            .WithEntityAccess()
+            .WithNone<MaterialChangedComponent>())
         {
             if (enemyComponent.ValueRO.moveTimer >= enemyComponent.ValueRO.moveTimerTarget)
             {

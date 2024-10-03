@@ -135,8 +135,8 @@ PrefabInstance:
       value: PumpkinBossEnemySpawner
       objectReference: {fileID: 0}
     - target: {fileID: 223364175071980859, guid: d123696b91ddccf45a058169d618bcf5, type: 3}
-      propertyPath: destroySpawnerTimerTarget
-      value: 60
+      propertyPath: speed
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 1505488116753821568, guid: d123696b91ddccf45a058169d618bcf5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -191,10 +191,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 982719994730326901, guid: 9840f2aa0d116bc41996eee790c792ec, type: 3}
-      propertyPath: destroySpawnerTimerTarget
-      value: 60
-      objectReference: {fileID: 0}
     - target: {fileID: 1071655660648834303, guid: 9840f2aa0d116bc41996eee790c792ec, type: 3}
       propertyPath: m_Name
       value: TomatoEnemySpawner

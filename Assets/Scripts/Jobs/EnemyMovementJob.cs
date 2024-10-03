@@ -22,9 +22,10 @@ public partial struct EnemyMovementJob : IJobEntity
             return;
         }
 
-        float3 currentPos3D = new float3(transform.Position.x, 0, transform.Position.z);
         int nextPathIndex = math.min(enemy.currentPathIndex + 1, pathBuffer.Length - 1);
-        float3 targetPos3D = new float3(pathBuffer[nextPathIndex].position.x, 0, pathBuffer[nextPathIndex].position.y);
+        int2 nextPathPosition = pathBuffer[nextPathIndex].position;
+        float3 currentPos3D = new float3(transform.Position.x, 0, transform.Position.z);
+        float3 targetPos3D = new float3(nextPathPosition.x, 0, nextPathPosition.y);
 
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 

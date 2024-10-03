@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
 
     private IMemoryCleaner[] memoryCleaners;
-    private Entity currentSubsceneEntity = Entity.Null;
+    private List<Entity> currentSubsceneEntities = new List<Entity>();
 
     private int subsceneIndex;
 
@@ -66,11 +67,14 @@ public class LevelManager : MonoBehaviour
 
     private void UnloadSubScene()
     {
-        if (currentSubsceneEntity != Entity.Null && IsSceneLoaded(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity))
+        if (currentSubsceneEntities.Count > 0)
         {
-            UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity, UnloadParameters.DestroyMetaEntities);
+            foreach (var currentSubsceneEntity in currentSubsceneEntities)
+            {
+                UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity, UnloadParameters.DestroyMetaEntities);
+            }
 
-            currentSubsceneEntity = Entity.Null;
+            currentSubsceneEntities.Clear();
         }
     }
 
@@ -78,10 +82,7 @@ public class LevelManager : MonoBehaviour
     {
         if (subsceneIndex >= entitySubsceneReferences.Length) return;
 
-        currentSubsceneEntity = LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex], new LoadParameters
-        {
-            Flags = SceneLoadFlags.BlockOnImport
-        });
+        currentSubsceneEntities.Add(LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex]));
 
         OnSubSceneLoaded?.Invoke(subsceneIndex);
     }

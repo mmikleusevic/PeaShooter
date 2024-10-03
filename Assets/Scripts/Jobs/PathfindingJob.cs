@@ -8,14 +8,25 @@ partial struct PathfindingJob : IJobEntity
 {
     [ReadOnly] private const int STRAIGHT_COST = 10;
     [ReadOnly] private const int DIAGONAL_COST = 14;
+    [ReadOnly] public float elapsedTime;
+    [ReadOnly] public float defaultMoveSpeed;
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public GridComponent grid;
+    [ReadOnly] public InputComponent input;
 
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
     {
+        float timeOfNextPathfinding = math.min(0.5f, defaultMoveSpeed / enemy.moveSpeed) + enemy.timeOfLastPathfinding;
+
+        if (enemy.isFullySpawned == 0 && elapsedTime < timeOfNextPathfinding) return;
+
+        enemy.timeOfLastPathfinding = elapsedTime;
+
         pathBuffer.Clear();
 
-        NativeList<int2> path = FindPath(enemy.gridPosition, playerPosition);
+        int2 predictedPlayerPosition = playerPosition + (int2)math.round(input.move);
+
+        NativeList<int2> path = FindPath(enemy.gridPosition, predictedPlayerPosition);
 
         if (path.IsCreated)
         {
@@ -33,7 +44,9 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private NativeList<int2> FindPath(int2 start, int2 goal)
     {
-        var result = new NativeList<int2>(Allocator.Temp);
+        float distance = math.distance(start, goal);
+
+        var result = new NativeList<int2>((int)distance, Allocator.Temp);
 
         if (start.Equals(goal)) return result;
 
@@ -148,21 +161,12 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, NodeComponent> cameFrom, int2 current)
     {
-        NativeList<int2> tempPath = new NativeList<int2>(Allocator.Temp);
-
         while (cameFrom.ContainsKey(current))
         {
-            tempPath.Add(current);
+            result.Add(current);
             current = cameFrom[current].position;
         }
 
-        tempPath.Add(current);
-
-        for (int i = tempPath.Length - 1; i >= 0; i--)
-        {
-            result.Add(tempPath[i]);
-        }
-
-        tempPath.Dispose();
+        result.Add(current);
     }
 }

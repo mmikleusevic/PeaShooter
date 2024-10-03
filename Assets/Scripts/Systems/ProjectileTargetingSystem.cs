@@ -6,7 +6,7 @@ using Unity.Physics.Systems;
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(PhysicsSystemGroup))]
-public partial struct TargetingSystem : ISystem
+public partial struct ProjectileTargetingSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -17,7 +17,7 @@ public partial struct TargetingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        TargetingSystemJob job = new TargetingSystemJob
+        ProjectileTargetingSystemJob job = new ProjectileTargetingSystemJob
         {
             deltaTime = SystemAPI.Time.DeltaTime
         };
