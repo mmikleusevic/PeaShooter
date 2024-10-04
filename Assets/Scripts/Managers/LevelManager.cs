@@ -69,7 +69,7 @@ public class LevelManager : MonoBehaviour
     {
         if (currentSubsceneEntities.Count > 0)
         {
-            foreach (var currentSubsceneEntity in currentSubsceneEntities)
+            foreach (Entity currentSubsceneEntity in currentSubsceneEntities)
             {
                 UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity, UnloadParameters.DestroyMetaEntities);
             }

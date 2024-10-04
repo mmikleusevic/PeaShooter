@@ -14,11 +14,18 @@ partial struct PathfindingJob : IJobEntity
     [ReadOnly] public GridComponent grid;
     [ReadOnly] public InputComponent input;
 
+    private static readonly int2[] Directions = new int2[]
+    {
+        new int2(-1, 1), new int2(0, 1), new int2(1, 1),
+        new int2(-1, 0),                   new int2(1, 0),
+        new int2(-1, -1),  new int2(0, -1),  new int2(1, -1)
+    };
+
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
     {
         float timeOfNextPathfinding = math.min(0.5f, defaultMoveSpeed / enemy.moveSpeed) + enemy.timeOfLastPathfinding;
 
-        if (enemy.isFullySpawned == 0 && elapsedTime < timeOfNextPathfinding) return;
+        if (enemy.isFullySpawned == 0 || elapsedTime < timeOfNextPathfinding) return;
 
         enemy.timeOfLastPathfinding = elapsedTime;
 
@@ -26,11 +33,16 @@ partial struct PathfindingJob : IJobEntity
 
         int2 predictedPlayerPosition = playerPosition + (int2)math.round(input.move);
 
+        if (grid.IsValidPosition(predictedPlayerPosition) == 0)
+        {
+            predictedPlayerPosition = playerPosition;
+        }
+
         NativeList<int2> path = FindPath(enemy.gridPosition, predictedPlayerPosition);
 
         if (path.IsCreated)
         {
-            foreach (var node in path)
+            foreach (int2 node in path)
             {
                 pathBuffer.Add(new NodeComponent { position = node });
             }
@@ -44,15 +56,15 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private NativeList<int2> FindPath(int2 start, int2 goal)
     {
-        float distance = math.distance(start, goal);
-
-        var result = new NativeList<int2>((int)distance, Allocator.Temp);
+        var result = new NativeList<int2>(Allocator.Temp);
 
         if (start.Equals(goal)) return result;
 
-        var openSet = new NativeList<NodeComponent>(Allocator.Temp);
-        var closedSet = new NativeHashSet<int2>(10, Allocator.Temp);
-        var cameFrom = new NativeHashMap<int2, NodeComponent>(100, Allocator.Temp);
+        float distance = math.distance(start, goal);
+        int estimatedNodes = (int)((distance + 1) * 1.5f);
+        var openSet = new NativeList<NodeComponent>(estimatedNodes, Allocator.Temp);
+        var closedSet = new NativeHashSet<int2>(estimatedNodes, Allocator.Temp);
+        var cameFrom = new NativeHashMap<int2, int2>(estimatedNodes, Allocator.Temp);
 
         openSet.Add(new NodeComponent { position = start, gCost = 0, hCost = CalculateDistanceCost(start, goal) });
 
@@ -70,55 +82,54 @@ partial struct PathfindingJob : IJobEntity
             openSet.RemoveAtSwapBack(currentIndex);
             closedSet.Add(current.position);
 
-            for (int x = -1; x <= 1; x++)
+            for (int i = 0; i < Directions.Length; i++)
             {
-                for (int y = -1; y <= 1; y++)
+                if (i == 0 || i == 2 || i == 5 || i == 7)
                 {
-                    if (x == 0 && y == 0) continue;
+                    int2 dirX = new int2(Directions[i].x, 0);
+                    int2 dirY = new int2(0, Directions[i].y);
+                    if (grid.IsValidPosition(current.position + dirX) == 0 ||
+                        grid.IsValidPosition(current.position + dirY) == 0)
+                        continue;
+                }
 
-                    if (math.abs(x) == 1 && math.abs(y) == 1)
+                int2 neighborPos = current.position + Directions[i];
+
+                if (closedSet.Contains(neighborPos) || grid.IsValidPosition(neighborPos) == 0) continue;
+
+                int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
+
+                bool inOpenSet = false;
+                for (int j = 0; j < openSet.Length; j++)
+                {
+                    if (openSet[j].position.Equals(neighborPos))
                     {
-                        if (grid.IsValidPosition(current.position + new int2(x, 0)) == 0 || grid.IsValidPosition(current.position + new int2(0, y)) == 0) continue;
-                    }
-
-                    int2 neighborPos = current.position + new int2(x, y);
-
-                    if (closedSet.Contains(neighborPos) || grid.IsValidPosition(neighborPos) == 0) continue;
-
-                    int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
-
-                    bool inOpenSet = false;
-                    for (int i = 0; i < openSet.Length; i++)
-                    {
-                        if (openSet[i].position.Equals(neighborPos))
+                        inOpenSet = true;
+                        if (tentativeGCost < openSet[j].gCost)
                         {
-                            inOpenSet = true;
-                            if (tentativeGCost < openSet[i].gCost)
+                            openSet[j] = new NodeComponent
                             {
-                                openSet[i] = new NodeComponent
-                                {
-                                    position = neighborPos,
-                                    gCost = tentativeGCost,
-                                    hCost = CalculateDistanceCost(neighborPos, goal)
-                                };
+                                position = neighborPos,
+                                gCost = tentativeGCost,
+                                hCost = CalculateDistanceCost(neighborPos, goal)
+                            };
 
-                                cameFrom[neighborPos] = current;
-                            }
-                            break;
+                            cameFrom[neighborPos] = current.position;
                         }
+                        break;
                     }
+                }
 
-                    if (!inOpenSet)
+                if (!inOpenSet)
+                {
+                    openSet.Add(new NodeComponent
                     {
-                        openSet.Add(new NodeComponent
-                        {
-                            position = neighborPos,
-                            gCost = tentativeGCost,
-                            hCost = CalculateDistanceCost(neighborPos, goal),
-                        });
+                        position = neighborPos,
+                        gCost = tentativeGCost,
+                        hCost = CalculateDistanceCost(neighborPos, goal),
+                    });
 
-                        cameFrom[neighborPos] = current;
-                    }
+                    cameFrom[neighborPos] = current.position;
                 }
             }
         }
@@ -159,14 +170,26 @@ partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, NodeComponent> cameFrom, int2 current)
+    private void ReconstructPath(NativeList<int2> result, NativeHashMap<int2, int2> cameFrom, int2 current)
     {
-        while (cameFrom.ContainsKey(current))
+        int pathLength = 0;
+        int2 tempCurrent = current;
+
+        while (cameFrom.ContainsKey(tempCurrent))
         {
-            result.Add(current);
-            current = cameFrom[current].position;
+            pathLength++;
+            tempCurrent = cameFrom[tempCurrent];
         }
 
-        result.Add(current);
+        result.ResizeUninitialized(pathLength + 1);
+
+        int index = pathLength;
+        while (cameFrom.ContainsKey(current))
+        {
+            result[index--] = current;
+            current = cameFrom[current];
+        }
+
+        result[0] = current;
     }
 }

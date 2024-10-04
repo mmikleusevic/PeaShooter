@@ -17,29 +17,40 @@ public struct CollisionDamageJob : ICollisionEventsJob
     [ReadOnly] public ComponentLookup<ActiveForCollisionComponent> activeForCollisionLookup;
     [ReadOnly] public float deltaTime;
 
+    private bool HasHealth(Entity entity) => healthLookup.HasComponent(entity);
+    private bool HasObstacle(Entity entity) => obstacleLookup.HasComponent(entity);
+    private bool HasEnemy(Entity entity) => enemyDamageLookup.HasComponent(entity);
+    private bool HasActiveForCollision(Entity entity) => activeForCollisionLookup.HasComponent(entity);
+    private bool HasProjectile(Entity entity) => projectileLookup.HasComponent(entity);
+
     public void Execute(CollisionEvent collisionEvent)
     {
         Entity entityA = collisionEvent.EntityA;
         Entity entityB = collisionEvent.EntityB;
 
+        if (HasObstacle(entityA) && HasHealth(entityB) || HasObstacle(entityB) && HasHealth(entityA))
+        {
+            return;
+        }
+
         bool playerEnemyCollision = false;
 
-        if (healthLookup.HasComponent(entityA) && enemyDamageLookup.HasComponent(entityB) && activeForCollisionLookup.HasComponent(entityB))
+        if (HasHealth(entityA) && HasEnemy(entityB) && HasActiveForCollision(entityB))
         {
             HandlePlayerCollision(ref playerEnemyCollision, entityA, entityB);
         }
-        else if (healthLookup.HasComponent(entityB) && enemyDamageLookup.HasComponent(entityA) && activeForCollisionLookup.HasComponent(entityA))
+        else if (HasHealth(entityB) && HasEnemy(entityA) && HasActiveForCollision(entityA))
         {
             HandlePlayerCollision(ref playerEnemyCollision, entityB, entityA);
         }
 
         if (playerEnemyCollision) return;
 
-        if (projectileLookup.HasComponent(entityA))
+        if (HasProjectile(entityA))
         {
             HandleProjectileCollision(entityA, entityB);
         }
-        else if (projectileLookup.HasComponent(entityB))
+        else if (HasProjectile(entityB))
         {
             HandleProjectileCollision(entityB, entityA);
         }
