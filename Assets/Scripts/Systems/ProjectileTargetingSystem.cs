@@ -4,8 +4,8 @@ using Unity.Jobs;
 using Unity.Physics.Systems;
 
 [BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateAfter(typeof(PhysicsSystemGroup))]
+[UpdateInGroup(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(CollisionDamageSystem))]
 public partial struct ProjectileTargetingSystem : ISystem
 {
     [BurstCompile]

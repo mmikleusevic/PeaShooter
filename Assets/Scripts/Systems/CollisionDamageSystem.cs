@@ -1,28 +1,20 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics;
 using Unity.Physics.Systems;
 
 [BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateAfter(typeof(PhysicsSystemGroup))]
-[UpdateBefore(typeof(ProjectileDisablingSystem))]
+[UpdateInGroup(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(PhysicsSimulationGroup))]
 public partial struct CollisionDamageSystem : ISystem
 {
-    private EntityQuery simulationEntityQuery;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        simulationEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-           .WithAll<SimulationSingleton>()
-           .Build(state.EntityManager);
-
-        state.RequireForUpdate(simulationEntityQuery);
-        state.RequireForUpdate<HealthComponent>();
-        state.RequireForUpdate<EnemyDamageComponent>();
+        state.RequireForUpdate<SimulationSingleton>();
+        state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
@@ -30,7 +22,7 @@ public partial struct CollisionDamageSystem : ISystem
     {
         if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
 
-        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         CollisionDamageJob job = new CollisionDamageJob
@@ -45,7 +37,7 @@ public partial struct CollisionDamageSystem : ISystem
             deltaTime = SystemAPI.Time.DeltaTime
         };
 
-        SimulationSingleton simulationSingleton = simulationEntityQuery.GetSingleton<SimulationSingleton>();
+        SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();
 
         JobHandle handle = job.Schedule(simulationSingleton, state.Dependency);
         state.Dependency = handle;

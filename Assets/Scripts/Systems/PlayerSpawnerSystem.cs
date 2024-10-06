@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateAfter(typeof(GridSpawnerSystem))]
+[UpdateAfter(typeof(PlaneSpawnerSystem))]
 
 public partial struct PlayerSpawnerSystem : ISystem
 {
@@ -12,6 +12,7 @@ public partial struct PlayerSpawnerSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlayerSpawnerComponent>();
+        state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]

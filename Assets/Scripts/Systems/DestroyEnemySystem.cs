@@ -11,6 +11,7 @@ public partial struct DestroyEnemySystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EnemyDeadComponent>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]

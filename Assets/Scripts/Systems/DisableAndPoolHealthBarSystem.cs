@@ -11,6 +11,7 @@ public partial struct DisableAndPoolHealthBarSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<HealthBarUIReference>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)

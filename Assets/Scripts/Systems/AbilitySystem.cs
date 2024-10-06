@@ -30,6 +30,7 @@ public partial struct AbilitySystem : ISystem
         state.RequireForUpdate(playerEntityQuery);
         state.RequireForUpdate(enemyEntityQuery);
         state.RequireForUpdate<AbilityComponent>();
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]

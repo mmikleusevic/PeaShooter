@@ -1,28 +1,22 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct GridSpawnerSystem : ISystem
 {
-    private EntityQuery gridEntityQuery;
-
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(ref state);
-
         state.RequireForUpdate<GridSpawnerComponent>();
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         GridSpawnJob job = new GridSpawnJob
@@ -37,12 +31,12 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        if (gridEntityQuery.HasSingleton<GridComponent>())
+        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent))
         {
-            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
-            gridComponent.gridNodes.Dispose();
-
-            state.EntityManager.DestroyEntity(gridEntityQuery);
+            if (gridComponent.gridNodes.IsCreated)
+            {
+                gridComponent.gridNodes.Dispose();
+            }
         }
     }
 }

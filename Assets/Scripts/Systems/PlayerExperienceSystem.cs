@@ -28,6 +28,7 @@ public partial class PlayerExperienceSystem : SystemBase
         RequireForUpdate(playerExperienceEntityQuery);
         RequireForUpdate(levelsEntityQuery);
         RequireForUpdate<EnemyDeadComponent>();
+        RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     protected override void OnUpdate()

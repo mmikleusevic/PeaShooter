@@ -4,13 +4,13 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateBefore(typeof(GridSpawnerSystem))]
 public partial struct PlaneSpawnerSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<PlaneSpawnerComponent>();
+        state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]

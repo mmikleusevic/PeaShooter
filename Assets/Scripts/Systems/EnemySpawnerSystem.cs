@@ -7,6 +7,7 @@ using UnityEngine;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+[UpdateAfter(typeof(GridSpawnerSystem))]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -21,6 +22,7 @@ public partial struct EnemySpawnerSystem : ISystem
         state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate(gridEntityQuery);
         state.RequireForUpdate<EnemySpawnerComponent>();
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
