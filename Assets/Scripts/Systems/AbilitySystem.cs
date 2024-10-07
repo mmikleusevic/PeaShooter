@@ -16,7 +16,7 @@ public partial struct AbilitySystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent, LocalTransform>()
+            .WithAll<PlayerComponent, LocalTransform, PlayerAliveComponent>()
             .Build(ref state);
 
         projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)

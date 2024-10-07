@@ -6,7 +6,6 @@ using Unity.Jobs;
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct GridSpawnerSystem : ISystem
 {
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridSpawnerComponent>();
@@ -26,17 +25,5 @@ public partial struct GridSpawnerSystem : ISystem
 
         JobHandle jobHandle = job.Schedule(state.Dependency);
         state.Dependency = jobHandle;
-    }
-
-    [BurstCompile]
-    public void OnDestroy(ref SystemState state)
-    {
-        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent))
-        {
-            if (gridComponent.gridNodes.IsCreated)
-            {
-                gridComponent.gridNodes.Dispose();
-            }
-        }
     }
 }

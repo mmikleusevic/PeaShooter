@@ -11,7 +11,7 @@ public partial class PlayerHealthSystem : SystemBase
     {
         base.OnCreate();
 
-        RequireForUpdate<PlayerComponent>();
+        RequireForUpdate<PlayerAliveComponent>();
         RequireForUpdate<HealthComponent>();
     }
 
@@ -19,8 +19,7 @@ public partial class PlayerHealthSystem : SystemBase
     {
         foreach (var playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
             .WithChangeFilter<HealthComponent>()
-            .WithNone<PlayerDeadComponent>()
-            .WithAll<PlayerComponent>())
+            .WithAll<PlayerAliveComponent>())
         {
             OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
         }

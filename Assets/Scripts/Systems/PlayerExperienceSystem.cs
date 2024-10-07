@@ -18,7 +18,7 @@ public partial class PlayerExperienceSystem : SystemBase
         base.OnCreate();
 
         playerExperienceEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAllRW<PlayerExperienceComponent>()
+            .WithAllRW<PlayerExperienceComponent, PlayerAliveComponent>()
             .Build(EntityManager);
 
         levelsEntityQuery = new EntityQueryBuilder(Allocator.Temp)

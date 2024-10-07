@@ -18,21 +18,12 @@ public partial class MaterialChangerSystem : SystemBase
         materialMapping = new Dictionary<Material, BatchMaterialID>();
         hybridRendererSystem = World.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
 
+        RequireForUpdate<PlayerAliveComponent>();
         RequireForUpdate<BeginPresentationEntityCommandBufferSystem.Singleton>();
         RequireForUpdate<EnemyComponent>();
     }
-
-    protected override void OnStopRunning()
-    {
-        base.OnStopRunning();
-
-        UnregisterMaterials();
-    }
-
     protected override void OnUpdate()
     {
-        if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
-
         BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
@@ -56,6 +47,13 @@ public partial class MaterialChangerSystem : SystemBase
                 ecb.SetComponent(materialEntity, materialMeshInfo);
             }
         }
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        UnregisterMaterials();
     }
 
     private void RegisterMaterial(Material material)

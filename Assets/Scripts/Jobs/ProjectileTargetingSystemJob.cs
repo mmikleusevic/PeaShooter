@@ -6,7 +6,6 @@ using Unity.Physics;
 using Unity.Transforms;
 
 [BurstCompile]
-[WithNone(typeof(PlayerDeadComponent))]
 public partial struct ProjectileTargetingSystemJob : IJobEntity
 {
     [ReadOnly] public float deltaTime;

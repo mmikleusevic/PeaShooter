@@ -16,6 +16,7 @@ public partial struct InstantiateOrPoolHealthBarSystem : ISystem
         state.RequireForUpdate<HealthComponent>();
         state.RequireForUpdate<UIPrefabs>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     public void OnUpdate(ref SystemState state)

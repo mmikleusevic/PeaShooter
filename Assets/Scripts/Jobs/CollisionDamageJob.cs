@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Physics;
 
 [BurstCompile]
-[WithNone(typeof(PlayerDeadComponent))]
 public struct CollisionDamageJob : ICollisionEventsJob
 {
     public EntityCommandBuffer ecb;
@@ -71,7 +70,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
 
         if (playerHealthComponent.ValueRO.HitPoints == 0)
         {
-            ecb.AddComponent<PlayerDeadComponent>(playerEntity);
+            ecb.RemoveComponent<PlayerAliveComponent>(playerEntity);
         }
     }
 

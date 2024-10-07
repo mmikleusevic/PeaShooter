@@ -13,15 +13,13 @@ public partial struct CollisionDamageSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SimulationSingleton>();
-        state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<PlayerAliveComponent>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
-
         EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 

@@ -12,6 +12,7 @@ public partial struct ProjectileTargetingSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<TargetComponent>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]

@@ -12,6 +12,7 @@ public partial struct DestroyEnemySystem : ISystem
     {
         state.RequireForUpdate<EnemyDeadComponent>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]

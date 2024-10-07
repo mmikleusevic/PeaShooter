@@ -6,7 +6,6 @@ using Unity.Physics;
 using Unity.Transforms;
 
 [BurstCompile]
-[WithNone(typeof(PlayerDeadComponent))]
 public partial struct ProjectileDisablingJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;

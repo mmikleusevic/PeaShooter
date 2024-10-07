@@ -23,7 +23,8 @@ public class GameStateManager : MonoBehaviour
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
         playerDeadEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerDeadComponent>()
+            .WithAll<PlayerComponent>()
+            .WithNone<PlayerAliveComponent>()
             .Build(entityManager);
 
         ResumeTheGame();

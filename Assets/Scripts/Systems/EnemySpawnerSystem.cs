@@ -19,17 +19,15 @@ public partial struct EnemySpawnerSystem : ISystem
             .WithAll<GridComponent>()
             .Build(ref state);
 
-        state.RequireForUpdate<PlayerComponent>();
         state.RequireForUpdate(gridEntityQuery);
         state.RequireForUpdate<EnemySpawnerComponent>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.HasSingleton<PlayerDeadComponent>()) return;
-
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();

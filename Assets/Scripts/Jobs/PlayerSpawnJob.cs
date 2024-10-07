@@ -18,6 +18,8 @@ public partial struct PlayerSpawnJob : IJobEntity
             Scale = playerSpawner.scale
         });
 
+        ecb.AddComponent(spawnedEntity, new PlayerAliveComponent());
+
         ecb.DestroyEntity(spawnerEntity);
     }
 }

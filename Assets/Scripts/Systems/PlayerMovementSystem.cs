@@ -19,7 +19,7 @@ public partial struct PlayerMovementSystem : ISystem
             .Build(ref state);
 
         state.RequireForUpdate(gridEntityQuery);
-        state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]

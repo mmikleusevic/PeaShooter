@@ -16,7 +16,7 @@ public partial struct PathfindingSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent>()
+            .WithAll<PlayerComponent, PlayerAliveComponent>()
             .Build(ref state);
 
         gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)

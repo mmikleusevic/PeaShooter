@@ -12,6 +12,8 @@ public partial class PlayerControllerSystem : SystemBase
 
     protected override void OnCreate()
     {
+        base.OnCreate();
+
         playerInput = new PlayerInput();
 
         playerInput.Enable();
@@ -23,7 +25,7 @@ public partial class PlayerControllerSystem : SystemBase
             .Build(EntityManager);
 
         RequireForUpdate(inputEntityQuery);
-        RequireForUpdate<PlayerComponent>();
+        RequireForUpdate<PlayerAliveComponent>();
     }
 
     protected override void OnUpdate() { }
@@ -40,6 +42,8 @@ public partial class PlayerControllerSystem : SystemBase
 
     protected override void OnDestroy()
     {
+        base.OnDestroy();
+
         playerInput.Player.Movement.performed -= OnMovementPerformed;
         playerInput.Player.Movement.canceled -= OnMovementCanceled;
         playerInput.Disable();

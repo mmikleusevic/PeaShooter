@@ -6,7 +6,6 @@ using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
-[WithNone(typeof(PlayerDeadComponent))]
 public partial struct EnemySpawnJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;

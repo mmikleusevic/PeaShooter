@@ -17,6 +17,7 @@ public partial class LoadNewWaveSystem : SystemBase
             .Build(EntityManager);
 
         RequireForUpdate(loadNewWaveEntityQuery);
+        RequireForUpdate<PlayerAliveComponent>();
     }
 
     protected override void OnStartRunning()

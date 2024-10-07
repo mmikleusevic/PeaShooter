@@ -13,6 +13,7 @@ public partial struct ProjectileDisablingSystem : ISystem
     {
         state.RequireForUpdate<ProjectileComponent>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]
