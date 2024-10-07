@@ -5,6 +5,7 @@ using Unity.Entities;
 [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
 public partial class PlayerHealthSystem : SystemBase
 {
+    public event Action OnPlayerDied;
     public event Action<float> OnHealthChanged;
 
     protected override void OnCreate()
@@ -22,6 +23,8 @@ public partial class PlayerHealthSystem : SystemBase
             .WithAll<PlayerAliveComponent>())
         {
             OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
+
+            if (playerHealth.ValueRO.IsDead) OnPlayerDied?.Invoke();
         }
     }
 }

@@ -36,7 +36,7 @@ public class PauseUIController : MonoBehaviour
 
     private void OnPause()
     {
-        GameStateManager.Instance.PauseTheGame();
+        GameStateManager.Instance.PauseGame();
 
         pauseElementUI.visible = false;
         pauseUI.visible = true;
@@ -44,7 +44,7 @@ public class PauseUIController : MonoBehaviour
 
     private void OnResume()
     {
-        GameStateManager.Instance.ResumeTheGame();
+        GameStateManager.Instance.ResumeGame();
 
         pauseElementUI.visible = true;
         pauseUI.visible = false;

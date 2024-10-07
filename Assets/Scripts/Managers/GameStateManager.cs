@@ -1,15 +1,14 @@
-using System;
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
-    public event Action OnPlayerDied;
 
-    private EntityQuery playerDeadEntityQuery;
-
+    [SerializeField] private AbilityPickerRNG abilityPickerRNG;
+    private PlayerHealthSystem playerHealthSystem;
+    private PlayerExperienceSystem playerExperienceSystem;
+    private bool isPausedForLevelUp = false;
     private bool isDead = false;
     public bool IsDead => IsDead;
 
@@ -22,41 +21,54 @@ public class GameStateManager : MonoBehaviour
     {
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        playerDeadEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent>()
-            .WithNone<PlayerAliveComponent>()
-            .Build(entityManager);
+        playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
+        playerExperienceSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
 
-        ResumeTheGame();
+        if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied += OnPlayerDied;
+        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
+        if (abilityPickerRNG != null) abilityPickerRNG.OnAbilityChosen += OnAbilityChosen;
+
+        ResumeGame();
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (playerDeadEntityQuery.CalculateEntityCount() > 0)
-        {
-            if (isDead) return;
-
-            PlayerDied();
-        }
+        if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied -= OnPlayerDied;
+        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp -= OnLevelUp;
+        if (abilityPickerRNG != null) abilityPickerRNG.OnAbilityChosen -= OnAbilityChosen;
     }
 
-    private void PlayerDied()
+    private void OnPlayerDied()
     {
-        OnPlayerDied?.Invoke();
         isDead = true;
-        PauseTheGame();
+
+        PauseGame();
     }
 
-    public void PauseTheGame()
+    private void OnLevelUp()
+    {
+        isPausedForLevelUp = true;
+
+        PauseGame();
+    }
+
+    private void OnAbilityChosen()
+    {
+        isPausedForLevelUp = false;
+
+        ResumeGame();
+    }
+
+    public void PauseGame()
     {
         Time.timeScale = 0;
     }
 
-    public void ResumeTheGame()
+    public void ResumeGame()
     {
-        if (isDead)
+        if (isDead || isPausedForLevelUp)
         {
-            PauseTheGame();
+            PauseGame();
         }
         else
         {
