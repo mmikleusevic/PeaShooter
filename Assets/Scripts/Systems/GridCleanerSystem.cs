@@ -20,6 +20,10 @@ public partial class GridCleanerSystem : SystemBase
         base.OnStopRunning();
 
         Cleanup();
+
+#if UNITY_EDITOR
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+#endif
     }
 
     private void Cleanup()
