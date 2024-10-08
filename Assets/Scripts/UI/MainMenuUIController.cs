@@ -7,8 +7,6 @@ public class MainMenuUIController : MonoBehaviour
     private Button optionsButton;
     private Button quitButton;
 
-    [SerializeField] private OptionsUIController optionsUI;
-
     private void Start()
     {
         VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
@@ -36,7 +34,7 @@ public class MainMenuUIController : MonoBehaviour
 
     private void OptionsPressed()
     {
-        optionsUI.Show();
+        OptionsUIController.Instance.Show();
     }
 
     private void QuitPressed()

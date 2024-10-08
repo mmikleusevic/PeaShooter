@@ -8,6 +8,7 @@ public class PauseUIController : MonoBehaviour
     private Button pauseButton;
     private Button resumeButton;
     private Button restartButton;
+    private Button optionsButton;
     private Button mainMenuButton;
 
     private void Start()
@@ -18,11 +19,13 @@ public class PauseUIController : MonoBehaviour
         pauseButton = pauseElementUI.Q<Button>("pause");
         resumeButton = pauseUI.Q<Button>("resume");
         restartButton = pauseUI.Q<Button>("restart");
+        optionsButton = pauseUI.Q<Button>("options");
         mainMenuButton = pauseUI.Q<Button>("main-menu");
 
         if (pauseButton != null) pauseButton.clicked += OnPause;
         if (resumeButton != null) resumeButton.clicked += OnResume;
         if (restartButton != null) restartButton.clicked += OnRestart;
+        if (optionsButton != null) optionsButton.clicked += OnOptions;
         if (mainMenuButton != null) mainMenuButton.clicked += OnMainMenu;
     }
 
@@ -31,6 +34,7 @@ public class PauseUIController : MonoBehaviour
         if (pauseButton != null) pauseButton.clicked -= OnPause;
         if (resumeButton != null) resumeButton.clicked -= OnResume;
         if (restartButton != null) restartButton.clicked -= OnRestart;
+        if (optionsButton != null) optionsButton.clicked -= OnOptions;
         if (mainMenuButton != null) mainMenuButton.clicked -= OnMainMenu;
     }
 
@@ -54,6 +58,11 @@ public class PauseUIController : MonoBehaviour
     {
         HideAll();
         LevelManager.Instance.LoadGameScene();
+    }
+
+    private void OnOptions()
+    {
+        OptionsUIController.Instance.Show();
     }
 
     private void OnMainMenu()

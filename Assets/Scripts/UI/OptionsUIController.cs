@@ -3,6 +3,8 @@ using UnityEngine.UIElements;
 
 public class OptionsUIController : MonoBehaviour
 {
+    public static OptionsUIController Instance { get; private set; }
+
     private VisualElement optionsElement;
     private Toggle musicToggle;
     private Button closeButton;
@@ -10,17 +12,25 @@ public class OptionsUIController : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
         optionsElement = GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("optionsUI");
 
         musicToggle = optionsElement.Q<Toggle>("music");
         closeButton = optionsElement.Q<Button>("close");
         slider = optionsElement.Q<Slider>("musicVolume");
 
-        if (closeButton != null) closeButton.clicked += Hide;
-    }
-
-    private void Start()
-    {
         if (musicToggle != null)
         {
             musicToggle.value = SoundManager.Instance.GetIsMusicEnabled();
@@ -32,6 +42,8 @@ public class OptionsUIController : MonoBehaviour
             slider.value = SoundManager.Instance.GetMusicVolume();
             slider.RegisterValueChangedCallback(SetVolume);
         }
+
+        if (closeButton != null) closeButton.clicked += Hide;
     }
 
     private void OnDestroy()
