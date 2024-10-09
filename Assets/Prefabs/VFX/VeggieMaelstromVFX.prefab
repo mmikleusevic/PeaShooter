@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6790679445014208110}
   - component: {fileID: 6270897859278675432}
   m_Layer: 0
-  m_Name: VeggieMaelstrom
+  m_Name: VeggieMaelstromVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
