@@ -3,7 +3,7 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour
 {
     private const string MUSIC = "Music";
-    private const string VOLUME = "Volume";
+    private const string MUSIC_VOLUME = "MusicVolume";
     public static SoundManager Instance { get; private set; }
 
     [SerializeField] private AudioSource musicSource;
@@ -28,14 +28,14 @@ public class SoundManager : MonoBehaviour
         bool.TryParse(PlayerPrefs.GetString(MUSIC), out bool isMuted);
         musicSource.mute = isMuted;
 
-        float volume = PlayerPrefs.GetFloat(VOLUME);
+        float volume = PlayerPrefs.GetFloat(MUSIC_VOLUME);
         musicSource.volume = volume;
     }
 
     public void SavePlayerPrefs()
     {
         PlayerPrefs.SetString(MUSIC, musicSource.mute.ToString());
-        PlayerPrefs.SetFloat(VOLUME, musicSource.volume);
+        PlayerPrefs.SetFloat(MUSIC_VOLUME, musicSource.volume);
     }
 
     public void SetMusic(bool value)

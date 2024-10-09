@@ -7,8 +7,8 @@ public class OptionsUIController : MonoBehaviour
 
     private VisualElement optionsElement;
     private Toggle musicToggle;
+    private Slider volumeSlider;
     private Button closeButton;
-    private Slider slider;
 
     private void Awake()
     {
@@ -26,10 +26,9 @@ public class OptionsUIController : MonoBehaviour
     private void Start()
     {
         optionsElement = GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("optionsUI");
-
         musicToggle = optionsElement.Q<Toggle>("music");
+        volumeSlider = optionsElement.Q<Slider>("musicVolume");
         closeButton = optionsElement.Q<Button>("close");
-        slider = optionsElement.Q<Slider>("musicVolume");
 
         if (musicToggle != null)
         {
@@ -37,10 +36,10 @@ public class OptionsUIController : MonoBehaviour
             musicToggle.RegisterValueChangedCallback(ToggleMusic);
         }
 
-        if (slider != null)
+        if (volumeSlider != null)
         {
-            slider.value = SoundManager.Instance.GetMusicVolume();
-            slider.RegisterValueChangedCallback(SetVolume);
+            volumeSlider.value = SoundManager.Instance.GetMusicVolume();
+            volumeSlider.RegisterValueChangedCallback(SetVolume);
         }
 
         if (closeButton != null) closeButton.clicked += Hide;
@@ -49,7 +48,7 @@ public class OptionsUIController : MonoBehaviour
     private void OnDestroy()
     {
         if (musicToggle != null) musicToggle.UnregisterValueChangedCallback(ToggleMusic);
-        if (slider != null) slider.UnregisterValueChangedCallback(SetVolume);
+        if (volumeSlider != null) volumeSlider.UnregisterValueChangedCallback(SetVolume);
         if (closeButton != null) closeButton.clicked -= Hide;
     }
 
