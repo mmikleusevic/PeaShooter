@@ -5,7 +5,6 @@ public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
 
-    [SerializeField] private AbilityPickerRNG abilityPickerRNG;
     private PlayerHealthSystem playerHealthSystem;
     private PlayerExperienceSystem playerExperienceSystem;
     private bool isPausedForLevelUp = false;
@@ -26,7 +25,6 @@ public class GameStateManager : MonoBehaviour
 
         if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied += OnPlayerDied;
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
-        if (abilityPickerRNG != null) abilityPickerRNG.OnAbilityChosen += OnAbilityChosen;
 
         ResumeGame();
     }
@@ -35,7 +33,6 @@ public class GameStateManager : MonoBehaviour
     {
         if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied -= OnPlayerDied;
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp -= OnLevelUp;
-        if (abilityPickerRNG != null) abilityPickerRNG.OnAbilityChosen -= OnAbilityChosen;
     }
 
     private void OnPlayerDied()
@@ -52,7 +49,7 @@ public class GameStateManager : MonoBehaviour
         PauseGame();
     }
 
-    private void OnAbilityChosen()
+    public void OnAbilityChosen()
     {
         isPausedForLevelUp = false;
 

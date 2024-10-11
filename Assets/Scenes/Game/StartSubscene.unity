@@ -421,7 +421,7 @@ PrefabInstance:
       objectReference: {fileID: 3057557230959584855, guid: aab4e1b21e5fea644aad9a08d25b656c, type: 3}
     - target: {fileID: 2859643969635770922, guid: 29e9cc6b51082394da65d3a495d211f2, type: 3}
       propertyPath: m_Name
-      value: UIPrefabs
+      value: Prefabs
       objectReference: {fileID: 0}
     - target: {fileID: 6347798679416324171, guid: 29e9cc6b51082394da65d3a495d211f2, type: 3}
       propertyPath: m_LocalPosition.x

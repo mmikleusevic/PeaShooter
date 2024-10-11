@@ -4,13 +4,13 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
-[UpdateAfter(typeof(DisableAndPoolHealthBarSystem))]
-public partial struct DestroyEnemySystem : ISystem
+[UpdateAfter(typeof(RemoveParticlesSystem))]
+
+public partial struct DestroySystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<EnemyDeadComponent>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerAliveComponent>();
     }
@@ -21,12 +21,12 @@ public partial struct DestroyEnemySystem : ISystem
         EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        DestroyEnemyJob job = new DestroyEnemyJob
+        DestroyJob job = new DestroyJob
         {
-            ecb = ecb.AsParallelWriter()
+            ecb = ecb.AsParallelWriter(),
         };
 
-        JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = jobHandle;
+        JobHandle spawnHandle = job.ScheduleParallel(state.Dependency);
+        state.Dependency = spawnHandle;
     }
 }

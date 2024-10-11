@@ -102,6 +102,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
                 if (enemyHealthComponent.ValueRW.HitPoints == 0)
                 {
                     ecb.AddComponent(otherEntity, new EnemyDeadComponent());
+                    ecb.AddComponent(otherEntity, new DestroyComponent());
                 }
             }
         }

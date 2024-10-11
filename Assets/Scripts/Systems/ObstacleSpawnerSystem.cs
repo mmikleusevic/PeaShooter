@@ -38,7 +38,7 @@ public partial struct ObstacleSpawnerSystem : ISystem
         ObstacleSpawnJob job = new ObstacleSpawnJob
         {
             ecb = ecb,
-            grid = grid,
+            gridNodes = grid.gridNodes,
             seed = seed
         };
 

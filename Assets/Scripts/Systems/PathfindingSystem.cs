@@ -43,7 +43,7 @@ public partial struct PathfindingSystem : ISystem
             elapsedTime = (float)SystemAPI.Time.ElapsedTime,
             defaultMoveSpeed = 100f,
             playerPosition = playerPosition,
-            grid = grid,
+            gridNodes = grid.gridNodes,
             input = inputEntityQuery.GetSingleton<InputComponent>()
         };
 

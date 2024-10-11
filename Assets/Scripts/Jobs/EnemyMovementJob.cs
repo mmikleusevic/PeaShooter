@@ -8,9 +8,12 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct EnemyMovementJob : IJobEntity
 {
+    public EntityCommandBuffer.ParallelWriter ecb;
+
     [ReadOnly] public float deltaTime;
 
-    void Execute(ref EnemyComponent enemy, in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform, ref PhysicsVelocity velocity)
+    void Execute([ChunkIndexInQuery] int sortKey, ref EnemyComponent enemy, in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform,
+        ref PhysicsVelocity velocity, in Entity entity)
     {
         if (pathBuffer.Length == 0 || enemy.moveTimer < enemy.moveTimerTarget)
         {
@@ -30,7 +33,24 @@ public partial struct EnemyMovementJob : IJobEntity
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 
         velocity.Linear = direction * enemy.moveSpeed * deltaTime;
-        enemy.gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
+
+        int2 gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
+
+        if (!enemy.gridPosition.Equals(gridPosition))
+        {
+            int2 oldPosition = enemy.gridPosition;
+
+            ecb.AddComponent(sortKey, entity, new GridEnemyPositionUpdateComponent
+            {
+                entity = entity,
+                oldPosition = oldPosition,
+                position = gridPosition,
+                status = UpdateStatus.Move
+            });
+
+            enemy.gridPosition = gridPosition;
+        }
+
         enemy.position = transform.Position;
 
         if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f)

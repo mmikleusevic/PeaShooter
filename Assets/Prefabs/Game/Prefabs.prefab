@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6347798679416324171}
   - component: {fileID: 884590535726902007}
   m_Layer: 0
-  m_Name: UIPrefabs
+  m_Name: Prefabs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,3 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpBarPrefab: {fileID: 3057557230959584855, guid: aab4e1b21e5fea644aad9a08d25b656c, type: 3}
+  fireflyBoltsVFXPrefab: {fileID: 2642901123473026388, guid: 02203b025e513734a815e32aa5e51997, type: 3}
+  veggieMaelstromVFXPrefab: {fileID: 7498807033596197178, guid: d084e8dc94e917b4dac2e9821c4abbd3, type: 3}

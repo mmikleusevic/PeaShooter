@@ -13,16 +13,21 @@ public partial struct EnemyMovementSystem : ISystem
     {
         state.RequireForUpdate<PlayerAliveComponent>();
         state.RequireForUpdate<EnemyComponent>();
+        state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
         float deltaTime = SystemAPI.Time.DeltaTime;
 
         EnemyMovementJob job = new EnemyMovementJob
         {
-            deltaTime = deltaTime
+            deltaTime = deltaTime,
+            ecb = ecb.AsParallelWriter(),
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);

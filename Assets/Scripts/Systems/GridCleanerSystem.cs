@@ -1,4 +1,6 @@
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
@@ -35,6 +37,13 @@ public partial class GridCleanerSystem : SystemBase
             Dependency.Complete();
 
             gridComponent.gridNodes.Dispose();
+
+            foreach (KVPair<int2, NativeList<Entity>> enemyPosition in gridComponent.enemyPositions)
+            {
+                enemyPosition.Value.Dispose();
+            }
+
+            gridComponent.enemyPositions.Dispose();
 
             Entity entity = SystemAPI.GetSingletonEntity<GridComponent>();
 

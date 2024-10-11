@@ -6,8 +6,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-[UpdateAfter(typeof(GridSpawnerSystem))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
 public partial struct EnemySpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -21,16 +20,16 @@ public partial struct EnemySpawnerSystem : ISystem
 
         state.RequireForUpdate(gridEntityQuery);
         state.RequireForUpdate<EnemySpawnerComponent>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndInitializationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerAliveComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
+        GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
@@ -39,7 +38,7 @@ public partial struct EnemySpawnerSystem : ISystem
         {
             ecb = ecb.AsParallelWriter(),
             elapsedTime = SystemAPI.Time.ElapsedTime,
-            grid = grid,
+            gridNodes = gridComponent.gridNodes,
             seed = seed
         };
 

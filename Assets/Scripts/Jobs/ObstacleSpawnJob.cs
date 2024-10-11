@@ -9,11 +9,11 @@ using Random = Unity.Mathematics.Random;
 public partial struct ObstacleSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
-    public GridComponent grid;
+    public NativeHashMap<int2, byte> gridNodes;
 
     [ReadOnly] public uint seed;
 
-    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData, Entity entity)
+    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData, in Entity entity)
     {
         randomData.seed = new Random(seed);
 
@@ -27,7 +27,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
             {
                 newPosition = randomData.nextPosition;
             }
-            while (!IsValidPosition(newPosition, grid));
+            while (!IsValidPosition(newPosition));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
@@ -38,15 +38,15 @@ public partial struct ObstacleSpawnJob : IJobEntity
 
             ecb.AddComponent(spawnedEntity, new ObstacleComponent());
 
-            grid.gridNodes[newPosition] = 0;
+            gridNodes[newPosition] = 0;
         }
 
         ecb.DestroyEntity(entity);
     }
 
     [BurstCompile]
-    private bool IsValidPosition(int2 position, GridComponent grid)
+    private bool IsValidPosition(int2 position)
     {
-        return grid.gridNodes[position] == 1 && position.x != 0 && position.y != 0;
+        return gridNodes[position] == 1 && position.x != 0 && position.y != 0;
     }
 }

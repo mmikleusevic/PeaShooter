@@ -11,7 +11,7 @@ partial struct PathfindingJob : IJobEntity
     [ReadOnly] public float elapsedTime;
     [ReadOnly] public float defaultMoveSpeed;
     [ReadOnly] public int2 playerPosition;
-    [ReadOnly] public GridComponent grid;
+    [ReadOnly] public NativeHashMap<int2, byte> gridNodes;
     [ReadOnly] public InputComponent input;
 
     private static readonly int2[] Directions = new int2[]
@@ -33,7 +33,7 @@ partial struct PathfindingJob : IJobEntity
 
         int2 predictedPlayerPosition = playerPosition + (int2)math.round(input.move);
 
-        if (grid.IsValidPosition(predictedPlayerPosition) == 0)
+        if (IsValidPosition(predictedPlayerPosition) == 0)
         {
             predictedPlayerPosition = playerPosition;
         }
@@ -88,14 +88,14 @@ partial struct PathfindingJob : IJobEntity
                 {
                     int2 dirX = new int2(Directions[i].x, 0);
                     int2 dirY = new int2(0, Directions[i].y);
-                    if (grid.IsValidPosition(current.position + dirX) == 0 ||
-                        grid.IsValidPosition(current.position + dirY) == 0)
+                    if (IsValidPosition(current.position + dirX) == 0 ||
+                        IsValidPosition(current.position + dirY) == 0)
                         continue;
                 }
 
                 int2 neighborPos = current.position + Directions[i];
 
-                if (closedSet.Contains(neighborPos) || grid.IsValidPosition(neighborPos) == 0) continue;
+                if (closedSet.Contains(neighborPos) || IsValidPosition(neighborPos) == 0) continue;
 
                 int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
 
@@ -191,5 +191,13 @@ partial struct PathfindingJob : IJobEntity
         }
 
         result[0] = current;
+    }
+
+    [BurstCompile]
+    public byte IsValidPosition(int2 position)
+    {
+        if (!gridNodes.ContainsKey(position)) return 0;
+
+        return gridNodes[position];
     }
 }

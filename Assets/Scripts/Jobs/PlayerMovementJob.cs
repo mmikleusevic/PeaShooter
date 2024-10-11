@@ -9,7 +9,7 @@ using Unity.Transforms;
 public partial struct PlayerMovementJob : IJobEntity
 {
     [ReadOnly] public float deltaTime;
-    [ReadOnly] public GridComponent gridComponent;
+    [ReadOnly] public int2 size;
 
     private void Execute(ref PlayerComponent player, in InputComponent input, ref LocalTransform transform, ref PhysicsVelocity velocity)
     {
@@ -26,7 +26,7 @@ public partial struct PlayerMovementJob : IJobEntity
         }
 
         velocity.Linear = moveDirection * player.moveSpeed * deltaTime;
-        transform.Position = math.clamp(transform.Position, -gridComponent.size.x, gridComponent.size.x);
+        transform.Position = math.clamp(transform.Position, -size.x, size.x);
         player.position = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
     }
 }

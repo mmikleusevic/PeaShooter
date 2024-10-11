@@ -9,8 +9,8 @@ using Random = Unity.Mathematics.Random;
 public partial struct EnemySpawnJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
+    public NativeHashMap<int2, byte> gridNodes;
 
-    [ReadOnly] public GridComponent grid;
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public uint seed;
 
@@ -32,7 +32,7 @@ public partial struct EnemySpawnJob : IJobEntity
         {
             newPosition = randomData.nextPosition;
         }
-        while (grid.gridNodes[newPosition] == 0);
+        while (gridNodes[newPosition] == 0);
 
         float3 position = new float3(newPosition.x, 0, newPosition.y);
 

@@ -44,6 +44,12 @@ public partial class MaterialChangerSystem : SystemBase
 
                 ecb.AddComponent(entity, typeof(MaterialChangedComponent));
                 ecb.AddComponent(entity, typeof(ActiveForCollisionComponent));
+                ecb.AddComponent(entity, new GridEnemyPositionUpdateComponent
+                {
+                    entity = entity,
+                    position = enemyComponent.ValueRO.gridPosition,
+                    status = UpdateStatus.Add
+                });
                 ecb.SetComponent(materialEntity, materialMeshInfo);
             }
         }

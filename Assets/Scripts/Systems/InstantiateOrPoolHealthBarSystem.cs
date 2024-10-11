@@ -6,15 +6,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(EnemySpawnerSystem))]
+[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct InstantiateOrPoolHealthBarSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<HealthComponent>();
-        state.RequireForUpdate<UIPrefabs>();
+        state.RequireForUpdate<Prefabs>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerAliveComponent>();
     }
