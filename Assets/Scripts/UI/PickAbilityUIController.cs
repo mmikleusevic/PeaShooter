@@ -2,17 +2,26 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public class AbilityPickerRNG : MonoBehaviour
+public class PickAbilityUIController : MonoBehaviour
 {
+    [SerializeField] private AbilityPicker abilityPickerRNG;
+
+    private PlayerExperienceSystem playerExperienceSystem;
     private EntityQuery playerEntityQuery;
     private EntityQuery prefabsQuery;
     private EntityManager entityManager;
-    private PlayerExperienceSystem playerExperienceSystem;
 
     // TODO: Remove later
     private bool isExecuted = false;
 
-    private void Start()
+    private void Awake()
+    {
+        playerExperienceSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
+
+        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
+    }
+
+    void Start()
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -23,10 +32,6 @@ public class AbilityPickerRNG : MonoBehaviour
         prefabsQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithAll<Prefabs>()
             .Build(entityManager);
-
-        playerExperienceSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
-
-        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
     }
 
     private void Update()
@@ -43,6 +48,7 @@ public class AbilityPickerRNG : MonoBehaviour
 
     private void OnLevelUp()
     {
+        abilityPickerRNG.PickRandomAbilities();
         // Instantiate 3-4 Random UI Cards of abilities so that player can pick a new ability or upgrade his old one
         // Make it scriptable objects probably with data to use for cards
         // After he picks invoke OnAbilityChosen to resume the game
