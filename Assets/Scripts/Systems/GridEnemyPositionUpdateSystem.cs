@@ -17,7 +17,7 @@ public partial struct GridEnemyPositionUpdateSystem : ISystem
             .Build(ref state);
 
         state.RequireForUpdate<BeginVariableRateSimulationEntityCommandBufferSystem.Singleton>();
-        state.RequireForUpdate(gridEntityQuery);
+        state.RequireForUpdate(gridEntityQuery);       
     }
 
     [BurstCompile]
