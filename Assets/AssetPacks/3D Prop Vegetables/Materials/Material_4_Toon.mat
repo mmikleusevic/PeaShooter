@@ -26,8 +26,8 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
-  m_LightmapFlags: 2
-  m_EnableInstancingVariants: 1
+  m_LightmapFlags: 6
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -116,7 +116,6 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _Outline_Thickness: 0.84
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0

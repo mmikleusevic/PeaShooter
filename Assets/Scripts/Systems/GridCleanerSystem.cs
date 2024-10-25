@@ -17,7 +17,7 @@ public partial class GridCleanerSystem : SystemBase
 
     protected override void OnUpdate() { }
 
-    protected override void OnStopRunning()
+    protected override void OnDestroy()
     {
         base.OnStopRunning();
 
@@ -30,9 +30,7 @@ public partial class GridCleanerSystem : SystemBase
 
     private void Cleanup()
     {
-        if (!SystemAPI.TryGetSingleton(out GridComponent gridComponent)) return;
-
-        if (gridComponent.gridNodes.IsCreated)
+        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent) && gridComponent.gridNodes.IsCreated)
         {
             Dependency.Complete();
 

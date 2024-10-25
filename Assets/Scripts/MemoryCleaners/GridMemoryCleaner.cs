@@ -19,9 +19,7 @@ public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
 
     public void Cleanup()
     {
-        if (gridEntityQuery.CalculateEntityCount() == 0) return;
-
-        if (gridEntityQuery.HasSingleton<GridComponent>())
+        if (gridEntityQuery.CalculateEntityCount() != 0 && gridEntityQuery.HasSingleton<GridComponent>())
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 

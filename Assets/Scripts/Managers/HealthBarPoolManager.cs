@@ -31,7 +31,7 @@ public class HealthBarPoolManager : MonoBehaviour
 
     private GameObject InstantiateObject()
     {
-        if (hpBarPrefab == null)
+        if (!hpBarPrefab)
         {
             hpBarPrefab = hpBarEntityQuery.GetSingleton<Prefabs>().hpBar;
         }

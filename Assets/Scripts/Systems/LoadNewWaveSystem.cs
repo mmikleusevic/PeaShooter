@@ -45,7 +45,7 @@ public partial class LoadNewWaveSystem : SystemBase
 
         timer += SystemAPI.Time.DeltaTime;
 
-        if (timer < loadNewWaveComponent.loadTimerTarget || LevelManager.Instance == null) return;
+        if (timer < loadNewWaveComponent.loadTimerTarget || !LevelManager.Instance) return;
 
         LevelManager.Instance.LoadNewSubScene();
     }
