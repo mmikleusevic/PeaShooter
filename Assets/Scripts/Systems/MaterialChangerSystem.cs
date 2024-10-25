@@ -27,20 +27,17 @@ public partial class MaterialChangerSystem : SystemBase
         BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-        foreach (var (changer, linkedEntityGroup, enemyComponent, entity) in SystemAPI.Query<MaterialChangerComponent, DynamicBuffer<LinkedEntityGroup>, RefRO<EnemyComponent>>()
+        foreach (var (changer, materialMeshInfo, enemyComponent, entity) in SystemAPI.Query<MaterialChangerComponent, RefRW<MaterialMeshInfo>, RefRO<EnemyComponent>>()
             .WithEntityAccess()
             .WithNone<MaterialChangedComponent>())
         {
             if (enemyComponent.ValueRO.moveTimer >= enemyComponent.ValueRO.moveTimerTarget)
             {
-                Entity materialEntity = linkedEntityGroup[1].Value;
-                MaterialMeshInfo materialMeshInfo = SystemAPI.GetComponent<MaterialMeshInfo>(materialEntity);
-
                 Material material = changer.material;
 
                 RegisterMaterial(changer.material);
 
-                materialMeshInfo.MaterialID = materialMapping[material];
+                materialMeshInfo.ValueRW.MaterialID = materialMapping[material];
 
                 ecb.AddComponent(entity, typeof(MaterialChangedComponent));
                 ecb.AddComponent(entity, typeof(ActiveForCollisionComponent));
@@ -50,7 +47,6 @@ public partial class MaterialChangerSystem : SystemBase
                     position = enemyComponent.ValueRO.gridPosition,
                     status = UpdateStatus.Add
                 });
-                ecb.SetComponent(materialEntity, materialMeshInfo);
             }
         }
     }

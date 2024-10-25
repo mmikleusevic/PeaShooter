@@ -64,11 +64,13 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: b8acf905ee3fe4044b068279e99089fb, type: 2}
-  - {fileID: 2100000, guid: 3d74406b12637b2408fa1ea0a1724c9a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -336,5 +338,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1538a77897d614ca6493f0bc054b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldown: 0
   value: 0

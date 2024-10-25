@@ -108,6 +108,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AvocadoBossEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 7366305124181314534, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

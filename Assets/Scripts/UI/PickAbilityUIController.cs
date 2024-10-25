@@ -21,7 +21,7 @@ public class PickAbilityUIController : MonoBehaviour
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
     }
 
-    void Start()
+    private void Start()
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
