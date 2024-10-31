@@ -4,8 +4,8 @@ using Unity.Mathematics;
 public struct PlayerSpawnerComponent : IComponentData
 {
     public Entity prefab;
+    public Entity startingAbilityPrefab;
     public float3 position;
     public quaternion rotation;
-    public Entity projectilePrefab;
     public float scale;
 }

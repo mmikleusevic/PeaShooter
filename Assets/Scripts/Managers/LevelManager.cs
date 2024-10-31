@@ -8,15 +8,13 @@ using static Unity.Scenes.SceneSystem;
 
 public class LevelManager : MonoBehaviour
 {
-    public static LevelManager Instance { get; private set; }
-    public event Action<int> OnSubSceneLoaded;
-
     [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
+    private readonly List<Entity> currentSubsceneEntities = new();
 
     private IMemoryCleaner[] memoryCleaners;
-    private List<Entity> currentSubsceneEntities = new List<Entity>();
 
     private int subsceneIndex;
+    public static LevelManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -35,6 +33,8 @@ public class LevelManager : MonoBehaviour
     {
         memoryCleaners = GetComponentsInChildren<IMemoryCleaner>();
     }
+
+    public event Action<int> OnSubSceneLoaded;
 
     public void LoadGameScene()
     {
@@ -70,9 +70,8 @@ public class LevelManager : MonoBehaviour
         if (currentSubsceneEntities.Count > 0)
         {
             foreach (Entity currentSubsceneEntity in currentSubsceneEntities)
-            {
-                UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity, UnloadParameters.DestroyMetaEntities);
-            }
+                UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity,
+                    UnloadParameters.DestroyMetaEntities);
 
             currentSubsceneEntities.Clear();
         }
@@ -82,7 +81,8 @@ public class LevelManager : MonoBehaviour
     {
         if (subsceneIndex >= entitySubsceneReferences.Length) return;
 
-        currentSubsceneEntities.Add(LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged, entitySubsceneReferences[subsceneIndex]));
+        currentSubsceneEntities.Add(LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged,
+            entitySubsceneReferences[subsceneIndex]));
 
         OnSubSceneLoaded?.Invoke(subsceneIndex);
     }
@@ -91,9 +91,6 @@ public class LevelManager : MonoBehaviour
     {
         World.DefaultGameObjectInjectionWorld.EntityManager.CompleteAllTrackedJobs();
 
-        foreach (IMemoryCleaner cleaner in memoryCleaners)
-        {
-            cleaner.Cleanup();
-        }
+        foreach (IMemoryCleaner cleaner in memoryCleaners) cleaner.Cleanup();
     }
 }

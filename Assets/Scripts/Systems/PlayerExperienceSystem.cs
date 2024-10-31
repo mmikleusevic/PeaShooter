@@ -7,11 +7,11 @@ using Unity.Mathematics;
 [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
 public partial class PlayerExperienceSystem : SystemBase
 {
-    public event Action<uint, uint> OnGainedExp;
-    public event Action OnLevelUp;
+    private EntityQuery levelsEntityQuery;
 
     private EntityQuery playerExperienceEntityQuery;
-    private EntityQuery levelsEntityQuery;
+    public event Action<uint, uint> OnGainedExp;
+    public event Action OnLevelUp;
 
     protected override void OnCreate()
     {
@@ -33,14 +33,18 @@ public partial class PlayerExperienceSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
         LevelsComponent levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>();
-        RefRW<PlayerExperienceComponent> playerExperience = playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
+        RefRW<PlayerExperienceComponent> playerExperience =
+            playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
 
-        foreach (var (experienceComponent, enemyDeadComponent, entity) in SystemAPI.Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
-            .WithEntityAccess())
+        foreach ((RefRW<EnemyExperienceWorthComponent> experienceComponent,
+                     RefRO<EnemyDeadComponent> enemyDeadComponent, Entity entity) in SystemAPI
+                     .Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
+                     .WithEntityAccess())
         {
             uint maxEXP = levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
             uint currentEXP = playerExperience.ValueRO.points + experienceComponent.ValueRO.value;

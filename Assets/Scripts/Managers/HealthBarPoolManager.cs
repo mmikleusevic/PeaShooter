@@ -5,12 +5,12 @@ using UnityEngine.Pool;
 
 public class HealthBarPoolManager : MonoBehaviour
 {
-    public static HealthBarPoolManager Instance { get; private set; }
+    private EntityManager entityManager;
 
     private ObjectPool<GameObject> healthBarPool;
-    private GameObject hpBarPrefab;
-    private EntityManager entityManager;
     private EntityQuery hpBarEntityQuery;
+    private GameObject hpBarPrefab;
+    public static HealthBarPoolManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -22,19 +22,16 @@ public class HealthBarPoolManager : MonoBehaviour
             .Build(entityManager);
 
         healthBarPool = new ObjectPool<GameObject>(
-            createFunc: () => InstantiateObject(),
-            actionOnGet: bar => bar.SetActive(true),
-            actionOnRelease: bar => bar.SetActive(false),
-            actionOnDestroy: Destroy
+            () => InstantiateObject(),
+            bar => bar.SetActive(true),
+            bar => bar.SetActive(false),
+            Destroy
         );
     }
 
     private GameObject InstantiateObject()
     {
-        if (!hpBarPrefab)
-        {
-            hpBarPrefab = hpBarEntityQuery.GetSingleton<Prefabs>().hpBar;
-        }
+        if (!hpBarPrefab) hpBarPrefab = hpBarEntityQuery.GetSingleton<Prefabs>().hpBar;
 
         return Instantiate(hpBarPrefab, transform);
     }

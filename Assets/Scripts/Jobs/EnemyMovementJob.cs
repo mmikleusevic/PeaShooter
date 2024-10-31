@@ -12,7 +12,8 @@ public partial struct EnemyMovementJob : IJobEntity
 
     [ReadOnly] public float deltaTime;
 
-    void Execute([ChunkIndexInQuery] int sortKey, ref EnemyComponent enemy, in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform,
+    private void Execute([ChunkIndexInQuery] int sortKey, ref EnemyComponent enemy,
+        in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform,
         ref PhysicsVelocity velocity, in Entity entity)
     {
         if (pathBuffer.Length == 0 || enemy.moveTimer < enemy.moveTimerTarget)
@@ -53,9 +54,6 @@ public partial struct EnemyMovementJob : IJobEntity
 
         enemy.position = transform.Position;
 
-        if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f)
-        {
-            enemy.currentPathIndex = nextPathIndex;
-        }
+        if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f) enemy.currentPathIndex = nextPathIndex;
     }
 }

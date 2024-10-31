@@ -8,43 +8,12 @@ namespace Unity.Physics.Editor
 {
     [CustomEditor(typeof(PhysicsBodyAuthoring))]
     [CanEditMultipleObjects]
-    class PhysicsBodyAuthoringEditor : BaseEditor
+    internal class PhysicsBodyAuthoringEditor : BaseEditor
     {
-        static class Content
-        {
-            public static readonly GUIContent MassLabel = EditorGUIUtility.TrTextContent("Mass");
-            public static readonly GUIContent CenterOfMassLabel = EditorGUIUtility.TrTextContent(
-                "Center of Mass", "Center of mass in the space of this body's transform."
-            );
-            public static readonly GUIContent InertiaTensorLabel = EditorGUIUtility.TrTextContent(
-                "Inertia Tensor", "Resistance to angular motion about each axis of rotation."
-            );
-            public static readonly GUIContent OrientationLabel = EditorGUIUtility.TrTextContent(
-                "Orientation", "Orientation of the body's inertia tensor in the space of its transform."
-            );
-            public static readonly GUIContent AdvancedLabel = EditorGUIUtility.TrTextContent(
-                "Advanced", "Advanced options"
-            );
-        }
+        private readonly List<string> m_StatusMessages = new(8);
+        private MessageType m_Status;
 
-#pragma warning disable 649
-        [AutoPopulate] SerializedProperty m_MotionType;
-        [AutoPopulate] SerializedProperty m_Smoothing;
-        [AutoPopulate] SerializedProperty m_Mass;
-        [AutoPopulate] SerializedProperty m_GravityFactor;
-        [AutoPopulate] SerializedProperty m_LinearDamping;
-        [AutoPopulate] SerializedProperty m_AngularDamping;
-        [AutoPopulate] SerializedProperty m_InitialLinearVelocity;
-        [AutoPopulate] SerializedProperty m_InitialAngularVelocity;
-        [AutoPopulate] SerializedProperty m_OverrideDefaultMassDistribution;
-        [AutoPopulate] SerializedProperty m_CenterOfMass;
-        [AutoPopulate] SerializedProperty m_Orientation;
-        [AutoPopulate] SerializedProperty m_InertiaTensor;
-        [AutoPopulate] SerializedProperty m_WorldIndex;
-        [AutoPopulate] SerializedProperty m_CustomTags;
-#pragma warning restore 649
-
-        bool showAdvanced;
+        private bool showAdvanced;
 
         public override void OnInspectorGUI()
         {
@@ -57,14 +26,16 @@ namespace Unity.Physics.Editor
             if (m_MotionType.intValue != (int)BodyMotionType.Static)
                 EditorGUILayout.PropertyField(m_Smoothing);
 
-            var dynamic = m_MotionType.intValue == (int)BodyMotionType.Dynamic;
+            bool dynamic = m_MotionType.intValue == (int)BodyMotionType.Dynamic;
 
             if (dynamic)
+            {
                 EditorGUILayout.PropertyField(m_Mass, Content.MassLabel);
+            }
             else
             {
                 EditorGUI.BeginDisabledGroup(true);
-                var position = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
+                Rect position = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
                 EditorGUI.BeginProperty(position, Content.MassLabel, m_Mass);
                 EditorGUI.FloatField(position, Content.MassLabel, float.PositiveInfinity);
                 EditorGUI.EndProperty();
@@ -84,9 +55,7 @@ namespace Unity.Physics.Editor
             }
 
             if (m_MotionType.intValue == (int)BodyMotionType.Dynamic)
-            {
                 EditorGUILayout.PropertyField(m_GravityFactor, true);
-            }
 
             showAdvanced = EditorGUILayout.Foldout(showAdvanced, Content.AdvancedLabel);
             if (showAdvanced)
@@ -110,7 +79,7 @@ namespace Unity.Physics.Editor
                         else
                         {
                             EditorGUI.BeginDisabledGroup(true);
-                            var position =
+                            Rect position =
                                 EditorGUILayout.GetControlRect(true, EditorGUI.GetPropertyHeight(m_InertiaTensor));
                             EditorGUI.BeginProperty(position, Content.InertiaTensorLabel, m_InertiaTensor);
                             EditorGUI.Vector3Field(position, Content.InertiaTensorLabel,
@@ -124,6 +93,7 @@ namespace Unity.Physics.Editor
                         --EditorGUI.indentLevel;
                     }
                 }
+
                 EditorGUILayout.PropertyField(m_CustomTags);
                 --EditorGUI.indentLevel;
             }
@@ -134,15 +104,13 @@ namespace Unity.Physics.Editor
             DisplayStatusMessages();
         }
 
-        MessageType m_Status;
-        List<string> m_StatusMessages = new List<string>(8);
-
-        void DisplayStatusMessages()
+        private void DisplayStatusMessages()
         {
             m_Status = MessageType.None;
             m_StatusMessages.Clear();
 
-            var hierarchyStatus = StatusMessageUtility.GetHierarchyStatusMessage(targets, out var hierarchyStatusMessage);
+            MessageType hierarchyStatus =
+                StatusMessageUtility.GetHierarchyStatusMessage(targets, out string hierarchyStatusMessage);
             if (!string.IsNullOrEmpty(hierarchyStatusMessage))
             {
                 m_StatusMessages.Add(hierarchyStatusMessage);
@@ -152,5 +120,43 @@ namespace Unity.Physics.Editor
             if (m_StatusMessages.Count > 0)
                 EditorGUILayout.HelpBox(string.Join("\n\n", m_StatusMessages), m_Status);
         }
+
+        private static class Content
+        {
+            public static readonly GUIContent MassLabel = EditorGUIUtility.TrTextContent("Mass");
+
+            public static readonly GUIContent CenterOfMassLabel = EditorGUIUtility.TrTextContent(
+                "Center of Mass", "Center of mass in the space of this body's transform."
+            );
+
+            public static readonly GUIContent InertiaTensorLabel = EditorGUIUtility.TrTextContent(
+                "Inertia Tensor", "Resistance to angular motion about each axis of rotation."
+            );
+
+            public static readonly GUIContent OrientationLabel = EditorGUIUtility.TrTextContent(
+                "Orientation", "Orientation of the body's inertia tensor in the space of its transform."
+            );
+
+            public static readonly GUIContent AdvancedLabel = EditorGUIUtility.TrTextContent(
+                "Advanced", "Advanced options"
+            );
+        }
+
+#pragma warning disable 649
+        [AutoPopulate] private SerializedProperty m_MotionType;
+        [AutoPopulate] private SerializedProperty m_Smoothing;
+        [AutoPopulate] private SerializedProperty m_Mass;
+        [AutoPopulate] private SerializedProperty m_GravityFactor;
+        [AutoPopulate] private SerializedProperty m_LinearDamping;
+        [AutoPopulate] private SerializedProperty m_AngularDamping;
+        [AutoPopulate] private SerializedProperty m_InitialLinearVelocity;
+        [AutoPopulate] private SerializedProperty m_InitialAngularVelocity;
+        [AutoPopulate] private SerializedProperty m_OverrideDefaultMassDistribution;
+        [AutoPopulate] private SerializedProperty m_CenterOfMass;
+        [AutoPopulate] private SerializedProperty m_Orientation;
+        [AutoPopulate] private SerializedProperty m_InertiaTensor;
+        [AutoPopulate] private SerializedProperty m_WorldIndex;
+        [AutoPopulate] private SerializedProperty m_CustomTags;
+#pragma warning restore 649
     }
 }

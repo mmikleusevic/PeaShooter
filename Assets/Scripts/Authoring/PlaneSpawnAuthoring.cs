@@ -17,7 +17,7 @@ public class PlaneSpawnerAuthoring : MonoBehaviour
             {
                 prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
                 position = authoring.prefab.transform.position,
-                rotation = authoring.prefab.transform.rotation,
+                rotation = authoring.prefab.transform.rotation
             });
         }
     }

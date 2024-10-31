@@ -19,7 +19,8 @@ public partial struct EnemyMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         float deltaTime = SystemAPI.Time.DeltaTime;
@@ -27,7 +28,7 @@ public partial struct EnemyMovementSystem : ISystem
         EnemyMovementJob job = new EnemyMovementJob
         {
             deltaTime = deltaTime,
-            ecb = ecb.AsParallelWriter(),
+            ecb = ecb.AsParallelWriter()
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);

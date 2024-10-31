@@ -6,18 +6,20 @@ using UnityEditor;
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
 public partial class GridCleanerSystem : SystemBase
 {
-    protected override void OnCreate()
+    protected override void OnStartRunning()
     {
-        base.OnCreate();
+        base.OnStartRunning();
 
 #if UNITY_EDITOR
         EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 #endif
     }
 
-    protected override void OnUpdate() { }
+    protected override void OnUpdate()
+    {
+    }
 
-    protected override void OnDestroy()
+    protected override void OnStopRunning()
     {
         base.OnStopRunning();
 
@@ -37,9 +39,7 @@ public partial class GridCleanerSystem : SystemBase
             gridComponent.gridNodes.Dispose();
 
             foreach (KVPair<int2, NativeList<Entity>> enemyPosition in gridComponent.enemyPositions)
-            {
                 enemyPosition.Value.Dispose();
-            }
 
             gridComponent.enemyPositions.Dispose();
 
@@ -52,10 +52,7 @@ public partial class GridCleanerSystem : SystemBase
 #if UNITY_EDITOR
     private void OnPlayModeStateChanged(PlayModeStateChange stateChange)
     {
-        if (stateChange == PlayModeStateChange.ExitingPlayMode)
-        {
-            Cleanup();
-        }
+        if (stateChange == PlayModeStateChange.ExitingPlayMode) Cleanup();
     }
 #endif
 }

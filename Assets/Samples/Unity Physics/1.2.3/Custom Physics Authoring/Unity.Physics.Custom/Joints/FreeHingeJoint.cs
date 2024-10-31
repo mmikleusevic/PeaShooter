@@ -6,8 +6,7 @@ namespace Unity.Physics.Authoring
     public class FreeHingeJoint : BallAndSocketJoint
     {
         // Editor only settings
-        [HideInInspector]
-        public bool EditAxes;
+        [HideInInspector] public bool EditAxes;
 
         public float3 HingeAxisLocal;
         public float3 HingeAxisInConnectedEntity;
@@ -23,23 +22,33 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class FreeHingeJointBaker : JointBaker<FreeHingeJoint>
+    internal class FreeHingeJointBaker : JointBaker<FreeHingeJoint>
     {
         public override void Bake(FreeHingeJoint authoring)
         {
             authoring.UpdateAuto();
 
-            Math.CalculatePerpendicularNormalized(authoring.HingeAxisLocal, out var perpendicularLocal, out _);
-            Math.CalculatePerpendicularNormalized(authoring.HingeAxisInConnectedEntity, out var perpendicularConnected, out _);
+            Math.CalculatePerpendicularNormalized(authoring.HingeAxisLocal, out float3 perpendicularLocal, out _);
+            Math.CalculatePerpendicularNormalized(authoring.HingeAxisInConnectedEntity,
+                out float3 perpendicularConnected,
+                out _);
 
-            var physicsJoint = PhysicsJoint.CreateHinge(
-                new BodyFrame { Axis = authoring.HingeAxisLocal, Position = authoring.PositionLocal, PerpendicularAxis = perpendicularLocal },
-                new BodyFrame { Axis = authoring.HingeAxisInConnectedEntity, Position = authoring.PositionInConnectedEntity, PerpendicularAxis = perpendicularConnected }
+            PhysicsJoint physicsJoint = PhysicsJoint.CreateHinge(
+                new BodyFrame
+                {
+                    Axis = authoring.HingeAxisLocal, Position = authoring.PositionLocal,
+                    PerpendicularAxis = perpendicularLocal
+                },
+                new BodyFrame
+                {
+                    Axis = authoring.HingeAxisInConnectedEntity, Position = authoring.PositionInConnectedEntity,
+                    PerpendicularAxis = perpendicularConnected
+                }
             );
 
             physicsJoint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntity(worldIndex, constraintBodyPair, physicsJoint);

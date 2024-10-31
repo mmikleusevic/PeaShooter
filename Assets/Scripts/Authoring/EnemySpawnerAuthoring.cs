@@ -5,7 +5,7 @@ public class EnemySpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
     [SerializeField] private float spawnRate;
-    [SerializeField][Range(100, 500)] private float speed;
+    [SerializeField] [Range(100, 500)] private float speed;
     [SerializeField] private float enemyMoveTimerTarget;
     [SerializeField] private float destroySpawnerTimerTarget;
 

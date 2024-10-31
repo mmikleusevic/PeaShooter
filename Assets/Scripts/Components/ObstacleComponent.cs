@@ -1,3 +1,5 @@
 using Unity.Entities;
 
-public struct ObstacleComponent : IComponentData { }
+public struct ObstacleComponent : IComponentData
+{
+}

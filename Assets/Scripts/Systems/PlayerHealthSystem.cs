@@ -18,9 +18,9 @@ public partial class PlayerHealthSystem : SystemBase
 
     protected override void OnUpdate()
     {
-        foreach (var playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
-            .WithChangeFilter<HealthComponent>()
-            .WithAll<PlayerAliveComponent>())
+        foreach (RefRO<HealthComponent> playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
+                     .WithChangeFilter<HealthComponent>()
+                     .WithAll<PlayerAliveComponent>())
         {
             OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
 

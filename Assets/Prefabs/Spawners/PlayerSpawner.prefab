@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 4514804550613245317, guid: 86295daaa759ca448939df60ba3ec992, type: 3}
+  startingAbilityPrefab: {fileID: 5983440456877086692, guid: ec3ece16654543e44a9a35f648e2a086, type: 3}

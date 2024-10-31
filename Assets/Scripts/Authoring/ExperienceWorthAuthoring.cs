@@ -13,7 +13,7 @@ public class ExperienceWorthAuthoring : MonoBehaviour
 
             AddComponent(entity, new EnemyExperienceWorthComponent
             {
-                value = authoring.value,
+                value = authoring.value
             });
         }
     }

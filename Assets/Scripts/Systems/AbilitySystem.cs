@@ -38,29 +38,27 @@ public partial struct AbilitySystem : ISystem
     {
         LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         NativeArray<Entity> projectileEntities = projectileEntityQuery.ToEntityArray(Allocator.Temp);
         Entity projectileEntity = Entity.Null;
 
-        if (projectileEntities.Length > 0)
-        {
-            projectileEntity = projectileEntities[0];
-        }
+        if (projectileEntities.Length > 0) projectileEntity = projectileEntities[0];
 
         projectileEntities.Dispose();
 
         NativeArray<Entity> enemyEntities = enemyEntityQuery.ToEntityArray(Allocator.TempJob);
 
-        AbilitySystemJob job = new AbilitySystemJob
+        AbilityJob job = new AbilityJob
         {
             ecb = ecb.AsParallelWriter(),
             enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
             enemyEntities = enemyEntities,
             projectileEntity = projectileEntity,
             playerTransform = playerTransform,
-            deltaTime = SystemAPI.Time.DeltaTime,
+            deltaTime = SystemAPI.Time.DeltaTime
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);

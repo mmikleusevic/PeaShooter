@@ -3,12 +3,12 @@ using UnityEngine.UIElements;
 
 public class OptionsUIController : MonoBehaviour
 {
-    public static OptionsUIController Instance { get; private set; }
+    private Button closeButton;
+    private Toggle musicToggle;
 
     private VisualElement optionsElement;
-    private Toggle musicToggle;
     private Slider volumeSlider;
-    private Button closeButton;
+    public static OptionsUIController Instance { get; private set; }
 
     private void Awake()
     {

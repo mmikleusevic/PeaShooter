@@ -10,64 +10,69 @@ using UnityEngine;
 namespace Unity.Physics.Authoring
 {
     // put static UnityObject buffers in separate utility class so other methods can Burst compile
-    static class PhysicsShapeExtensions_NonBursted
+    internal static class PhysicsShapeExtensions_NonBursted
     {
-        internal static readonly List<PhysicsBodyAuthoring> s_PhysicsBodiesBuffer = new List<PhysicsBodyAuthoring>(16);
-        internal static readonly List<PhysicsShapeAuthoring> s_ShapesBuffer = new List<PhysicsShapeAuthoring>(16);
-        internal static readonly List<Rigidbody> s_RigidbodiesBuffer = new List<Rigidbody>(16);
-        internal static readonly List<UnityEngine.Collider> s_CollidersBuffer = new List<UnityEngine.Collider>(16);
+        internal static readonly List<PhysicsBodyAuthoring> s_PhysicsBodiesBuffer = new(16);
+        internal static readonly List<PhysicsShapeAuthoring> s_ShapesBuffer = new(16);
+        internal static readonly List<Rigidbody> s_RigidbodiesBuffer = new(16);
+        internal static readonly List<UnityEngine.Collider> s_CollidersBuffer = new(16);
     }
 
     public static partial class PhysicsShapeExtensions
     {
-        // used for de-skewing basis vectors; default priority assumes primary axis is z, secondary axis is y
-        public static readonly int3 k_DefaultAxisPriority = new int3(2, 1, 0);
-
         // avoids drift in axes we're not actually changing
         public const float kMinimumChange = HashableShapeInputs.k_DefaultLinearPrecision;
 
-        static readonly int[] k_NextAxis = { 1, 2, 0 };
-        static readonly int[] k_PrevAxis = { 2, 0, 1 };
+        private const float k_HashFloatTolerance = 0.01f;
+
+        // used for de-skewing basis vectors; default priority assumes primary axis is z, secondary axis is y
+        public static readonly int3 k_DefaultAxisPriority = new(2, 1, 0);
+
+        private static readonly int[] k_NextAxis = { 1, 2, 0 };
+        private static readonly int[] k_PrevAxis = { 2, 0, 1 };
 
         // matrix to transform point from shape's local basis into world space
         public static float4x4 GetBasisToWorldMatrix(
             float4x4 localToWorld, float3 center, quaternion orientation, float3 size
-        ) =>
-            math.mul(localToWorld, float4x4.TRS(center, orientation, size));
-
-        static float4 DeskewSecondaryAxis(float4 primaryAxis, float4 secondaryAxis)
+        )
         {
-            var n0 = math.normalizesafe(primaryAxis);
-            var dot = math.dot(secondaryAxis, n0);
+            return math.mul(localToWorld, float4x4.TRS(center, orientation, size));
+        }
+
+        private static float4 DeskewSecondaryAxis(float4 primaryAxis, float4 secondaryAxis)
+        {
+            float4 n0 = math.normalizesafe(primaryAxis);
+            float dot = math.dot(secondaryAxis, n0);
             return secondaryAxis - n0 * dot;
         }
 
         // priority is determined by length of each size dimension in the shape's basis after applying localToWorld transformation
         public static int3 GetBasisAxisPriority(float4x4 basisToWorld)
         {
-            var basisAxisLengths = basisToWorld.DecomposeScale();
-            var max = math.cmax(basisAxisLengths);
-            var min = math.cmin(basisAxisLengths);
+            float3 basisAxisLengths = basisToWorld.DecomposeScale();
+            float max = math.cmax(basisAxisLengths);
+            float min = math.cmin(basisAxisLengths);
             if (max == min)
                 return k_DefaultAxisPriority;
 
-            var imax = max == basisAxisLengths.x ? 0 : max == basisAxisLengths.y ? 1 : 2;
+            int imax = max == basisAxisLengths.x ? 0 : max == basisAxisLengths.y ? 1 : 2;
 
             basisToWorld[k_NextAxis[imax]] = DeskewSecondaryAxis(basisToWorld[imax], basisToWorld[k_NextAxis[imax]]);
             basisToWorld[k_PrevAxis[imax]] = DeskewSecondaryAxis(basisToWorld[imax], basisToWorld[k_PrevAxis[imax]]);
 
             basisAxisLengths = basisToWorld.DecomposeScale();
             min = math.cmin(basisAxisLengths);
-            var imin = min == basisAxisLengths.x ? 0 : min == basisAxisLengths.y ? 1 : 2;
+            int imin = min == basisAxisLengths.x ? 0 : min == basisAxisLengths.y ? 1 : 2;
             if (imin == imax)
                 imin = k_NextAxis[imax];
-            var imid = k_NextAxis[imax] == imin ? k_PrevAxis[imax] : k_NextAxis[imax];
+            int imid = k_NextAxis[imax] == imin ? k_PrevAxis[imax] : k_NextAxis[imax];
 
             return new int3(imax, imid, imin);
         }
 
-        [Conditional(CompilationSymbols.CollectionsChecksSymbol), Conditional(CompilationSymbols.DebugChecksSymbol)]
-        static void CheckBasisPriorityAndThrow(int3 basisPriority)
+        [Conditional(CompilationSymbols.CollectionsChecksSymbol)]
+        [Conditional(CompilationSymbols.DebugChecksSymbol)]
+        private static void CheckBasisPriorityAndThrow(int3 basisPriority)
         {
             if (
                 basisPriority.x == basisPriority.y
@@ -79,12 +84,13 @@ namespace Unity.Physics.Authoring
 
         // matrix to transform point on a primitive from bake space into space of the shape
         internal static float4x4 GetPrimitiveBakeToShapeMatrix(
-            float4x4 localToWorld, float4x4 shapeToWorld, ref float3 center, ref EulerAngles orientation, float3 scale, int3 basisPriority, bool bakeUniformScale = true
+            float4x4 localToWorld, float4x4 shapeToWorld, ref float3 center, ref EulerAngles orientation, float3 scale,
+            int3 basisPriority, bool bakeUniformScale = true
         )
         {
             CheckBasisPriorityAndThrow(basisPriority);
 
-            var localToBasis = float4x4.TRS(center, orientation, scale);
+            float4x4 localToBasis = float4x4.TRS(center, orientation, scale);
             // correct for imprecision in cases of no scale to prevent e.g., convex radius from being altered
             if (scale.Equals(new float3(1f)))
             {
@@ -97,13 +103,13 @@ namespace Unity.Physics.Authoring
 
             if (localToWorld.HasNonUniformScale() || localToWorld.HasShear())
             {
-                var localToBake = math.mul(localToWorld, localToBasis);
+                float4x4 localToBake = math.mul(localToWorld, localToBasis);
                 // deskew second longest axis with respect to longest axis
                 localToBake[basisPriority[1]] =
                     DeskewSecondaryAxis(localToBake[basisPriority[0]], localToBake[basisPriority[1]]);
 
                 // recompute third axes from first two
-                var n2 = math.normalizesafe(
+                float4 n2 = math.normalizesafe(
                     new float4(math.cross(localToBake[basisPriority[0]].xyz, localToBake[basisPriority[1]].xyz), 0f)
                 );
                 localToBake[basisPriority[2]] = n2 * math.dot(localToBake[basisPriority[2]], n2);
@@ -114,7 +120,7 @@ namespace Unity.Physics.Authoring
             {
                 if (bakeUniformScale)
                 {
-                    var localToBake = math.mul(localToWorld, localToBasis);
+                    float4x4 localToBake = math.mul(localToWorld, localToBasis);
                     bakeToShape = math.mul(math.inverse(shapeToWorld), localToBake);
                 }
                 else
@@ -161,8 +167,7 @@ namespace Unity.Physics.Authoring
             // include inactive in case the supplied shape GameObject is a prefab that has not been instantiated
             shape.GetComponentsInParent(true, buffer);
             GameObject result = null;
-            for (var i = buffer.Count - 1; i >= 0; --i)
-            {
+            for (int i = buffer.Count - 1; i >= 0; --i)
                 if (
                     (buffer[i] as UnityEngine.Collider)?.enabled ??
                     (buffer[i] as MonoBehaviour)?.enabled ?? true
@@ -171,23 +176,26 @@ namespace Unity.Physics.Authoring
                     result = buffer[i].gameObject;
                     break;
                 }
-            }
+
             buffer.Clear();
             return result;
         }
 
-        public static GameObject GetPrimaryBody(this PhysicsShapeAuthoring shape) => GetPrimaryBody(shape.gameObject);
+        public static GameObject GetPrimaryBody(this PhysicsShapeAuthoring shape)
+        {
+            return GetPrimaryBody(shape.gameObject);
+        }
 
         public static GameObject GetPrimaryBody(GameObject shape)
         {
-            var pb = ColliderExtensions.FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
-            var rb = ColliderExtensions.FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
+            GameObject pb = ColliderExtensions.FindFirstEnabledAncestor(shape,
+                PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
+            GameObject rb = ColliderExtensions.FindFirstEnabledAncestor(shape,
+                PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
 
             if (pb != null)
-            {
                 return rb == null ? pb.gameObject :
                     pb.transform.IsChildOf(rb.transform) ? pb.gameObject : rb.gameObject;
-            }
 
             if (rb != null)
                 return rb.gameObject;
@@ -198,31 +206,33 @@ namespace Unity.Physics.Authoring
                 return topStatic;
 
             // otherwise, find topmost enabled Collider or PhysicsShapeAuthoring
-            var topCollider = FindTopmostEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_CollidersBuffer);
-            var topShape = FindTopmostEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_ShapesBuffer);
+            GameObject topCollider =
+                FindTopmostEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_CollidersBuffer);
+            GameObject topShape = FindTopmostEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_ShapesBuffer);
 
             return topCollider == null
                 ? topShape == null ? shape.gameObject : topShape
                 : topShape == null
-                ? topCollider
-                : topShape.transform.IsChildOf(topCollider.transform)
-                ? topCollider
-                : topShape;
+                    ? topCollider
+                    : topShape.transform.IsChildOf(topCollider.transform)
+                        ? topCollider
+                        : topShape;
         }
 
         public static BoxGeometry GetBakedBoxProperties(this PhysicsShapeAuthoring shape)
         {
-            var box = shape.GetBoxProperties(out var orientation);
+            BoxGeometry box = shape.GetBoxProperties(out EulerAngles orientation);
             return box.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix(), orientation);
         }
 
         internal static BoxGeometry BakeToBodySpace(
-            this BoxGeometry box, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation, bool bakeUniformScale = true
+            this BoxGeometry box, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation,
+            bool bakeUniformScale = true
         )
         {
-            using (var geometry = new NativeArray<BoxGeometry>(1, Allocator.TempJob) { [0] = box })
+            using (NativeArray<BoxGeometry> geometry = new NativeArray<BoxGeometry>(1, Allocator.TempJob) { [0] = box })
             {
-                var job = new BakeBoxJob
+                BakeBoxJob job = new BakeBoxJob
                 {
                     Box = geometry,
                     LocalToWorld = localToWorld,
@@ -237,13 +247,13 @@ namespace Unity.Physics.Authoring
 
         public static void SetBakedBoxSize(this PhysicsShapeAuthoring shape, float3 size, float bevelRadius)
         {
-            var box = shape.GetBoxProperties(out var orientation);
-            var center = box.Center;
-            var prevSize = math.abs(box.Size);
+            BoxGeometry box = shape.GetBoxProperties(out EulerAngles orientation);
+            float3 center = box.Center;
+            float3 prevSize = math.abs(box.Size);
             size = math.abs(size);
 
-            var bakeToShape = BakeBoxJobExtension.GetBakeToShape(shape, center, orientation);
-            var scale = bakeToShape.DecomposeScale();
+            float4x4 bakeToShape = BakeBoxJobExtension.GetBakeToShape(shape, center, orientation);
+            float3 scale = bakeToShape.DecomposeScale();
 
             size /= scale;
 
@@ -259,40 +269,44 @@ namespace Unity.Physics.Authoring
 
         internal static CapsuleGeometryAuthoring GetBakedCapsuleProperties(this PhysicsShapeAuthoring shape)
         {
-            var capsule = shape.GetCapsuleProperties();
+            CapsuleGeometryAuthoring capsule = shape.GetCapsuleProperties();
             return capsule.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix());
         }
 
-        public static void SetBakedCylinderSize(this PhysicsShapeAuthoring shape, float height, float radius, float bevelRadius)
+        public static void SetBakedCylinderSize(this PhysicsShapeAuthoring shape, float height, float radius,
+            float bevelRadius)
         {
-            var cylinder = shape.GetCylinderProperties(out EulerAngles orientation);
-            var center = cylinder.Center;
+            CylinderGeometry cylinder = shape.GetCylinderProperties(out EulerAngles orientation);
+            float3 center = cylinder.Center;
 
-            var bakeToShape = BakeCylinderJobExtension.GetBakeToShape(shape, center, orientation);
-            var scale = bakeToShape.DecomposeScale();
+            float4x4 bakeToShape = BakeCylinderJobExtension.GetBakeToShape(shape, center, orientation);
+            float3 scale = bakeToShape.DecomposeScale();
 
-            var newRadius = radius / math.cmax(scale.xy);
+            float newRadius = radius / math.cmax(scale.xy);
             if (math.abs(cylinder.Radius - newRadius) > kMinimumChange) cylinder.Radius = newRadius;
             if (math.abs(cylinder.BevelRadius - bevelRadius) > kMinimumChange) cylinder.BevelRadius = bevelRadius;
 
 
-            var newHeight = math.max(0, height / scale.z);
+            float newHeight = math.max(0, height / scale.z);
             if (math.abs(cylinder.Height - newHeight) > kMinimumChange) cylinder.Height = newHeight;
             shape.SetCylinder(cylinder, orientation);
         }
 
-        internal static SphereGeometry GetBakedSphereProperties(this PhysicsShapeAuthoring shape, out EulerAngles orientation)
+        internal static SphereGeometry GetBakedSphereProperties(this PhysicsShapeAuthoring shape,
+            out EulerAngles orientation)
         {
-            var sphere = shape.GetSphereProperties(out orientation);
-            return sphere.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix(), ref orientation);
+            SphereGeometry sphere = shape.GetSphereProperties(out orientation);
+            return sphere.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix(),
+                ref orientation);
         }
 
         internal static void GetBakedPlaneProperties(
-            this PhysicsShapeAuthoring shape, out float3 vertex0, out float3 vertex1, out float3 vertex2, out float3 vertex3
+            this PhysicsShapeAuthoring shape, out float3 vertex0, out float3 vertex1, out float3 vertex2,
+            out float3 vertex3
         )
         {
-            var bakeToShape = shape.GetLocalToShapeMatrix();
-            shape.GetPlaneProperties(out var center, out var size, out EulerAngles orientation);
+            float4x4 bakeToShape = shape.GetLocalToShapeMatrix();
+            shape.GetPlaneProperties(out float3 center, out float2 size, out EulerAngles orientation);
             BakeToBodySpace(
                 center, size, orientation, bakeToShape,
                 out vertex0, out vertex1, out vertex2, out vertex3
@@ -314,8 +328,6 @@ namespace Unity.Physics.Authoring
             shape.BakePoints(vertices.AsArray());
         }
 
-        const float k_HashFloatTolerance = 0.01f;
-
         // used to hash convex hull generation properties in a way that is robust to imprecision
         public static uint GetStableHash(
             this ConvexHullGenerationParameters generationParameters,
@@ -323,7 +335,7 @@ namespace Unity.Physics.Authoring
             float tolerance = k_HashFloatTolerance
         )
         {
-            var differences = new float3(
+            float3 differences = new float3(
                 generationParameters.BevelRadius - hashedParameters.BevelRadius,
                 generationParameters.MinimumAngle - hashedParameters.MinimumAngle,
                 generationParameters.SimplificationTolerance - hashedParameters.SimplificationTolerance
@@ -342,22 +354,20 @@ namespace Unity.Physics.Authoring
                 return math.hash(points.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * points.Length);
 
             for (int i = 0, count = points.Length; i < count; ++i)
-            {
                 if (math.cmax(math.abs(points[i] - hashedPoints[i])) > tolerance)
                     return math.hash(points.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * points.Length);
-            }
             return math.hash(hashedPoints.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * hashedPoints.Length);
         }
 
         public static int GetMaxAxis(this float3 v)
         {
-            var cmax = math.cmax(v);
+            float cmax = math.cmax(v);
             return cmax == v.z ? 2 : cmax == v.y ? 1 : 0;
         }
 
         public static int GetDeviantAxis(this float3 v)
         {
-            var deviation = math.abs(v - math.csum(v) / 3f);
+            float3 deviation = math.abs(v - math.csum(v) / 3f);
             return math.cmax(deviation) == deviation.z ? 2 : math.cmax(deviation) == deviation.y ? 1 : 0;
         }
     }

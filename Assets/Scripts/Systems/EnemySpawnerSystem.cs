@@ -29,7 +29,8 @@ public partial struct EnemySpawnerSystem : ISystem
     {
         GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
-        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));

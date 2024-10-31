@@ -3,13 +3,13 @@ using UnityEngine.UIElements;
 
 public class PauseUIController : MonoBehaviour
 {
+    private Button mainMenuButton;
+    private Button optionsButton;
+    private Button pauseButton;
     private VisualElement pauseElementUI;
     private VisualElement pauseUI;
-    private Button pauseButton;
-    private Button resumeButton;
     private Button restartButton;
-    private Button optionsButton;
-    private Button mainMenuButton;
+    private Button resumeButton;
 
     private void Start()
     {

@@ -2,7 +2,7 @@ using Unity.Mathematics;
 
 namespace Unity.Physics.Editor
 {
-    enum MatrixState
+    internal enum MatrixState
     {
         UniformScale,
         NonUniformScale,
@@ -10,7 +10,7 @@ namespace Unity.Physics.Editor
         NotValidTRS
     }
 
-    static class ManipulatorUtility
+    internal static class ManipulatorUtility
     {
         public static MatrixState GetMatrixState(ref float4x4 localToWorld)
         {
@@ -22,8 +22,8 @@ namespace Unity.Physics.Editor
             )
                 return MatrixState.NotValidTRS;
 
-            var m = new float3x3(localToWorld.c0.xyz, localToWorld.c1.xyz, localToWorld.c2.xyz);
-            var lossyScale = new float3(math.length(m.c0.xyz), math.length(m.c1.xyz), math.length(m.c2.xyz));
+            float3x3 m = new float3x3(localToWorld.c0.xyz, localToWorld.c1.xyz, localToWorld.c2.xyz);
+            float3 lossyScale = new float3(math.length(m.c0.xyz), math.length(m.c1.xyz), math.length(m.c2.xyz));
             if (math.determinant(m) < 0f)
                 lossyScale.x *= -1f;
             if (math.lengthsq(lossyScale) == 0f)

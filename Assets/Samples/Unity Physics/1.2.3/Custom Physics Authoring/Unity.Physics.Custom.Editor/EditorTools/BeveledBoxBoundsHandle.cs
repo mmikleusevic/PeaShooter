@@ -5,8 +5,14 @@ using UnityEngine;
 
 namespace Unity.Physics.Editor
 {
-    class BeveledBoxBoundsHandle : BoxBoundsHandle
+    internal class BeveledBoxBoundsHandle : BoxBoundsHandle
     {
+        private static readonly PhysicsBoundsHandleUtility.Corner[]
+            s_Corners = new PhysicsBoundsHandleUtility.Corner[8];
+
+        private float m_BevelRadius = ConvexHullGenerationParameters.Default.BevelRadius;
+        private bool m_IsDragging;
+
         public float bevelRadius
         {
             get => math.min(m_BevelRadius, math.cmin(GetSize()) * 0.5f);
@@ -16,10 +22,6 @@ namespace Unity.Physics.Editor
                     m_BevelRadius = math.max(0f, value);
             }
         }
-        float m_BevelRadius = ConvexHullGenerationParameters.Default.BevelRadius;
-        bool m_IsDragging = false;
-
-        static PhysicsBoundsHandleUtility.Corner[] s_Corners = new PhysicsBoundsHandleUtility.Corner[8];
 
         public new void DrawHandle()
         {
@@ -40,48 +42,71 @@ namespace Unity.Physics.Editor
                 return;
             }
 
-            var cameraPosition = float3.zero;
-            var cameraForward = new float3 { z = 1f };
+            float3 cameraPosition = float3.zero;
+            float3 cameraForward = new float3 { z = 1f };
             if (Camera.current != null)
             {
                 cameraPosition = Camera.current.transform.position;
                 cameraForward = Camera.current.transform.forward;
             }
 
-            var bounds = new Bounds(this.center, this.size);
-            bool isCameraInsideBox = Camera.current != null && bounds.Contains(Handles.inverseMatrix.MultiplyPoint(cameraPosition));
-            var bevelRadius = this.bevelRadius;
-            var origin = (float3)this.center;
-            var size = (float3)this.size;
+            Bounds bounds = new Bounds(center, this.size);
+            bool isCameraInsideBox = Camera.current != null &&
+                                     bounds.Contains(Handles.inverseMatrix.MultiplyPoint(cameraPosition));
+            float bevelRadius = this.bevelRadius;
+            float3 origin = center;
+            float3 size = this.size;
 
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 0, axes, isCameraInsideBox);
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(-1f, 1f, 1f), bevelRadius, 0, axes, isCameraInsideBox);
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 1, axes, isCameraInsideBox);
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, -1f, 1f), bevelRadius, 1, axes, isCameraInsideBox);
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 2, axes, isCameraInsideBox);
-            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, -1f), bevelRadius, 2, axes, isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 0, axes,
+                isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(-1f, 1f, 1f), bevelRadius, 0, axes,
+                isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 1, axes,
+                isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, -1f, 1f), bevelRadius, 1, axes,
+                isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, 1f), bevelRadius, 2, axes,
+                isCameraInsideBox);
+            PhysicsBoundsHandleUtility.DrawFace(origin, size * new float3(1f, 1f, -1f), bevelRadius, 2, axes,
+                isCameraInsideBox);
 
-            var corner = 0.5f * size - new float3(1f) * bevelRadius;
-            var axisx = new float3(1f, 0f, 0f);
-            var axisy = new float3(0f, 1f, 0f);
-            var axisz = new float3(0f, 0f, 1f);
+            float3 corner = 0.5f * size - new float3(1f) * bevelRadius;
+            float3 axisx = new float3(1f, 0f, 0f);
+            float3 axisy = new float3(0f, 1f, 0f);
+            float3 axisz = new float3(0f, 0f, 1f);
 
             // Since the geometry is transformed by Handles.matrix during rendering, we transform the camera position
             // by the inverse matrix so that the two-shaded wireframe will have the proper orientation.
-            var invMatrix = Handles.inverseMatrix;
+            Matrix4x4 invMatrix = Handles.inverseMatrix;
             cameraPosition = invMatrix.MultiplyPoint(cameraPosition);
             cameraForward = invMatrix.MultiplyVector(cameraForward);
-            var cameraOrtho = Camera.current == null || Camera.current.orthographic;
+            bool cameraOrtho = Camera.current == null || Camera.current.orthographic;
 
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, 1f, -1f), quaternion.LookRotation(-axisz, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[0]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, 1f, 1f), quaternion.LookRotation(-axisx, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[1]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, 1f, 1f), quaternion.LookRotation(axisz, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[2]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, 1f, -1f), quaternion.LookRotation(axisx, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[3]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, 1f, -1f),
+                quaternion.LookRotation(-axisz, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[0]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, 1f, 1f),
+                quaternion.LookRotation(-axisx, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[1]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, 1f, 1f),
+                quaternion.LookRotation(axisz, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[2]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, 1f, -1f),
+                quaternion.LookRotation(axisx, axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[3]);
 
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, -1f, -1f), quaternion.LookRotation(-axisx, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[4]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, -1f, 1f), quaternion.LookRotation(axisz, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[5]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, -1f, 1f), quaternion.LookRotation(axisx, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[6]);
-            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, -1f, -1f), quaternion.LookRotation(-axisz, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius, out s_Corners[7]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, -1f, -1f),
+                quaternion.LookRotation(-axisx, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[4]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(-1f, -1f, 1f),
+                quaternion.LookRotation(axisz, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[5]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, -1f, 1f),
+                quaternion.LookRotation(axisx, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[6]);
+            PhysicsBoundsHandleUtility.CalculateCornerHorizon(origin + corner * new float3(1f, -1f, -1f),
+                quaternion.LookRotation(-axisz, -axisy), cameraPosition, cameraForward, cameraOrtho, bevelRadius,
+                out s_Corners[7]);
 
             for (int i = 0; i < s_Corners.Length; i++)
                 PhysicsBoundsHandleUtility.DrawCorner(s_Corners[i], true);
@@ -92,14 +117,20 @@ namespace Unity.Physics.Editor
                 int dnA = upA + 4;
                 int dnB = upB + 4;
 
-                if (s_Corners[upA].splitAxis[0].z && s_Corners[upB].splitAxis[1].x) Handles.DrawLine(s_Corners[upA].points[0], s_Corners[upB].points[1]);
-                if (s_Corners[upA].splitAxis[1].z && s_Corners[upB].splitAxis[0].x) Handles.DrawLine(s_Corners[upA].points[1], s_Corners[upB].points[0]);
+                if (s_Corners[upA].splitAxis[0].z && s_Corners[upB].splitAxis[1].x)
+                    Handles.DrawLine(s_Corners[upA].points[0], s_Corners[upB].points[1]);
+                if (s_Corners[upA].splitAxis[1].z && s_Corners[upB].splitAxis[0].x)
+                    Handles.DrawLine(s_Corners[upA].points[1], s_Corners[upB].points[0]);
 
-                if (s_Corners[dnA].splitAxis[0].x && s_Corners[dnB].splitAxis[1].z) Handles.DrawLine(s_Corners[dnA].points[0], s_Corners[dnB].points[1]);
-                if (s_Corners[dnA].splitAxis[1].x && s_Corners[dnB].splitAxis[0].z) Handles.DrawLine(s_Corners[dnA].points[1], s_Corners[dnB].points[0]);
+                if (s_Corners[dnA].splitAxis[0].x && s_Corners[dnB].splitAxis[1].z)
+                    Handles.DrawLine(s_Corners[dnA].points[0], s_Corners[dnB].points[1]);
+                if (s_Corners[dnA].splitAxis[1].x && s_Corners[dnB].splitAxis[0].z)
+                    Handles.DrawLine(s_Corners[dnA].points[1], s_Corners[dnB].points[0]);
 
-                if (s_Corners[dnA].splitAxis[0].y && s_Corners[upA].splitAxis[1].y) Handles.DrawLine(s_Corners[dnA].points[0], s_Corners[upA].points[1]);
-                if (s_Corners[dnA].splitAxis[1].y && s_Corners[upA].splitAxis[0].y) Handles.DrawLine(s_Corners[dnA].points[1], s_Corners[upA].points[0]);
+                if (s_Corners[dnA].splitAxis[0].y && s_Corners[upA].splitAxis[1].y)
+                    Handles.DrawLine(s_Corners[dnA].points[0], s_Corners[upA].points[1]);
+                if (s_Corners[dnA].splitAxis[1].y && s_Corners[upA].splitAxis[0].y)
+                    Handles.DrawLine(s_Corners[dnA].points[1], s_Corners[upA].points[0]);
             }
         }
     }

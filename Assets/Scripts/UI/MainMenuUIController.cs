@@ -1,10 +1,11 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class MainMenuUIController : MonoBehaviour
 {
-    private Button playButton;
     private Button optionsButton;
+    private Button playButton;
     private Button quitButton;
 
     private void Start()
@@ -40,7 +41,7 @@ public class MainMenuUIController : MonoBehaviour
     private void QuitPressed()
     {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+        EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
     }

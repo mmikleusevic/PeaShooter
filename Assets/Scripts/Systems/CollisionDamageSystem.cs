@@ -1,3 +1,4 @@
+using Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
@@ -20,7 +21,8 @@ public partial struct CollisionDamageSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         CollisionDamageJob job = new CollisionDamageJob
@@ -29,6 +31,8 @@ public partial struct CollisionDamageSystem : ISystem
             projectileLookup = SystemAPI.GetComponentLookup<ProjectileComponent>(),
             healthLookup = SystemAPI.GetComponentLookup<HealthComponent>(),
             targetLookup = SystemAPI.GetComponentLookup<TargetComponent>(true),
+            abilityLookup = SystemAPI.GetComponentLookup<AbilityComponent>(true),
+            projectileAbilityLookup = SystemAPI.GetComponentLookup<ProjectileAbilityComponent>(true),
             obstacleLookup = SystemAPI.GetComponentLookup<ObstacleComponent>(true),
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
             activeForCollisionLookup = SystemAPI.GetComponentLookup<ActiveForCollisionComponent>(true),

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
-    class EnumFlagsDrawer : BaseDrawer
+    internal class EnumFlagsDrawer : BaseDrawer
     {
         protected override bool IsCompatible(SerializedProperty property)
         {
@@ -17,7 +17,7 @@ namespace Unity.Physics.Editor
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            var value = property.longValue;
+            long value = property.longValue;
             EditorGUI.BeginChangeCheck();
             value = Convert.ToInt64(
                 EditorGUI.EnumFlagsField(position, label, (Enum)Enum.ToObject(fieldInfo.FieldType, value))

@@ -8,8 +8,8 @@ using Material = UnityEngine.Material;
 [UpdateInGroup(typeof(PresentationSystemGroup), OrderFirst = true)]
 public partial class MaterialChangerSystem : SystemBase
 {
-    private Dictionary<Material, BatchMaterialID> materialMapping;
     private EntitiesGraphicsSystem hybridRendererSystem;
+    private Dictionary<Material, BatchMaterialID> materialMapping;
 
     protected override void OnCreate()
     {
@@ -22,15 +22,18 @@ public partial class MaterialChangerSystem : SystemBase
         RequireForUpdate<BeginPresentationEntityCommandBufferSystem.Singleton>();
         RequireForUpdate<EnemyComponent>();
     }
+
     protected override void OnUpdate()
     {
-        BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
+        BeginPresentationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-        foreach (var (changer, materialMeshInfo, enemyComponent, entity) in SystemAPI.Query<MaterialChangerComponent, RefRW<MaterialMeshInfo>, RefRO<EnemyComponent>>()
-            .WithEntityAccess()
-            .WithNone<MaterialChangedComponent>())
-        {
+        foreach ((MaterialChangerComponent changer, RefRW<MaterialMeshInfo> materialMeshInfo,
+                     RefRO<EnemyComponent> enemyComponent, Entity entity) in SystemAPI
+                     .Query<MaterialChangerComponent, RefRW<MaterialMeshInfo>, RefRO<EnemyComponent>>()
+                     .WithEntityAccess()
+                     .WithNone<MaterialChangedComponent>())
             if (enemyComponent.ValueRO.moveTimer >= enemyComponent.ValueRO.moveTimerTarget)
             {
                 Material material = changer.material;
@@ -48,7 +51,6 @@ public partial class MaterialChangerSystem : SystemBase
                     status = UpdateStatus.Add
                 });
             }
-        }
     }
 
     protected override void OnDestroy()
@@ -61,9 +63,7 @@ public partial class MaterialChangerSystem : SystemBase
     private void RegisterMaterial(Material material)
     {
         if (!materialMapping.ContainsKey(material))
-        {
             materialMapping[material] = hybridRendererSystem.RegisterMaterial(material);
-        }
     }
 
     private void UnregisterMaterials()
@@ -71,9 +71,7 @@ public partial class MaterialChangerSystem : SystemBase
         if (hybridRendererSystem == null) return;
 
         foreach (KeyValuePair<Material, BatchMaterialID> materialMap in materialMapping)
-        {
             hybridRendererSystem.UnregisterMaterial(materialMap.Value);
-        }
 
         materialMapping.Clear();
     }

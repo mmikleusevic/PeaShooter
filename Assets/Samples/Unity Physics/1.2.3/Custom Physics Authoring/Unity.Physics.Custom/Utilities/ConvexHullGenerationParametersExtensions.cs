@@ -17,8 +17,8 @@ namespace Unity.Physics.Authoring
             if (points.Length <= 1)
                 return;
 
-            var bounds = new Aabb { Min = points[0], Max = points[0] };
-            for (var i = 1; i < points.Length; ++i)
+            Aabb bounds = new Aabb { Min = points[0], Max = points[0] };
+            for (int i = 1; i < points.Length; ++i)
                 bounds.Include(points[i]);
             generationParameters.SimplificationTolerance = math.max(
                 k_MinRecommendedSimplificationTolerance,
@@ -27,14 +27,16 @@ namespace Unity.Physics.Authoring
             // TODO: initialize other properties based on input points?
         }
 
-        internal static void OnValidate(ref this ConvexHullGenerationParameters generationParameters, float maxAngle = 180f)
+        internal static void OnValidate(ref this ConvexHullGenerationParameters generationParameters,
+            float maxAngle = 180f)
         {
             generationParameters.SimplificationTolerance = math.max(0f, generationParameters.SimplificationTolerance);
             generationParameters.BevelRadius = math.max(0f, generationParameters.BevelRadius);
             generationParameters.MinimumAngle = math.clamp(generationParameters.MinimumAngle, 0f, maxAngle);
         }
 
-        public static ConvexHullGenerationParameters ToAuthoring(this ConvexHullGenerationParameters generationParameters)
+        public static ConvexHullGenerationParameters ToAuthoring(
+            this ConvexHullGenerationParameters generationParameters)
         {
             generationParameters.MinimumAngle = math.degrees(generationParameters.MinimumAngle);
             return generationParameters;

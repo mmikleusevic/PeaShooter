@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance"
+         engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
+         noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="abilityTemplate"
+               style="align-self: auto; left: 0; width: 20%; height: 30%; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; background-image: none; background-color: rgb(207, 207, 207); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: space-between; align-items: stretch; flex-grow: 0; align-content: auto; -unity-text-align: middle-left; overflow: hidden; flex-basis: auto;">
+        <ui:VisualElement name="image"
+                          style="flex-grow: 0; background-image: url(&quot;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=5923138177525885446&amp;guid=c19935b02ee97354d94ed3c3c6d1f516&amp;type=3#Remove@2x&quot;); width: 25%; height: 25%; align-self: center; position: relative; justify-content: flex-end; align-items: stretch; flex-shrink: 0; -unity-background-scale-mode: scale-to-fit; background-size: 25% 25%; background-position-x: center 0; background-position-y: center 0;"/>
+        <ui:Label text="Lorem Ipsum" name="name"
+                  style="font-size: 18px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;); -unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-grow: 0;"/>
+        <ui:Label text="Level" name="description"
+                  style="flex-grow: 1; justify-content: space-around; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; text-overflow: clip; white-space: normal; font-size: 18px; color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;); -unity-text-align: middle-center; -unity-font-style: bold;"/>
+    </ui:Button>
+</ui:UXML>

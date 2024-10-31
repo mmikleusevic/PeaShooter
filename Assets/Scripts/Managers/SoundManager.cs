@@ -4,9 +4,9 @@ public class SoundManager : MonoBehaviour
 {
     private const string MUSIC = "Music";
     private const string MUSIC_VOLUME = "MusicVolume";
-    public static SoundManager Instance { get; private set; }
 
     [SerializeField] private AudioSource musicSource;
+    public static SoundManager Instance { get; private set; }
 
     private void Awake()
     {

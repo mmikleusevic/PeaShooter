@@ -1,3 +1,5 @@
 using Unity.Entities;
 
-public struct EnemyDeadComponent : IComponentData { }
+public struct EnemyDeadComponent : IComponentData
+{
+}

@@ -11,7 +11,8 @@ public partial struct PlayerMovementJob : IJobEntity
     [ReadOnly] public float deltaTime;
     [ReadOnly] public int2 size;
 
-    private void Execute(ref PlayerComponent player, in InputComponent input, ref LocalTransform transform, ref PhysicsVelocity velocity)
+    private void Execute(ref PlayerComponent player, in InputComponent input, ref LocalTransform transform,
+        ref PhysicsVelocity velocity)
     {
         float3 moveDirection = new float3(input.move.x, 0, input.move.y);
 

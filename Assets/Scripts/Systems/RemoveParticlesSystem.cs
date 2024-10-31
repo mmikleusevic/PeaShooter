@@ -16,14 +16,13 @@ public partial struct RemoveParticlesSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (particles, entity) in SystemAPI.Query<ParticleReference>()
-            .WithNone<LocalTransform>()
-            .WithEntityAccess())
-        {
+        foreach ((ParticleReference particles, Entity entity) in SystemAPI.Query<ParticleReference>()
+                     .WithNone<LocalTransform>()
+                     .WithEntityAccess())
             ecb.RemoveComponent<ParticleReference>(entity);
-        }
     }
 }

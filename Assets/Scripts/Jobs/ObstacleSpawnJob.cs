@@ -26,14 +26,13 @@ public partial struct ObstacleSpawnJob : IJobEntity
             do
             {
                 newPosition = randomData.nextPosition;
-            }
-            while (!IsValidPosition(newPosition));
+            } while (!IsValidPosition(newPosition));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
                 Position = new float3(newPosition.x, 0, newPosition.y),
                 Rotation = quaternion.identity,
-                Scale = 1f,
+                Scale = 1f
             });
 
             ecb.AddComponent(spawnedEntity, new ObstacleComponent());

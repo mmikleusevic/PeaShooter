@@ -20,14 +20,15 @@ public partial struct UpdateHealthBarValueSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (health, healthBarUI) in SystemAPI.Query<RefRO<HealthComponent>, HealthBarUIReference>()
-            .WithChangeFilter<HealthComponent>())
-        {
+        foreach ((RefRO<HealthComponent> health, HealthBarUIReference healthBarUI) in SystemAPI
+                     .Query<RefRO<HealthComponent>, HealthBarUIReference>()
+                     .WithChangeFilter<HealthComponent>())
             SetHealthBar(healthBarUI.value, health.ValueRO);
-        }
 
-        foreach (var (transform, healthBarOffset, healthBarUI) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<HealthBarOffset>, HealthBarUIReference>()
-            .WithChangeFilter<LocalTransform>())
+        foreach ((RefRO<LocalTransform> transform, RefRO<HealthBarOffset> healthBarOffset,
+                     HealthBarUIReference healthBarUI) in SystemAPI
+                     .Query<RefRO<LocalTransform>, RefRO<HealthBarOffset>, HealthBarUIReference>()
+                     .WithChangeFilter<LocalTransform>())
         {
             float3 healthBarPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;
             healthBarUI.value.transform.position = healthBarPosition;
@@ -37,7 +38,7 @@ public partial struct UpdateHealthBarValueSystem : ISystem
     [BurstCompile]
     public void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
     {
-        var hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
+        Slider hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
         hpBarSlider.minValue = 0;
         hpBarSlider.maxValue = health.maxHitPoints;
         hpBarSlider.value = health.HitPoints;

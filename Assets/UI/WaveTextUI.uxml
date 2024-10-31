@@ -1,3 +1,7 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Label tabindex="-1" text="Wave 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="waveText" style="margin-left: 4px; align-items: flex-start; align-self: auto; justify-content: center; font-size: 12px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-text-align: upper-center; margin-top: 6px; left: 20%; margin-right: 4px; margin-bottom: 4px; right: 60%; position: absolute; width: 20%; height: 5%;" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance"
+         engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
+         noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label tabindex="-1" text="Wave 1" parse-escape-sequences="true" display-tooltip-when-elided="true"
+              name="waveText"
+              style="margin-left: 4px; align-items: flex-start; align-self: auto; justify-content: center; font-size: 12px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-text-align: upper-center; margin-top: 6px; left: 20%; margin-right: 4px; margin-bottom: 4px; right: 60%; position: absolute; width: 20%; height: 5%;"/>
 </ui:UXML>

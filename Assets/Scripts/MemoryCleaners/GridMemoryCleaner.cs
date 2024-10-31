@@ -8,7 +8,7 @@ public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
     private EntityManager entityManager;
     private EntityQuery gridEntityQuery;
 
-    private void OnEnable()
+    private void Start()
     {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -26,9 +26,7 @@ public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
             gridComponent.gridNodes.Dispose();
 
             foreach (KVPair<int2, NativeList<Entity>> enemyPosition in gridComponent.enemyPositions)
-            {
                 enemyPosition.Value.Dispose();
-            }
 
             gridComponent.enemyPositions.Dispose();
 

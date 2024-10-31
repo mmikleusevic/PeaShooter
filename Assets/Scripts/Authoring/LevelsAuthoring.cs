@@ -24,7 +24,8 @@ public class LevelsAuthoring : MonoBehaviour
                 valuesArray[i] = authoring.levelValues[i];
             }
 
-            BlobAssetReference<LevelDataBlob> blobAsset = builder.CreateBlobAssetReference<LevelDataBlob>(Allocator.Persistent);
+            BlobAssetReference<LevelDataBlob> blobAsset =
+                builder.CreateBlobAssetReference<LevelDataBlob>(Allocator.Persistent);
             builder.Dispose();
 
             Entity entity = GetEntity(TransformUsageFlags.None);

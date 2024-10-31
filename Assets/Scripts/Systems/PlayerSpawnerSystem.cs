@@ -5,7 +5,6 @@ using Unity.Jobs;
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(PlaneSpawnerSystem))]
-
 public partial struct PlayerSpawnerSystem : ISystem
 {
     [BurstCompile]
@@ -18,7 +17,8 @@ public partial struct PlayerSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+        BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         PlayerSpawnJob job = new PlayerSpawnJob

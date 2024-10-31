@@ -8,16 +8,14 @@ namespace Unity.Physics.Authoring
 {
     public class RagdollJoint : BallAndSocketJoint
     {
-        const int k_LatestVersion = 1;
+        private const int k_LatestVersion = 1;
 
         // Editor only settings
-        [HideInInspector]
-        public bool EditAxes;
-        [HideInInspector]
-        public bool EditLimits;
+        [HideInInspector] public bool EditAxes;
 
-        [SerializeField]
-        int m_Version;
+        [HideInInspector] public bool EditLimits;
+
+        [SerializeField] private int m_Version;
 
         public float3 TwistAxisLocal;
         public float3 TwistAxisInConnectedEntity;
@@ -29,17 +27,7 @@ namespace Unity.Physics.Authoring
         public float MinTwistAngle;
         public float MaxTwistAngle;
 
-        internal void UpgradeVersionIfNecessary()
-        {
-            if (m_Version >= k_LatestVersion)
-                return;
-
-            MinPerpendicularAngle -= 90f;
-            MaxPerpendicularAngle -= 90f;
-            m_Version = k_LatestVersion;
-        }
-
-        void OnValidate()
+        private void OnValidate()
         {
             UpgradeVersionIfNecessary();
 
@@ -49,7 +37,7 @@ namespace Unity.Physics.Authoring
             MinPerpendicularAngle = math.clamp(MinPerpendicularAngle, -90f, 90f);
             if (MaxPerpendicularAngle < MinPerpendicularAngle)
             {
-                var swap = new FloatRange(MinPerpendicularAngle, MaxPerpendicularAngle).Sorted();
+                FloatRange swap = new FloatRange(MinPerpendicularAngle, MaxPerpendicularAngle).Sorted();
                 MinPerpendicularAngle = swap.Min;
                 MaxPerpendicularAngle = swap.Max;
             }
@@ -58,10 +46,20 @@ namespace Unity.Physics.Authoring
             MaxTwistAngle = math.clamp(MaxTwistAngle, -180f, 180f);
             if (MaxTwistAngle < MinTwistAngle)
             {
-                var swap = new FloatRange(MinTwistAngle, MaxTwistAngle).Sorted();
+                FloatRange swap = new FloatRange(MinTwistAngle, MaxTwistAngle).Sorted();
                 MinTwistAngle = swap.Min;
                 MaxTwistAngle = swap.Max;
             }
+        }
+
+        internal void UpgradeVersionIfNecessary()
+        {
+            if (m_Version >= k_LatestVersion)
+                return;
+
+            MinPerpendicularAngle -= 90f;
+            MaxPerpendicularAngle -= 90f;
+            m_Version = k_LatestVersion;
         }
 
         public override void UpdateAuto()
@@ -76,7 +74,7 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class RagdollJointBaker : JointBaker<RagdollJoint>
+    internal class RagdollJointBaker : JointBaker<RagdollJoint>
     {
         public override void Bake(RagdollJoint authoring)
         {
@@ -84,25 +82,35 @@ namespace Unity.Physics.Authoring
             authoring.UpgradeVersionIfNecessary();
 
             PhysicsJoint.CreateRagdoll(
-                new BodyFrame { Axis = authoring.TwistAxisLocal, PerpendicularAxis = authoring.PerpendicularAxisLocal, Position = authoring.PositionLocal },
-                new BodyFrame { Axis = authoring.TwistAxisInConnectedEntity, PerpendicularAxis = authoring.PerpendicularAxisInConnectedEntity, Position = authoring.PositionInConnectedEntity },
+                new BodyFrame
+                {
+                    Axis = authoring.TwistAxisLocal, PerpendicularAxis = authoring.PerpendicularAxisLocal,
+                    Position = authoring.PositionLocal
+                },
+                new BodyFrame
+                {
+                    Axis = authoring.TwistAxisInConnectedEntity,
+                    PerpendicularAxis = authoring.PerpendicularAxisInConnectedEntity,
+                    Position = authoring.PositionInConnectedEntity
+                },
                 math.radians(authoring.MaxConeAngle),
                 math.radians(new FloatRange(authoring.MinPerpendicularAngle, authoring.MaxPerpendicularAngle)),
                 math.radians(new FloatRange(authoring.MinTwistAngle, authoring.MaxTwistAngle)),
-                out var primaryCone,
-                out var perpendicularCone
+                out PhysicsJoint primaryCone,
+                out PhysicsJoint perpendicularCone
             );
 
             primaryCone.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
             perpendicularCone.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             using NativeList<Entity> entities = new NativeList<Entity>(1, Allocator.TempJob);
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntities(worldIndex,
                 constraintBodyPair,
-                new NativeArray<PhysicsJoint>(2, Allocator.Temp) { [0] = primaryCone, [1] = perpendicularCone }, entities);
+                new NativeArray<PhysicsJoint>(2, Allocator.Temp) { [0] = primaryCone, [1] = perpendicularCone },
+                entities);
         }
     }
 }

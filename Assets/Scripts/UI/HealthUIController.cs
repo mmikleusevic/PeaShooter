@@ -5,8 +5,8 @@ using UnityEngine.UIElements;
 
 public class HealthUIController : MonoBehaviour
 {
-    private PlayerHealthSystem playerHealthSystem;
     private ProgressBar healthBar;
+    private PlayerHealthSystem playerHealthSystem;
 
     private void Awake()
     {

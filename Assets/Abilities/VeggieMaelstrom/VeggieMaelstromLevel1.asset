@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 729389ac760943cf92d42359df40d9d6, type: 3}
+  m_Name: VeggieMaelstromLevel1
+  m_EditorClassIdentifier: 
+  icon: {fileID: -9095717837082945937, guid: 34587324d412940a79d530020c957dc0, type: 3}
+  abilityName: Veggie Maelstrom
+  abilityDescription: Level 1
+  cooldown: 0
+  cooldownRemaining: 0
+  range: 0
+  speed: 0
+  damage: 0
+  projectilePrefab: {fileID: 0}
+  projectileScale: 0

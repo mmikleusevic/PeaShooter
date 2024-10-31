@@ -14,7 +14,8 @@ namespace Unity.Physics.Editor
 
             EditorGUI.BeginChangeCheck();
 
-            EditorUtilities.EditPivot(ballAndSocket.worldFromA, ballAndSocket.worldFromB, ballAndSocket.AutoSetConnected,
+            EditorUtilities.EditPivot(ballAndSocket.worldFromA, ballAndSocket.worldFromB,
+                ballAndSocket.AutoSetConnected,
                 ref ballAndSocket.PositionLocal, ref ballAndSocket.PositionInConnectedEntity, ballAndSocket);
         }
     }

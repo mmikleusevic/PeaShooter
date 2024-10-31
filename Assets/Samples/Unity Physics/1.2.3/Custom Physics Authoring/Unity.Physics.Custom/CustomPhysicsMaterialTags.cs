@@ -6,8 +6,8 @@ namespace Unity.Physics.Authoring
     [Serializable]
     public struct CustomPhysicsMaterialTags : IEquatable<CustomPhysicsMaterialTags>
     {
-        public static CustomPhysicsMaterialTags Everything => new CustomPhysicsMaterialTags { Value = unchecked((byte)~0) };
-        public static CustomPhysicsMaterialTags Nothing => new CustomPhysicsMaterialTags { Value = 0 };
+        public static CustomPhysicsMaterialTags Everything => new() { Value = unchecked((byte)~0) };
+        public static CustomPhysicsMaterialTags Nothing => new() { Value = 0 };
 
         public bool Tag00;
         public bool Tag01;
@@ -41,14 +41,30 @@ namespace Unity.Physics.Authoring
                 SafetyChecks.CheckInRangeAndThrow(i, new int2(0, 7), nameof(i));
                 switch (i)
                 {
-                    case 0: Tag00 = value; break;
-                    case 1: Tag01 = value; break;
-                    case 2: Tag02 = value; break;
-                    case 3: Tag03 = value; break;
-                    case 4: Tag04 = value; break;
-                    case 5: Tag05 = value; break;
-                    case 6: Tag06 = value; break;
-                    case 7: Tag07 = value; break;
+                    case 0:
+                        Tag00 = value;
+                        break;
+                    case 1:
+                        Tag01 = value;
+                        break;
+                    case 2:
+                        Tag02 = value;
+                        break;
+                    case 3:
+                        Tag03 = value;
+                        break;
+                    case 4:
+                        Tag04 = value;
+                        break;
+                    case 5:
+                        Tag05 = value;
+                        break;
+                    case 6:
+                        Tag06 = value;
+                        break;
+                    case 7:
+                        Tag07 = value;
+                        break;
                 }
             }
         }
@@ -57,7 +73,7 @@ namespace Unity.Physics.Authoring
         {
             get
             {
-                var result = 0;
+                int result = 0;
                 result |= (Tag00 ? 1 : 0) << 0;
                 result |= (Tag01 ? 1 : 0) << 1;
                 result |= (Tag02 ? 1 : 0) << 2;
@@ -81,10 +97,19 @@ namespace Unity.Physics.Authoring
             }
         }
 
-        public bool Equals(CustomPhysicsMaterialTags other) => Value == other.Value;
+        public bool Equals(CustomPhysicsMaterialTags other)
+        {
+            return Value == other.Value;
+        }
 
-        public override bool Equals(object obj) => obj is CustomPhysicsMaterialTags other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is CustomPhysicsMaterialTags other && Equals(other);
+        }
 
-        public override int GetHashCode() => Value;
+        public override int GetHashCode()
+        {
+            return Value;
+        }
     }
 }

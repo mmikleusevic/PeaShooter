@@ -24,13 +24,13 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class PrismaticJointBaker : JointBaker<PrismaticJoint>
+    internal class PrismaticJointBaker : JointBaker<PrismaticJoint>
     {
         public override void Bake(PrismaticJoint authoring)
         {
             authoring.UpdateAuto();
 
-            var physicsJoint = PhysicsJoint.CreatePrismatic(
+            PhysicsJoint physicsJoint = PhysicsJoint.CreatePrismatic(
                 new BodyFrame
                 {
                     Axis = authoring.AxisLocal,
@@ -48,7 +48,7 @@ namespace Unity.Physics.Authoring
 
             physicsJoint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntity(worldIndex, constraintBodyPair, physicsJoint);

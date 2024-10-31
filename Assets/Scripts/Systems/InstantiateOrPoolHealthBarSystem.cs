@@ -20,13 +20,16 @@ public partial struct InstantiateOrPoolHealthBarSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (health, transform, healthBarOffset, entity) in SystemAPI.Query<RefRO<HealthComponent>, RefRO<LocalTransform>, RefRO<HealthBarOffset>>()
-            .WithNone<HealthBarUIReference, PlayerComponent>()
-            .WithAll<MaterialChangedComponent>()
-            .WithEntityAccess())
+        foreach ((RefRO<HealthComponent> health, RefRO<LocalTransform> transform,
+                     RefRO<HealthBarOffset> healthBarOffset, Entity entity) in SystemAPI
+                     .Query<RefRO<HealthComponent>, RefRO<LocalTransform>, RefRO<HealthBarOffset>>()
+                     .WithNone<HealthBarUIReference, PlayerComponent>()
+                     .WithAll<MaterialChangedComponent>()
+                     .WithEntityAccess())
         {
             float3 spawnPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;
 

@@ -8,7 +8,6 @@ using UnityEngine;
 [BurstCompile]
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
 [UpdateAfter(typeof(PlayerSpawnerSystem))]
-
 public partial struct ObstacleSpawnerSystem : ISystem
 {
     private EntityQuery gridEntityQuery;
@@ -28,7 +27,8 @@ public partial struct ObstacleSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();

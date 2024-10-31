@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ParticleReference : ICleanupComponentData
 {
-    public GameObject value;
-    public bool updateTransform;
     public float damage;
+    public bool updateTransform;
+    public GameObject value;
 }

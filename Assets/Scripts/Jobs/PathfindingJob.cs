@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [BurstCompile]
-partial struct PathfindingJob : IJobEntity
+internal partial struct PathfindingJob : IJobEntity
 {
     [ReadOnly] private const int STRAIGHT_COST = 10;
     [ReadOnly] private const int DIAGONAL_COST = 14;
@@ -14,11 +14,11 @@ partial struct PathfindingJob : IJobEntity
     [ReadOnly] public NativeHashMap<int2, byte> gridNodes;
     [ReadOnly] public InputComponent input;
 
-    private static readonly int2[] Directions = new int2[]
+    private static readonly int2[] Directions =
     {
-        new int2(-1, 1), new int2(0, 1), new int2(1, 1),
-        new int2(-1, 0),                   new int2(1, 0),
-        new int2(-1, -1),  new int2(0, -1),  new int2(1, -1)
+        new(-1, 1), new(0, 1), new(1, 1),
+        new(-1, 0), new(1, 0),
+        new(-1, -1), new(0, -1), new(1, -1)
     };
 
     public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
@@ -33,19 +33,13 @@ partial struct PathfindingJob : IJobEntity
 
         int2 predictedPlayerPosition = playerPosition + (int2)math.round(input.move);
 
-        if (IsValidPosition(predictedPlayerPosition) == 0)
-        {
-            predictedPlayerPosition = playerPosition;
-        }
+        if (IsValidPosition(predictedPlayerPosition) == 0) predictedPlayerPosition = playerPosition;
 
         NativeList<int2> path = FindPath(enemy.gridPosition, predictedPlayerPosition);
 
         if (path.IsCreated)
         {
-            foreach (int2 node in path)
-            {
-                pathBuffer.Add(new NodeComponent { position = node });
-            }
+            foreach (int2 node in path) pathBuffer.Add(new NodeComponent { position = node });
 
             enemy.currentPathIndex = 0;
         }
@@ -56,22 +50,22 @@ partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private NativeList<int2> FindPath(int2 start, int2 goal)
     {
-        var result = new NativeList<int2>(Allocator.Temp);
+        NativeList<int2> result = new NativeList<int2>(Allocator.Temp);
 
         if (start.Equals(goal)) return result;
 
         float distance = math.distance(start, goal);
         int estimatedNodes = (int)((distance + 1) * 1.5f);
-        var openSet = new NativeList<NodeComponent>(estimatedNodes, Allocator.Temp);
-        var closedSet = new NativeHashSet<int2>(estimatedNodes, Allocator.Temp);
-        var cameFrom = new NativeHashMap<int2, int2>(estimatedNodes, Allocator.Temp);
+        NativeList<NodeComponent> openSet = new NativeList<NodeComponent>(estimatedNodes, Allocator.Temp);
+        NativeHashSet<int2> closedSet = new NativeHashSet<int2>(estimatedNodes, Allocator.Temp);
+        NativeHashMap<int2, int2> cameFrom = new NativeHashMap<int2, int2>(estimatedNodes, Allocator.Temp);
 
         openSet.Add(new NodeComponent { position = start, gCost = 0, hCost = CalculateDistanceCost(start, goal) });
 
         while (openSet.Length > 0)
         {
             int currentIndex = GetLowestFCostIndex(openSet);
-            var current = openSet[currentIndex];
+            NodeComponent current = openSet[currentIndex];
 
             if (current.position.Equals(goal))
             {
@@ -101,7 +95,6 @@ partial struct PathfindingJob : IJobEntity
 
                 bool inOpenSet = false;
                 for (int j = 0; j < openSet.Length; j++)
-                {
                     if (openSet[j].position.Equals(neighborPos))
                     {
                         inOpenSet = true;
@@ -116,9 +109,9 @@ partial struct PathfindingJob : IJobEntity
 
                             cameFrom[neighborPos] = current.position;
                         }
+
                         break;
                     }
-                }
 
                 if (!inOpenSet)
                 {
@@ -126,7 +119,7 @@ partial struct PathfindingJob : IJobEntity
                     {
                         position = neighborPos,
                         gCost = tentativeGCost,
-                        hCost = CalculateDistanceCost(neighborPos, goal),
+                        hCost = CalculateDistanceCost(neighborPos, goal)
                     });
 
                     cameFrom[neighborPos] = current.position;
@@ -158,13 +151,11 @@ partial struct PathfindingJob : IJobEntity
         int lowestFCost = int.MaxValue;
 
         for (int i = 0; i < openSet.Length; i++)
-        {
             if (openSet[i].fCost < lowestFCost)
             {
                 lowestFCost = openSet[i].fCost;
                 lowestIndex = i;
             }
-        }
 
         return lowestIndex;
     }

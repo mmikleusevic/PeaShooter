@@ -32,7 +32,8 @@ public partial struct UpdateParticlesSystem : ISystem
     {
         RefRW<GridComponent> gridComponent = gridEntityQuery.GetSingletonRW<GridComponent>();
 
-        foreach (var (transform, particleReference) in SystemAPI.Query<RefRO<LocalTransform>, ParticleReference>())
+        foreach ((RefRO<LocalTransform> transform, ParticleReference particleReference) in SystemAPI
+                     .Query<RefRO<LocalTransform>, ParticleReference>())
         {
             ParticleSystem particleSystem = particleReference.value.GetComponent<ParticleSystem>();
             Particle[] particles = new Particle[particleSystem.main.maxParticles];
@@ -53,7 +54,7 @@ public partial struct UpdateParticlesSystem : ISystem
             {
                 UpdateTransform(particleReference, newParticlePosition);
             }
-            else if (particleSystem.time >= (particleSystem.main.duration - 0.05f))
+            else if (particleSystem.time >= particleSystem.main.duration - 0.05f)
             {
                 particleSystem.Clear();
                 UpdateTransform(particleReference, newParticlePosition);
@@ -62,10 +63,13 @@ public partial struct UpdateParticlesSystem : ISystem
     }
 
     [BurstCompile]
-    private void CalculateParticleCollisionWithEnemy(ref SystemState state, RefRO<LocalTransform> transform, Particle particle, RefRW<GridComponent> gridComponent, float particleSize)
+    private void CalculateParticleCollisionWithEnemy(ref SystemState state, RefRO<LocalTransform> transform,
+        Particle particle, RefRW<GridComponent> gridComponent, float particleSize)
     {
-        float3 particleWorldPosition = transform.ValueRO.TransformPoint(new float3(particle.position.x, 0, -particle.position.y));
-        int2 particleGridPosition = new int2((int)math.round(particleWorldPosition.x), (int)math.round(particleWorldPosition.z));
+        float3 particleWorldPosition =
+            transform.ValueRO.TransformPoint(new float3(particle.position.x, 0, -particle.position.y));
+        int2 particleGridPosition =
+            new int2((int)math.round(particleWorldPosition.x), (int)math.round(particleWorldPosition.z));
 
         if (!gridComponent.ValueRO.enemyPositions.ContainsKey(particleGridPosition)) return;
 
@@ -80,7 +84,8 @@ public partial struct UpdateParticlesSystem : ISystem
 
             float colliderRadius = sphereCollider.Radius;
 
-            if (math.distance(particleWorldPosition, enemyTransform.Position) > ((particleSize / 2) + colliderRadius)) continue;
+            if (math.distance(particleWorldPosition, enemyTransform.Position) >
+                particleSize / 2 + colliderRadius) continue;
 
             Debug.Log("collision");
             // Collision happened!

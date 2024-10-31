@@ -16,9 +16,8 @@ namespace Unity.Physics.Authoring
 
         public PhysicsJoint CreateLimitDOFJoint(RigidTransform offset)
         {
-            var constraints = new FixedList512Bytes<Constraint>();
+            FixedList512Bytes<Constraint> constraints = new FixedList512Bytes<Constraint>();
             if (math.any(LockLinearAxes))
-            {
                 constraints.Add(new Constraint
                 {
                     ConstrainedAxes = LockLinearAxes,
@@ -27,11 +26,9 @@ namespace Unity.Physics.Authoring
                     Max = 0,
                     SpringFrequency = Constraint.DefaultSpringFrequency,
                     DampingRatio = Constraint.DefaultDampingRatio,
-                    MaxImpulse = MaxImpulse,
+                    MaxImpulse = MaxImpulse
                 });
-            }
             if (math.any(LockAngularAxes))
-            {
                 constraints.Add(new Constraint
                 {
                     ConstrainedAxes = LockAngularAxes,
@@ -40,11 +37,10 @@ namespace Unity.Physics.Authoring
                     Max = 0,
                     SpringFrequency = Constraint.DefaultSpringFrequency,
                     DampingRatio = Constraint.DefaultDampingRatio,
-                    MaxImpulse = MaxImpulse,
+                    MaxImpulse = MaxImpulse
                 });
-            }
 
-            var joint = new PhysicsJoint
+            PhysicsJoint joint = new PhysicsJoint
             {
                 BodyAFromJoint = BodyFrame.Identity,
                 BodyBFromJoint = offset
@@ -54,19 +50,21 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class LimitDOFJointBaker : Baker<LimitDOFJoint>
+    internal class LimitDOFJointBaker : Baker<LimitDOFJoint>
     {
-        public Entity CreateJointEntity(uint worldIndex, PhysicsConstrainedBodyPair constrainedBodyPair, PhysicsJoint joint)
+        public Entity CreateJointEntity(uint worldIndex, PhysicsConstrainedBodyPair constrainedBodyPair,
+            PhysicsJoint joint)
         {
-            using (var joints = new NativeArray<PhysicsJoint>(1, Allocator.Temp) { [0] = joint })
-            using (var jointEntities = new NativeList<Entity>(1, Allocator.Temp))
+            using (NativeArray<PhysicsJoint> joints = new NativeArray<PhysicsJoint>(1, Allocator.Temp) { [0] = joint })
+            using (NativeList<Entity> jointEntities = new NativeList<Entity>(1, Allocator.Temp))
             {
                 CreateJointEntities(worldIndex, constrainedBodyPair, joints, jointEntities);
                 return jointEntities[0];
             }
         }
 
-        public void CreateJointEntities(uint worldIndex, PhysicsConstrainedBodyPair constrainedBodyPair, NativeArray<PhysicsJoint> joints, NativeList<Entity> newJointEntities = default)
+        public void CreateJointEntities(uint worldIndex, PhysicsConstrainedBodyPair constrainedBodyPair,
+            NativeArray<PhysicsJoint> joints, NativeList<Entity> newJointEntities = default)
         {
             if (!joints.IsCreated || joints.Length == 0)
                 return;
@@ -77,11 +75,11 @@ namespace Unity.Physics.Authoring
                 newJointEntities = new NativeList<Entity>(joints.Length, Allocator.Temp);
 
             // create all new joints
-            var multipleJoints = joints.Length > 1;
+            bool multipleJoints = joints.Length > 1;
 
-            for (var i = 0; i < joints.Length; ++i)
+            for (int i = 0; i < joints.Length; ++i)
             {
-                var jointEntity = CreateAdditionalEntity(TransformUsageFlags.Dynamic);
+                Entity jointEntity = CreateAdditionalEntity(TransformUsageFlags.Dynamic);
                 AddSharedComponent(jointEntity, new PhysicsWorldIndex(worldIndex));
 
                 AddComponent(jointEntity, constrainedBodyPair);
@@ -91,26 +89,27 @@ namespace Unity.Physics.Authoring
             }
 
             if (multipleJoints)
-            {
                 // set companion buffers for new joints
-                for (var i = 0; i < joints.Length; ++i)
+                for (int i = 0; i < joints.Length; ++i)
                 {
-                    var companions = AddBuffer<PhysicsJointCompanion>(newJointEntities[i]);
-                    for (var j = 0; j < joints.Length; ++j)
+                    DynamicBuffer<PhysicsJointCompanion> companions =
+                        AddBuffer<PhysicsJointCompanion>(newJointEntities[i]);
+                    for (int j = 0; j < joints.Length; ++j)
                     {
                         if (i == j)
                             continue;
                         companions.Add(new PhysicsJointCompanion { JointEntity = newJointEntities[j] });
                     }
                 }
-            }
         }
 
         protected PhysicsConstrainedBodyPair GetConstrainedBodyPair(LimitDOFJoint authoring)
         {
             return new PhysicsConstrainedBodyPair(
                 GetEntity(TransformUsageFlags.Dynamic),
-                authoring.ConnectedBody == null ? Entity.Null : GetEntity(authoring.ConnectedBody, TransformUsageFlags.Dynamic),
+                authoring.ConnectedBody == null
+                    ? Entity.Null
+                    : GetEntity(authoring.ConnectedBody, TransformUsageFlags.Dynamic),
                 authoring.EnableCollision
             );
         }
@@ -118,11 +117,8 @@ namespace Unity.Physics.Authoring
         public uint GetWorldIndex(Component c)
         {
             uint worldIndex = 0;
-            var physicsBody = GetComponent<PhysicsBodyAuthoring>(c);
-            if (physicsBody != null)
-            {
-                worldIndex = physicsBody.WorldIndex;
-            }
+            PhysicsBodyAuthoring physicsBody = GetComponent<PhysicsBodyAuthoring>(c);
+            if (physicsBody != null) worldIndex = physicsBody.WorldIndex;
             return worldIndex;
         }
 
@@ -134,7 +130,7 @@ namespace Unity.Physics.Authoring
             RigidTransform bFromA = math.mul(math.inverse(authoring.worldFromB), authoring.worldFromA);
             PhysicsJoint physicsJoint = authoring.CreateLimitDOFJoint(bFromA);
 
-            var worldIndex = GetWorldIndex(authoring);
+            uint worldIndex = GetWorldIndex(authoring);
             CreateJointEntity(
                 worldIndex,
                 GetConstrainedBodyPair(authoring),

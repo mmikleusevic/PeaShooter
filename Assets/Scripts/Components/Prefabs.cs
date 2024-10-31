@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Prefabs : IComponentData
 {
-    public GameObject hpBar;
     public GameObject fireflyBoltsVFX;
+    public GameObject hpBar;
     public GameObject veggieMaelstromVFX;
 }

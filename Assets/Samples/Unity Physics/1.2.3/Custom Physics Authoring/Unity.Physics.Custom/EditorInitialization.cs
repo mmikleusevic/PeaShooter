@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build;
@@ -6,16 +7,17 @@ using UnityEditor.Build;
 namespace Unity.Physics.Authoring
 {
     [InitializeOnLoad]
-    class EditorInitialization
+    internal class EditorInitialization
     {
-        static readonly string k_CustomDefine = "UNITY_PHYSICS_CUSTOM";
+        private static readonly string k_CustomDefine = "UNITY_PHYSICS_CUSTOM";
 
         static EditorInitialization()
         {
-            var fromBuildTargetGroup = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-            var definesStr = PlayerSettings.GetScriptingDefineSymbols(fromBuildTargetGroup);
-            var defines = definesStr.Split(';').ToList();
-            var found = defines.Find(define => define.Equals(k_CustomDefine));
+            NamedBuildTarget fromBuildTargetGroup =
+                NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            string definesStr = PlayerSettings.GetScriptingDefineSymbols(fromBuildTargetGroup);
+            List<string> defines = definesStr.Split(';').ToList();
+            string found = defines.Find(define => define.Equals(k_CustomDefine));
             if (found == null)
             {
                 defines.Add(k_CustomDefine);

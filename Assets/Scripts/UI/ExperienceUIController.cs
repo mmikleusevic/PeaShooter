@@ -4,14 +4,21 @@ using UnityEngine.UIElements;
 
 public class ExperienceUIController : MonoBehaviour
 {
-    private PlayerExperienceSystem playerExperienceSystem;
     private ProgressBar experienceBar;
+    private PlayerExperienceSystem playerExperienceSystem;
 
     private void Awake()
     {
-        playerExperienceSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
+        playerExperienceSystem =
+            World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
 
         if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp += OnGainedExp;
+    }
+
+    private void Start()
+    {
+        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
+        experienceBar = uiVisualELement.Q<ProgressBar>("experience");
     }
 
     private void OnDestroy()
@@ -22,12 +29,6 @@ public class ExperienceUIController : MonoBehaviour
     private void OnGainedExp(uint currentEXP, uint maxEXP)
     {
         SetProgressBar(currentEXP, maxEXP);
-    }
-
-    private void Start()
-    {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-        experienceBar = uiVisualELement.Q<ProgressBar>("experience");
     }
 
     private void SetProgressBar(uint currentEXP, uint maxEXP)

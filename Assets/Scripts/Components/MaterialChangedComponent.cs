@@ -1,3 +1,5 @@
 using Unity.Entities;
 
-public struct MaterialChangedComponent : IComponentData { }
+public struct MaterialChangedComponent : IComponentData
+{
+}

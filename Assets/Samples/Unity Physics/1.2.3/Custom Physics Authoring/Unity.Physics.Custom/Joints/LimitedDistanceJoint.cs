@@ -8,16 +8,17 @@ namespace Unity.Physics.Authoring
         public float MaxDistance;
     }
 
-    class LimitedDistanceJointBaker : JointBaker<LimitedDistanceJoint>
+    internal class LimitedDistanceJointBaker : JointBaker<LimitedDistanceJoint>
     {
         public override void Bake(LimitedDistanceJoint authoring)
         {
             authoring.UpdateAuto();
 
-            var physicsJoint = PhysicsJoint.CreateLimitedDistance(authoring.PositionLocal, authoring.PositionInConnectedEntity, new FloatRange(authoring.MinDistance, authoring.MaxDistance));
+            PhysicsJoint physicsJoint = PhysicsJoint.CreateLimitedDistance(authoring.PositionLocal,
+                authoring.PositionInConnectedEntity, new FloatRange(authoring.MinDistance, authoring.MaxDistance));
             physicsJoint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntity(worldIndex, constraintBodyPair, physicsJoint);

@@ -5,7 +5,6 @@ using Unity.Jobs;
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
 [UpdateAfter(typeof(RemoveParticlesSystem))]
-
 public partial struct DestroySystem : ISystem
 {
     [BurstCompile]
@@ -18,12 +17,13 @@ public partial struct DestroySystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         DestroyJob job = new DestroyJob
         {
-            ecb = ecb.AsParallelWriter(),
+            ecb = ecb.AsParallelWriter()
         };
 
         JobHandle spawnHandle = job.ScheduleParallel(state.Dependency);

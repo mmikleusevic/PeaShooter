@@ -1,3 +1,5 @@
 using Unity.Entities;
 
-public struct PlayerAliveComponent : IComponentData { }
+public struct PlayerAliveComponent : IComponentData
+{
+}

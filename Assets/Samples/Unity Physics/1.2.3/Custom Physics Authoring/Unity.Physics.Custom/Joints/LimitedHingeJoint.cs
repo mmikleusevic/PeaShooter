@@ -7,8 +7,7 @@ namespace Unity.Physics.Authoring
     public class LimitedHingeJoint : FreeHingeJoint
     {
         // Editor only settings
-        [HideInInspector]
-        public bool EditLimits;
+        [HideInInspector] public bool EditLimits;
 
         public float3 PerpendicularAxisLocal;
         public float3 PerpendicularAxisInConnectedEntity;
@@ -27,13 +26,13 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class LimitedHingeJointBaker : JointBaker<LimitedHingeJoint>
+    internal class LimitedHingeJointBaker : JointBaker<LimitedHingeJoint>
     {
         public override void Bake(LimitedHingeJoint authoring)
         {
             authoring.UpdateAuto();
 
-            var physicsJoint = PhysicsJoint.CreateLimitedHinge(
+            PhysicsJoint physicsJoint = PhysicsJoint.CreateLimitedHinge(
                 new BodyFrame
                 {
                     Axis = math.normalize(authoring.HingeAxisLocal),
@@ -51,7 +50,7 @@ namespace Unity.Physics.Authoring
 
             physicsJoint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntity(worldIndex, constraintBodyPair, physicsJoint);

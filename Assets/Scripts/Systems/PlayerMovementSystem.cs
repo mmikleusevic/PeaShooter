@@ -28,7 +28,7 @@ public partial struct PlayerMovementSystem : ISystem
         PlayerMovementJob job = new PlayerMovementJob
         {
             deltaTime = SystemAPI.Time.DeltaTime,
-            size = gridEntityQuery.GetSingleton<GridComponent>().size,
+            size = gridEntityQuery.GetSingleton<GridComponent>().size
         };
 
         JobHandle handle = job.Schedule(state.Dependency);

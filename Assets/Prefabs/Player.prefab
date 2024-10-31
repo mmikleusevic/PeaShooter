@@ -99,7 +99,6 @@ GameObject:
   - component: {fileID: 1571336347822976345}
   - component: {fileID: 5392305583404523313}
   - component: {fileID: 6736099531634673646}
-  - component: {fileID: 4214993522478765005}
   - component: {fileID: 2258809042960670038}
   m_Layer: 0
   m_Name: Player
@@ -346,22 +345,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitPoints: 100
   healthBarOffset: {x: 0, y: 1.5, z: 0}
---- !u!114 &4214993522478765005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4514804550613245317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbf4fa3bd11912a40a71e0865a02769d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldown: 1
-  range: 5
-  projectilePrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
-  projectileScale: 0.5
 --- !u!114 &2258809042960670038
 MonoBehaviour:
   m_ObjectHideFlags: 0

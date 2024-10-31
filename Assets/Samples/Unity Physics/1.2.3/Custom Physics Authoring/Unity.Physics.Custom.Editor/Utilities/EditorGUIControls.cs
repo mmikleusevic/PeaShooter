@@ -7,17 +7,33 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [InitializeOnLoad]
-    static class EditorGUIControls
+    internal static class EditorGUIControls
     {
+        private static readonly MethodInfo k_SoftSlider = typeof(EditorGUI).GetMethod(
+            "Slider",
+            BindingFlags.Static | BindingFlags.NonPublic,
+            null,
+            new[]
+            {
+                typeof(Rect), // position
+                typeof(GUIContent), // label
+                typeof(float), // value
+                typeof(float), // sliderMin
+                typeof(float), // sliderMax
+                typeof(float), // textFieldMin
+                typeof(float) // textFieldMax
+            },
+            Array.Empty<ParameterModifier>()
+        );
+
+        private static readonly object[] k_SoftSliderArgs = new object[7];
+
         static EditorGUIControls()
         {
             if (k_SoftSlider == null)
-                Debug.LogException(new MissingMemberException("Could not find expected signature of EditorGUI.Slider() for soft slider."));
-        }
-
-        static class Styles
-        {
-            public static readonly string CompatibilityWarning = L10n.Tr("Not compatible with {0}.");
+                Debug.LogException(
+                    new MissingMemberException(
+                        "Could not find expected signature of EditorGUI.Slider() for soft slider."));
         }
 
         public static void DisplayCompatibilityWarning(Rect position, GUIContent label, string incompatibleType)
@@ -28,25 +44,6 @@ namespace Unity.Physics.Editor
                 MessageType.Error
             );
         }
-
-        static readonly MethodInfo k_SoftSlider = typeof(EditorGUI).GetMethod(
-            "Slider",
-            BindingFlags.Static | BindingFlags.NonPublic,
-            null,
-            new[]
-            {
-                typeof(Rect),          // position
-                typeof(GUIContent),    // label
-                typeof(float),         // value
-                typeof(float),         // sliderMin
-                typeof(float),         // sliderMax
-                typeof(float),         // textFieldMin
-                typeof(float)          // textFieldMax
-            },
-            Array.Empty<ParameterModifier>()
-        );
-
-        static readonly object[] k_SoftSliderArgs = new object[7];
 
         public static void SoftSlider(
             Rect position, GUIContent label, SerializedProperty property,
@@ -76,11 +73,16 @@ namespace Unity.Physics.Editor
                 k_SoftSliderArgs[6] = textFieldMax;
                 EditorGUI.BeginProperty(position, label, property);
                 EditorGUI.BeginChangeCheck();
-                var result = k_SoftSlider.Invoke(null, k_SoftSliderArgs);
+                object result = k_SoftSlider.Invoke(null, k_SoftSliderArgs);
                 if (EditorGUI.EndChangeCheck())
                     property.floatValue = (float)result;
                 EditorGUI.EndProperty();
             }
+        }
+
+        private static class Styles
+        {
+            public static readonly string CompatibilityWarning = L10n.Tr("Not compatible with {0}.");
         }
     }
 }

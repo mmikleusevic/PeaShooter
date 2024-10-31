@@ -5,7 +5,7 @@ public struct HealthComponent : IComponentData
 {
     public float maxHitPoints;
     private float hitPoints;
-    private bool isDead;
+
     public float HitPoints
     {
         readonly get => hitPoints;
@@ -13,9 +13,9 @@ public struct HealthComponent : IComponentData
         {
             hitPoints = math.max(0, value);
 
-            if (hitPoints == 0) isDead = true;
+            if (hitPoints == 0) IsDead = true;
         }
     }
 
-    public bool IsDead => isDead;
+    public bool IsDead { get; private set; }
 }

@@ -1,44 +1,34 @@
-using Unity.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Game;
+using Managers;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PickAbilityUIController : MonoBehaviour
 {
-    [SerializeField] private AbilityPicker abilityPickerRNG;
+    [SerializeField] private VisualTreeAsset abilityCardTemplate;
+    private VisualElement abilityCardContainer;
+    private VisualElement abilityPicker;
 
     private PlayerExperienceSystem playerExperienceSystem;
-    private EntityQuery playerEntityQuery;
-    private EntityQuery prefabsQuery;
-    private EntityManager entityManager;
 
-    // TODO: Remove later
-    private bool isExecuted = false;
+    private VisualElement rootElement;
 
     private void Awake()
     {
-        playerExperienceSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
+        playerExperienceSystem =
+            World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
 
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
     }
 
     private void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent>()
-            .Build(entityManager);
-
-        prefabsQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<Prefabs>()
-            .Build(entityManager);
-    }
-
-    private void Update()
-    {
-        // TODO: Remove later
-        if (isExecuted) return;
-        AbilityChosen();
+        rootElement = GetComponent<UIDocument>().rootVisualElement;
+        abilityPicker = rootElement.Q<VisualElement>("abilityPicker");
+        abilityCardContainer = rootElement.Q<VisualElement>("abilityCardContainer");
     }
 
     private void OnDestroy()
@@ -48,36 +38,80 @@ public class PickAbilityUIController : MonoBehaviour
 
     private void OnLevelUp()
     {
-        abilityPickerRNG.PickRandomAbilities();
-        // Instantiate 3-4 Random UI Cards of abilities so that player can pick a new ability or upgrade his old one
-        // Make it scriptable objects probably with data to use for cards
-        // After he picks invoke OnAbilityChosen to resume the game
+        List<AbilityData> randomAbilities = AbilityManager.Instance.GetRandomAbilityChoices();
+
+        if (randomAbilities.Count == 0) return;
+
+        foreach (AbilityData ability in randomAbilities)
+        {
+            VisualElement template = abilityCardTemplate.CloneTree();
+            VisualElement abilityCard = template.Children().First();
+
+            VisualElement image = abilityCard.Q<VisualElement>("image");
+            Label name = abilityCard.Q<Label>("name");
+            Label description = abilityCard.Q<Label>("description");
+
+            image.style.backgroundImage = new StyleBackground(ability.icon);
+            name.text = ability.abilityName;
+            description.text = ability.abilityDescription;
+
+            abilityCard.userData = ability;
+            abilityCard.RegisterCallback<ClickEvent>(OnAbilityChosen);
+
+            abilityCardContainer.Add(abilityCard);
+        }
+
+        Show();
     }
 
-    private void AbilityChosen()
+    private void OnAbilityChosen(ClickEvent evt)
     {
-        // Important that this can work like this, will fix later
-        // Get the one actually picked later
-        // TODO: Remove later check
-        if (!prefabsQuery.HasSingleton<Prefabs>()) return;
+        VisualElement abilityCard = evt.currentTarget as VisualElement;
+        AbilityData ability = abilityCard?.userData as AbilityData;
 
-        GameObject vfxPrefab = prefabsQuery.GetSingleton<Prefabs>().fireflyBoltsVFX;
-        GameObject newVfx = Instantiate(vfxPrefab, vfxPrefab.transform.position, vfxPrefab.transform.rotation);
-
-        if (!playerEntityQuery.HasSingleton<PlayerComponent>()) return;
-
-        isExecuted = true;
-
-        Entity entity = playerEntityQuery.GetSingletonEntity();
-
-        ParticleReference particleReference = new ParticleReference
-        {
-            value = newVfx,
-            updateTransform = false
-        };
-
-        entityManager.AddComponentData(entity, particleReference);
+        AbilityManager.Instance.AcquireAbility(ability);
 
         GameStateManager.Instance.OnAbilityChosen();
+        Hide();
+
+        // TODO: Remove later if making particle abilities works
+        // if (!prefabsQuery.HasSingleton<Prefabs>()) return;
+        //
+        // GameObject vfxPrefab = prefabsQuery.GetSingleton<Prefabs>().fireflyBoltsVFX;
+        // GameObject newVfx = Instantiate(vfxPrefab, vfxPrefab.transform.position, vfxPrefab.transform.rotation);
+        //
+        // if (!playerEntityQuery.HasSingleton<PlayerComponent>()) return;
+        //
+        // Entity entity = playerEntityQuery.GetSingletonEntity();
+        //
+        // ParticleReference particleReference = new ParticleReference
+        // {
+        //     value = newVfx,
+        //     updateTransform = false
+        // };
+        //
+        // entityManager.AddComponentData(entity, particleReference);
+    }
+
+    private void Hide()
+    {
+        CleanupCards();
+
+        abilityPicker.visible = false;
+    }
+
+    private void Show()
+    {
+        abilityPicker.visible = true;
+    }
+
+    private void CleanupCards()
+    {
+        for (int i = 0; i < abilityCardContainer.childCount; i++)
+        {
+            abilityCardContainer[i].UnregisterCallback<ClickEvent>(OnAbilityChosen);
+        }
+
+        abilityCardContainer.Clear();
     }
 }

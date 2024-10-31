@@ -18,9 +18,10 @@ public partial struct ProjectileTargetingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        ProjectileTargetingSystemJob job = new ProjectileTargetingSystemJob
+        ProjectileTargetingJob job = new ProjectileTargetingJob
         {
-            deltaTime = SystemAPI.Time.DeltaTime
+            deltaTime = SystemAPI.Time.DeltaTime,
+            AbilityLookup = SystemAPI.GetComponentLookup<AbilityComponent>(true)
         };
 
         JobHandle jobHandle = job.ScheduleParallel(state.Dependency);

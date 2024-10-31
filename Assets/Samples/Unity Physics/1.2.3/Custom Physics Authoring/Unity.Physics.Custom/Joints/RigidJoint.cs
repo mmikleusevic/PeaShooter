@@ -15,6 +15,7 @@ namespace Unity.Physics.Authoring
                 RigidTransform bFromA = math.mul(math.inverse(worldFromB), worldFromA);
                 OrientationInConnectedEntity = math.mul(bFromA.rot, OrientationLocal);
             }
+
             {
                 OrientationLocal = math.normalize(OrientationLocal);
                 OrientationInConnectedEntity = math.normalize(OrientationInConnectedEntity);
@@ -22,20 +23,20 @@ namespace Unity.Physics.Authoring
         }
     }
 
-    class RigidJointBaker : JointBaker<RigidJoint>
+    internal class RigidJointBaker : JointBaker<RigidJoint>
     {
         public override void Bake(RigidJoint authoring)
         {
             authoring.UpdateAuto();
 
-            var physicsJoint = PhysicsJoint.CreateFixed(
+            PhysicsJoint physicsJoint = PhysicsJoint.CreateFixed(
                 new RigidTransform(authoring.OrientationLocal, authoring.PositionLocal),
                 new RigidTransform(authoring.OrientationInConnectedEntity, authoring.PositionInConnectedEntity)
             );
 
             physicsJoint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
 
-            var constraintBodyPair = GetConstrainedBodyPair(authoring);
+            PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
             uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntity(worldIndex, constraintBodyPair, physicsJoint);

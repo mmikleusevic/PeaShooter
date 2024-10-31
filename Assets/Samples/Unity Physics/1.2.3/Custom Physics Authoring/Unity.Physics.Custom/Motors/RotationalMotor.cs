@@ -7,33 +7,43 @@ namespace Unity.Physics.Authoring
     {
         [Tooltip("An offset from center of entity with motor. Representing the anchor/pivot point of rotation")]
         public float3 PivotPosition;
+
         [Tooltip("The axis of rotation of the motor. Value will be normalized")]
         public float3 AxisOfRotation;
+
         [Tooltip("Motor will maintain this target angle around the AxisOfRotation, in degrees")]
         public float TargetAngle;
-        [Tooltip("The magnitude of the maximum impulse the motor can exert in one step. Applies only to the motor constraint.")]
+
+        [Tooltip(
+            "The magnitude of the maximum impulse the motor can exert in one step. Applies only to the motor constraint.")]
         public float MaxImpulseAppliedByMotor = math.INFINITY;
 
-        private float3 PerpendicularAxisLocal;
-        private float3 PositionInConnectedEntity;
         private float3 HingeAxisInConnectedEntity;
         private float3 PerpendicularAxisInConnectedEntity;
 
-        class RotationalMotorBaker : JointBaker<RotationalMotor>
+        private float3 PerpendicularAxisLocal;
+        private float3 PositionInConnectedEntity;
+
+        private class RotationalMotorBaker : JointBaker<RotationalMotor>
         {
             public override void Bake(RotationalMotor authoring)
             {
                 float3 axisInA = math.normalize(authoring.AxisOfRotation);
 
                 RigidTransform bFromA = math.mul(math.inverse(authoring.worldFromB), authoring.worldFromA);
-                authoring.PositionInConnectedEntity = math.transform(bFromA, authoring.PivotPosition); //position of motored body pivot relative to Connected Entity in world space
-                authoring.HingeAxisInConnectedEntity = math.mul(bFromA.rot, axisInA); //motor axis in Connected Entity space
+                authoring.PositionInConnectedEntity =
+                    math.transform(bFromA,
+                        authoring
+                            .PivotPosition); //position of motored body pivot relative to Connected Entity in world space
+                authoring.HingeAxisInConnectedEntity =
+                    math.mul(bFromA.rot, axisInA); //motor axis in Connected Entity space
 
                 // Always calculate the perpendicular axes
-                Math.CalculatePerpendicularNormalized(axisInA, out var perpendicularLocal, out _);
-                authoring.PerpendicularAxisInConnectedEntity = math.mul(bFromA.rot, perpendicularLocal); //perp motor axis in Connected Entity space
+                Math.CalculatePerpendicularNormalized(axisInA, out float3 perpendicularLocal, out _);
+                authoring.PerpendicularAxisInConnectedEntity =
+                    math.mul(bFromA.rot, perpendicularLocal); //perp motor axis in Connected Entity space
 
-                var joint = PhysicsJoint.CreateRotationalMotor(
+                PhysicsJoint joint = PhysicsJoint.CreateRotationalMotor(
                     new BodyFrame
                     {
                         Axis = axisInA,
@@ -51,7 +61,7 @@ namespace Unity.Physics.Authoring
                 );
 
                 joint.SetImpulseEventThresholdAllConstraints(authoring.MaxImpulse);
-                var constraintBodyPair = GetConstrainedBodyPair(authoring);
+                PhysicsConstrainedBodyPair constraintBodyPair = GetConstrainedBodyPair(authoring);
 
                 uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
                 CreateJointEntity(worldIndex, constraintBodyPair, joint);

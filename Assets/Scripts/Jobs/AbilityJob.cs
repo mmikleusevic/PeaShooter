@@ -1,3 +1,4 @@
+using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -5,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
-public partial struct AbilitySystemJob : IJobEntity
+public partial struct AbilityJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
     public Entity projectileEntity;
@@ -15,7 +16,7 @@ public partial struct AbilitySystemJob : IJobEntity
     [ReadOnly] public LocalTransform playerTransform;
     [ReadOnly] public float deltaTime;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, ref AbilityComponent ability)
+    private void Execute([ChunkIndexInQuery] int sortKey, ref AbilityComponent ability, in Entity entity)
     {
         if (ability.cooldownRemaining <= 0f)
         {
@@ -46,6 +47,11 @@ public partial struct AbilitySystemJob : IJobEntity
                 if (projectileEntity == Entity.Null)
                 {
                     projectileEntity = ecb.Instantiate(sortKey, ability.projectileEntity);
+
+                    ecb.AddComponent(sortKey, projectileEntity, new ProjectileAbilityComponent
+                    {
+                        parentEntity = entity
+                    });
                 }
                 else
                 {
@@ -65,11 +71,8 @@ public partial struct AbilitySystemJob : IJobEntity
                     enemyEntity = closestEnemyEntity
                 });
             }
-            else
-            {
-                //TODO: Need to think what to do with the non projectile based abilities
-            }
 
+            //TODO: Need to think what to do with the non projectile based abilities
             ability.cooldownRemaining = ability.cooldown;
         }
         else

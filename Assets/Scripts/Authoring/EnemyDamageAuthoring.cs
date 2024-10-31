@@ -13,7 +13,7 @@ public class EnemyDamageAuthoring : MonoBehaviour
 
             AddComponent(entity, new EnemyDamageComponent
             {
-                damagePerSecond = authoring.damage,
+                damagePerSecond = authoring.damage
             });
         }
     }

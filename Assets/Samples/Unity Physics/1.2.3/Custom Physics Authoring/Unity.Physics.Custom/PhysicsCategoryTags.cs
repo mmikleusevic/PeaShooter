@@ -6,8 +6,8 @@ namespace Unity.Physics.Authoring
     [Serializable]
     public struct PhysicsCategoryTags : IEquatable<PhysicsCategoryTags>
     {
-        public static PhysicsCategoryTags Everything => new PhysicsCategoryTags { Value = unchecked((uint)~0) };
-        public static PhysicsCategoryTags Nothing => new PhysicsCategoryTags { Value = 0 };
+        public static PhysicsCategoryTags Everything => new() { Value = unchecked((uint)~0) };
+        public static PhysicsCategoryTags Nothing => new() { Value = 0 };
 
         public bool Category00;
         public bool Category01;
@@ -89,38 +89,102 @@ namespace Unity.Physics.Authoring
                 SafetyChecks.CheckInRangeAndThrow(i, new int2(0, 31), nameof(i));
                 switch (i)
                 {
-                    case 0: Category00 = value; break;
-                    case 1: Category01 = value; break;
-                    case 2: Category02 = value; break;
-                    case 3: Category03 = value; break;
-                    case 4: Category04 = value; break;
-                    case 5: Category05 = value; break;
-                    case 6: Category06 = value; break;
-                    case 7: Category07 = value; break;
-                    case 8: Category08 = value; break;
-                    case 9: Category09 = value; break;
-                    case 10: Category10 = value; break;
-                    case 11: Category11 = value; break;
-                    case 12: Category12 = value; break;
-                    case 13: Category13 = value; break;
-                    case 14: Category14 = value; break;
-                    case 15: Category15 = value; break;
-                    case 16: Category16 = value; break;
-                    case 17: Category17 = value; break;
-                    case 18: Category18 = value; break;
-                    case 19: Category19 = value; break;
-                    case 20: Category20 = value; break;
-                    case 21: Category21 = value; break;
-                    case 22: Category22 = value; break;
-                    case 23: Category23 = value; break;
-                    case 24: Category24 = value; break;
-                    case 25: Category25 = value; break;
-                    case 26: Category26 = value; break;
-                    case 27: Category27 = value; break;
-                    case 28: Category28 = value; break;
-                    case 29: Category29 = value; break;
-                    case 30: Category30 = value; break;
-                    case 31: Category31 = value; break;
+                    case 0:
+                        Category00 = value;
+                        break;
+                    case 1:
+                        Category01 = value;
+                        break;
+                    case 2:
+                        Category02 = value;
+                        break;
+                    case 3:
+                        Category03 = value;
+                        break;
+                    case 4:
+                        Category04 = value;
+                        break;
+                    case 5:
+                        Category05 = value;
+                        break;
+                    case 6:
+                        Category06 = value;
+                        break;
+                    case 7:
+                        Category07 = value;
+                        break;
+                    case 8:
+                        Category08 = value;
+                        break;
+                    case 9:
+                        Category09 = value;
+                        break;
+                    case 10:
+                        Category10 = value;
+                        break;
+                    case 11:
+                        Category11 = value;
+                        break;
+                    case 12:
+                        Category12 = value;
+                        break;
+                    case 13:
+                        Category13 = value;
+                        break;
+                    case 14:
+                        Category14 = value;
+                        break;
+                    case 15:
+                        Category15 = value;
+                        break;
+                    case 16:
+                        Category16 = value;
+                        break;
+                    case 17:
+                        Category17 = value;
+                        break;
+                    case 18:
+                        Category18 = value;
+                        break;
+                    case 19:
+                        Category19 = value;
+                        break;
+                    case 20:
+                        Category20 = value;
+                        break;
+                    case 21:
+                        Category21 = value;
+                        break;
+                    case 22:
+                        Category22 = value;
+                        break;
+                    case 23:
+                        Category23 = value;
+                        break;
+                    case 24:
+                        Category24 = value;
+                        break;
+                    case 25:
+                        Category25 = value;
+                        break;
+                    case 26:
+                        Category26 = value;
+                        break;
+                    case 27:
+                        Category27 = value;
+                        break;
+                    case 28:
+                        Category28 = value;
+                        break;
+                    case 29:
+                        Category29 = value;
+                        break;
+                    case 30:
+                        Category30 = value;
+                        break;
+                    case 31:
+                        Category31 = value;
+                        break;
                 }
             }
         }
@@ -129,7 +193,7 @@ namespace Unity.Physics.Authoring
         {
             get
             {
-                var result = 0;
+                int result = 0;
                 result |= (Category00 ? 1 : 0) << 0;
                 result |= (Category01 ? 1 : 0) << 1;
                 result |= (Category02 ? 1 : 0) << 2;
@@ -201,10 +265,19 @@ namespace Unity.Physics.Authoring
             }
         }
 
-        public bool Equals(PhysicsCategoryTags other) => Value == other.Value;
+        public bool Equals(PhysicsCategoryTags other)
+        {
+            return Value == other.Value;
+        }
 
-        public override bool Equals(object obj) => obj is PhysicsCategoryTags other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is PhysicsCategoryTags other && Equals(other);
+        }
 
-        public override int GetHashCode() => unchecked((int)Value);
+        public override int GetHashCode()
+        {
+            return unchecked((int)Value);
+        }
     }
 }

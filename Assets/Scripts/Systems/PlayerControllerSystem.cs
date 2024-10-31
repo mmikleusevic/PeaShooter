@@ -7,8 +7,8 @@ using UnityEngine.InputSystem;
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial class PlayerControllerSystem : SystemBase
 {
-    private PlayerInput playerInput;
     private EntityQuery inputEntityQuery;
+    private PlayerInput playerInput;
 
     protected override void OnCreate()
     {
@@ -28,7 +28,9 @@ public partial class PlayerControllerSystem : SystemBase
         RequireForUpdate<PlayerAliveComponent>();
     }
 
-    protected override void OnUpdate() { }
+    protected override void OnUpdate()
+    {
+    }
 
     private void OnMovementPerformed(InputAction.CallbackContext obj)
     {

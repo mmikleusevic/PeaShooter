@@ -4,10 +4,10 @@ using UnityEngine.UIElements;
 
 public class GameOverUIController : MonoBehaviour
 {
-    private PlayerHealthSystem playerHealthSystem;
     private VisualElement gameOverScreen;
-    private Button playAgainButton;
     private Button mainMenuButton;
+    private Button playAgainButton;
+    private PlayerHealthSystem playerHealthSystem;
 
     private void Start()
     {

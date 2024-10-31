@@ -1,3 +1,5 @@
 using Unity.Entities;
 
-public struct ActiveForCollisionComponent : IComponentData { }
+public struct ActiveForCollisionComponent : IComponentData
+{
+}

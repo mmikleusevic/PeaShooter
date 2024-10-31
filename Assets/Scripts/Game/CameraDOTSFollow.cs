@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class CameraDOTSFollow : MonoBehaviour
 {
-    private CinemachineCamera virtualCamera;
     private EntityManager entityManager;
     private Entity playerEntity;
     private EntityQuery playerEntityQuery;
+    private CinemachineCamera virtualCamera;
 
     private void Start()
     {
@@ -34,7 +34,7 @@ public class CameraDOTSFollow : MonoBehaviour
 
         if (entityManager.HasComponent<PlayerComponent>(playerEntity))
         {
-            var playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
+            LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
             Transform cameraTargetTransform = virtualCamera.Follow;
 
             if (!cameraTargetTransform)
@@ -51,10 +51,7 @@ public class CameraDOTSFollow : MonoBehaviour
 
     private Entity GetPlayerEntity()
     {
-        if (playerEntityQuery.CalculateEntityCount() > 0)
-        {
-            return playerEntityQuery.GetSingletonEntity();
-        }
+        if (playerEntityQuery.CalculateEntityCount() > 0) return playerEntityQuery.GetSingletonEntity();
 
         return Entity.Null;
     }

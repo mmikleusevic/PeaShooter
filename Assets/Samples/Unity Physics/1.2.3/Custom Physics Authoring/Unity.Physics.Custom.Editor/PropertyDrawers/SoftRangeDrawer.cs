@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(SoftRangeAttribute))]
-    class SoftRangeDrawer : BaseDrawer
+    internal class SoftRangeDrawer : BaseDrawer
     {
         protected override bool IsCompatible(SerializedProperty property)
         {
@@ -14,7 +14,7 @@ namespace Unity.Physics.Editor
 
         protected override void DoGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var attr = attribute as SoftRangeAttribute;
+            SoftRangeAttribute attr = attribute as SoftRangeAttribute;
             EditorGUIControls.SoftSlider(
                 position, label, property, attr.SliderMin, attr.SliderMax, attr.TextFieldMin, attr.TextFieldMax
             );
