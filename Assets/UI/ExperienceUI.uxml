@@ -2,6 +2,6 @@
          engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
          noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=88932a4070dc743488908c2adac4d25c&amp;type=3#Style"/>
-    <ui:ProgressBar value="0" name="experience" tooltip="Experience" high-value="0" title="EXP: 0"
-                    style="-unity-background-scale-mode: stretch-to-fill; width: 20%; height: 5%; align-self: center; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 12px; -unity-text-align: middle-center; text-overflow: clip; white-space: normal; transform-origin: top;"/>
+    <ui:ProgressBar value="0" name="experience" tooltip="Experience" high-value="0" title="EXP: 0" tabindex="-1"
+                    style="-unity-background-scale-mode: stretch-to-fill; width: 20%; height: 5%; align-self: center; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 12px; -unity-text-align: middle-center; text-overflow: clip; white-space: normal; transform-origin: top; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
 </ui:UXML>

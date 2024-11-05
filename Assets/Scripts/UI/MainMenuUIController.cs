@@ -1,31 +1,36 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Button = UnityEngine.UIElements.Button;
 
 public class MainMenuUIController : MonoBehaviour
 {
+    private VisualElement mainMenuElement;
     private Button optionsButton;
     private Button playButton;
     private Button quitButton;
 
     private void Start()
     {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-
-        playButton = uiVisualELement.Q<Button>("play");
-        optionsButton = uiVisualELement.Q<Button>("options");
-        quitButton = uiVisualELement.Q<Button>("quit");
+        mainMenuElement = GetComponent<UIDocument>().rootVisualElement.Q("mainMenu");
+        playButton = mainMenuElement.Q<Button>("play");
+        optionsButton = mainMenuElement.Q<Button>("options");
+        quitButton = mainMenuElement.Q<Button>("quit");
 
         if (playButton != null) playButton.clicked += PlayPressed;
-        if (playButton != null) optionsButton.clicked += OptionsPressed;
+        if (optionsButton != null) optionsButton.clicked += OptionsPressed;
         if (quitButton != null) quitButton.clicked += QuitPressed;
+        if (OptionsUIController.Instance) OptionsUIController.Instance.OnOptionsClosed += OnOptionsClosed;
+
+        playButton?.Focus();
     }
 
     private void OnDestroy()
     {
         if (playButton != null) playButton.clicked -= PlayPressed;
-        if (playButton != null) optionsButton.clicked -= OptionsPressed;
+        if (optionsButton != null) optionsButton.clicked -= OptionsPressed;
         if (quitButton != null) quitButton.clicked -= QuitPressed;
+        if (OptionsUIController.Instance) OptionsUIController.Instance.OnOptionsClosed -= OnOptionsClosed;
     }
 
     private void PlayPressed()
@@ -36,6 +41,7 @@ public class MainMenuUIController : MonoBehaviour
     private void OptionsPressed()
     {
         OptionsUIController.Instance.Show();
+        mainMenuElement.style.visibility = Visibility.Hidden;
     }
 
     private void QuitPressed()
@@ -44,5 +50,12 @@ public class MainMenuUIController : MonoBehaviour
         EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+    private void OnOptionsClosed()
+    {
+        mainMenuElement.style.visibility = Visibility.Visible;
+        mainMenuElement.schedule.Execute(() => playButton.Focus())
+            .Until(() => mainMenuElement.focusController.focusedElement == playButton);
     }
 }

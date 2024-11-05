@@ -2,15 +2,16 @@
          engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
          noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=88932a4070dc743488908c2adac4d25c&amp;type=3#Style"/>
-    <ui:VisualElement name="main-menu"
-                      style="flex-grow: 1; justify-content: space-between; align-items: flex-start; background-color: rgb(255, 255, 255);">
+    <ui:VisualElement name="mainMenu" focusable="false" tabindex="-1" picking-mode="Ignore"
+                      style="flex-grow: 1; justify-content: space-between; align-items: flex-start; background-color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);">
         <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="play"
-                   class="button-style-positive"
-                   style="border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;"/>
+                   selectable="true" tabindex="0" class="button-style-positive"
+                   style="border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
         <ui:Button text="Options" parse-escape-sequences="true" display-tooltip-when-elided="true" name="options"
-                   class="button-style-neutral" style="justify-content: space-between; align-self: flex-start;"/>
+                   selectable="true" tabindex="1" class="button-style-neutral"
+                   style="justify-content: space-between; align-self: flex-start; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
         <ui:Button text="Quit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="quit"
-                   class="button-style-negative"
-                   style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);"/>
+                   selectable="true" tabindex="2" class="button-style-negative"
+                   style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
     </ui:VisualElement>
 </ui:UXML>

@@ -9,8 +9,8 @@ using static Unity.Scenes.SceneSystem;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
-    private readonly List<Entity> currentSubsceneEntities = new();
 
+    private readonly List<Entity> currentSubsceneEntities = new();
     private IMemoryCleaner[] memoryCleaners;
 
     private int subsceneIndex;

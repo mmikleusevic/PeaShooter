@@ -1,4 +1,8 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UIElements;
 
 public class PauseUIController : MonoBehaviour
@@ -8,8 +12,15 @@ public class PauseUIController : MonoBehaviour
     private Button pauseButton;
     private VisualElement pauseElementUI;
     private VisualElement pauseUI;
+    private InputActionAsset playerInputAsset;
     private Button restartButton;
     private Button resumeButton;
+
+    private void Awake()
+    {
+        playerInputAsset = FindFirstObjectByType<EventSystem>().GetComponent<InputSystemUIInputModule>().actionsAsset;
+        playerInputAsset.FindActionMap("UI").FindAction("Pause").performed += TogglePauseUI;
+    }
 
     private void Start()
     {
@@ -20,8 +31,9 @@ public class PauseUIController : MonoBehaviour
         resumeButton = pauseUI.Q<Button>("resume");
         restartButton = pauseUI.Q<Button>("restart");
         optionsButton = pauseUI.Q<Button>("options");
-        mainMenuButton = pauseUI.Q<Button>("main-menu");
+        mainMenuButton = pauseUI.Q<Button>("mainMenu");
 
+        if (OptionsUIController.Instance) OptionsUIController.Instance.OnOptionsClosed += OnOptionsClosed;
         if (pauseButton != null) pauseButton.clicked += OnPause;
         if (resumeButton != null) resumeButton.clicked += OnResume;
         if (restartButton != null) restartButton.clicked += OnRestart;
@@ -31,6 +43,8 @@ public class PauseUIController : MonoBehaviour
 
     private void OnDestroy()
     {
+        playerInputAsset.FindActionMap("UI").FindAction("Pause").performed -= TogglePauseUI;
+        if (OptionsUIController.Instance) OptionsUIController.Instance.OnOptionsClosed -= OnOptionsClosed;
         if (pauseButton != null) pauseButton.clicked -= OnPause;
         if (resumeButton != null) resumeButton.clicked -= OnResume;
         if (restartButton != null) restartButton.clicked -= OnRestart;
@@ -38,20 +52,40 @@ public class PauseUIController : MonoBehaviour
         if (mainMenuButton != null) mainMenuButton.clicked -= OnMainMenu;
     }
 
+    public event Action OnPauseUIOpened;
+    public event Action OnPauseUIClosed;
+
+    private void TogglePauseUI(InputAction.CallbackContext obj)
+    {
+        if (!pauseUI.visible)
+        {
+            GameStateManager.Instance.PauseGame();
+            Show();
+        }
+        else
+        {
+            GameStateManager.Instance.ResumeGame();
+            Hide();
+        }
+    }
+
+    private void OnOptionsClosed()
+    {
+        Show();
+    }
+
     private void OnPause()
     {
         GameStateManager.Instance.PauseGame();
 
-        pauseElementUI.visible = false;
-        pauseUI.visible = true;
+        Show();
     }
 
     private void OnResume()
     {
         GameStateManager.Instance.ResumeGame();
 
-        pauseElementUI.visible = true;
-        pauseUI.visible = false;
+        Hide();
     }
 
     private void OnRestart()
@@ -62,6 +96,7 @@ public class PauseUIController : MonoBehaviour
 
     private void OnOptions()
     {
+        pauseUI.style.visibility = Visibility.Hidden;
         OptionsUIController.Instance.Show();
     }
 
@@ -71,9 +106,28 @@ public class PauseUIController : MonoBehaviour
         LevelManager.Instance.LoadMainMenu();
     }
 
+    private void Show()
+    {
+        OnPauseUIOpened?.Invoke();
+
+        pauseElementUI.style.visibility = Visibility.Hidden;
+        pauseUI.style.visibility = Visibility.Visible;
+
+        pauseUI.schedule.Execute(() => resumeButton.Focus())
+            .Until(() => pauseUI.focusController.focusedElement == resumeButton);
+    }
+
+    private void Hide()
+    {
+        OnPauseUIClosed?.Invoke();
+
+        pauseElementUI.style.visibility = Visibility.Visible;
+        pauseUI.style.visibility = Visibility.Hidden;
+    }
+
     private void HideAll()
     {
-        pauseElementUI.visible = false;
-        pauseUI.visible = false;
+        pauseElementUI.style.visibility = Visibility.Hidden;
+        pauseUI.style.visibility = Visibility.Visible;
     }
 }

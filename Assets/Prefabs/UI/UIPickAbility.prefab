@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3971999205039577562}
+  - component: {fileID: 9186569045099955198}
   - component: {fileID: 2829307186625441986}
   m_Layer: 0
   m_Name: UIPickAbility
@@ -32,6 +33,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9186569045099955198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114254144108269671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: ce43f6487721f5f40bfcf168dcacfb46, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 0f7ad1eccabbd514fa2350b2526f7cae, type: 3}
+  m_SortingOrder: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
 --- !u!114 &2829307186625441986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,4 +64,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d71b8ea68338fa4ba251384750d6d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityPickerRNG: {fileID: 3409829056793507305, guid: da542c6aee2b3b447b3e01417e162ccd, type: 3}
+  pauseUIController: {fileID: 0}
+  abilityCardTemplate: {fileID: 9197481963319205126, guid: b5451efa48ffe574586be5aeb16a944f, type: 3}

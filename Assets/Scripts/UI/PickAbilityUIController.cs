@@ -8,18 +8,26 @@ using UnityEngine.UIElements;
 
 public class PickAbilityUIController : MonoBehaviour
 {
+    [SerializeField] private PauseUIController pauseUIController;
     [SerializeField] private VisualTreeAsset abilityCardTemplate;
+
     private VisualElement abilityCardContainer;
     private VisualElement abilityPicker;
 
+    private bool isWaitingForPick;
     private PlayerExperienceSystem playerExperienceSystem;
-
     private VisualElement rootElement;
 
     private void Awake()
     {
         playerExperienceSystem =
             World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
+
+        if (pauseUIController)
+        {
+            pauseUIController.OnPauseUIOpened += OnPauseUIOpened;
+            pauseUIController.OnPauseUIClosed += OnPauseUIClosed;
+        }
 
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
     }
@@ -33,7 +41,26 @@ public class PickAbilityUIController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (pauseUIController)
+        {
+            pauseUIController.OnPauseUIOpened -= OnPauseUIOpened;
+            pauseUIController.OnPauseUIClosed -= OnPauseUIClosed;
+        }
+
         if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp -= OnLevelUp;
+    }
+
+    private void OnPauseUIOpened()
+    {
+        Hide();
+    }
+
+    private void OnPauseUIClosed()
+    {
+        if (isWaitingForPick)
+        {
+            Show();
+        }
     }
 
     private void OnLevelUp()
@@ -42,8 +69,12 @@ public class PickAbilityUIController : MonoBehaviour
 
         if (randomAbilities.Count == 0) return;
 
-        foreach (AbilityData ability in randomAbilities)
+        isWaitingForPick = true;
+
+        for (int i = 0; i < randomAbilities.Count; i++)
         {
+            AbilityData abilityData = randomAbilities[i];
+
             VisualElement template = abilityCardTemplate.CloneTree();
             VisualElement abilityCard = template.Children().First();
 
@@ -51,27 +82,51 @@ public class PickAbilityUIController : MonoBehaviour
             Label name = abilityCard.Q<Label>("name");
             Label description = abilityCard.Q<Label>("description");
 
-            image.style.backgroundImage = new StyleBackground(ability.icon);
-            name.text = ability.abilityName;
-            description.text = ability.abilityDescription;
+            image.style.backgroundImage = new StyleBackground(abilityData.icon);
+            name.text = abilityData.abilityName;
+            description.text = abilityData.abilityDescription;
 
-            abilityCard.userData = ability;
+            abilityCard.userData = abilityData;
+            abilityCard.focusable = true;
+            abilityCard.tabIndex = i;
+
             abilityCard.RegisterCallback<ClickEvent>(OnAbilityChosen);
+            abilityCard.RegisterCallback<NavigationSubmitEvent>(OnAbilityChosen);
 
             abilityCardContainer.Add(abilityCard);
+
+            if (i == 0) abilityCard.Focus();
         }
 
         Show();
     }
 
-    private void OnAbilityChosen(ClickEvent evt)
-    {
-        VisualElement abilityCard = evt.currentTarget as VisualElement;
-        AbilityData ability = abilityCard?.userData as AbilityData;
+    // private void FocusAbilityCard(FocusInEvent evt, VisualElement abilityCard)
+    // {
+    //     abilityCard.AddToClassList("abilityTemplateFocus");
+    // }
+    //
+    // private void UnfocusAbilityCard(FocusOutEvent evt, VisualElement abilityCard)
+    // {
+    //     abilityCard.RemoveFromClassList("abilityTemplateFocus");
+    // }
 
-        AbilityManager.Instance.AcquireAbility(ability);
+    private void OnAbilityChosen(EventBase evt)
+    {
+        VisualElement element = evt.currentTarget as VisualElement;
+
+        if (element == null) return;
+
+        AbilityData abilityData = element.userData as AbilityData;
+
+        if (!abilityData) return;
+
+        AbilityManager.Instance.AcquireAbility(abilityData);
 
         GameStateManager.Instance.OnAbilityChosen();
+
+        isWaitingForPick = false;
+
         Hide();
 
         // TODO: Remove later if making particle abilities works
@@ -95,14 +150,17 @@ public class PickAbilityUIController : MonoBehaviour
 
     private void Hide()
     {
-        CleanupCards();
+        if (!isWaitingForPick) CleanupCards();
 
-        abilityPicker.visible = false;
+        abilityPicker.style.visibility = Visibility.Hidden;
     }
 
     private void Show()
     {
-        abilityPicker.visible = true;
+        abilityPicker.style.visibility = Visibility.Visible;
+
+        abilityCardContainer.schedule.Execute(() => abilityCardContainer[0].Focus())
+            .Until(() => abilityCardContainer.focusController.focusedElement == abilityCardContainer[0]);
     }
 
     private void CleanupCards()
@@ -110,6 +168,7 @@ public class PickAbilityUIController : MonoBehaviour
         for (int i = 0; i < abilityCardContainer.childCount; i++)
         {
             abilityCardContainer[i].UnregisterCallback<ClickEvent>(OnAbilityChosen);
+            abilityCardContainer[i].UnregisterCallback<NavigationSubmitEvent>(OnAbilityChosen);
         }
 
         abilityCardContainer.Clear();

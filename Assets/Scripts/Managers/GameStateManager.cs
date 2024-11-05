@@ -4,12 +4,12 @@ using UnityEngine;
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
+
     private bool isDead;
     private bool isPausedForLevelUp;
     private PlayerExperienceSystem playerExperienceSystem;
 
     private PlayerHealthSystem playerHealthSystem;
-    public bool IsDead => IsDead;
 
     private void Awake()
     {
@@ -18,8 +18,6 @@ public class GameStateManager : MonoBehaviour
 
     private void Start()
     {
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
         playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
         playerExperienceSystem =
             World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
@@ -65,8 +63,12 @@ public class GameStateManager : MonoBehaviour
     public void ResumeGame()
     {
         if (isDead || isPausedForLevelUp)
+        {
             PauseGame();
+        }
         else
+        {
             Time.timeScale = 1;
+        }
     }
 }

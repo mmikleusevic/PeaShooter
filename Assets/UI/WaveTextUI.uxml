@@ -3,5 +3,5 @@
          noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Label tabindex="-1" text="Wave 1" parse-escape-sequences="true" display-tooltip-when-elided="true"
               name="waveText"
-              style="margin-left: 4px; align-items: flex-start; align-self: auto; justify-content: center; font-size: 12px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-text-align: upper-center; margin-top: 6px; left: 20%; margin-right: 4px; margin-bottom: 4px; right: 60%; position: absolute; width: 20%; height: 5%;"/>
+              style="margin-left: 4px; align-items: flex-start; align-self: auto; justify-content: center; font-size: 12px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-text-align: upper-center; margin-top: 6px; left: 20%; margin-right: 4px; margin-bottom: 4px; right: 60%; position: absolute; width: 20%; height: 5%; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
 </ui:UXML>
