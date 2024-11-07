@@ -1,6 +1,5 @@
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
@@ -23,12 +22,15 @@ public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
-            gridComponent.gridNodes.Dispose();
+            if (gridComponent.enemyPositions.IsCreated)
+            {
+                gridComponent.enemyPositions.Dispose();
+            }
 
-            foreach (KVPair<int2, NativeList<Entity>> enemyPosition in gridComponent.enemyPositions)
-                enemyPosition.Value.Dispose();
-
-            gridComponent.enemyPositions.Dispose();
+            if (gridComponent.gridNodes.IsCreated)
+            {
+                gridComponent.gridNodes.Dispose();
+            }
 
             entityManager.DestroyEntity(gridEntityQuery);
         }

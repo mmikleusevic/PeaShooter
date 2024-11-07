@@ -12,5 +12,6 @@ public struct GridEnemyPositionUpdateComponent : IComponentData
 public enum UpdateStatus
 {
     Add,
-    Move
+    Move,
+    Remove
 }

@@ -4,7 +4,7 @@ using Unity.Jobs;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
-[UpdateAfter(typeof(RemoveParticlesSystem))]
+//[UpdateAfter(typeof(RemoveParticlesSystem))]
 public partial struct DestroySystem : ISystem
 {
     [BurstCompile]

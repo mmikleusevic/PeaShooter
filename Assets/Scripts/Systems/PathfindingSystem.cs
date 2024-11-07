@@ -35,7 +35,7 @@ public partial struct PathfindingSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        int2 playerPosition = playerEntityQuery.GetSingleton<PlayerComponent>().position;
+        int2 playerPosition = playerEntityQuery.GetSingleton<PlayerComponent>().gridPosition;
         GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
 
         PathfindingJob job = new PathfindingJob

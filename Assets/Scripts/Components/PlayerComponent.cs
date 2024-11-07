@@ -5,5 +5,6 @@ public struct PlayerComponent : IComponentData
 {
     public float moveSpeed;
     public float rotationSpeed;
-    public int2 position;
+    public int2 gridPosition;
+    public float3 position;
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Components;
 using Unity.Entities;
 using Unity.Rendering;
 using UnityEngine.Rendering;
@@ -48,8 +49,10 @@ public partial class MaterialChangerSystem : SystemBase
                 {
                     entity = entity,
                     position = enemyComponent.ValueRO.gridPosition,
+                    oldPosition = enemyComponent.ValueRO.gridPosition,
                     status = UpdateStatus.Add
                 });
+                ecb.AddComponent(entity, typeof(HasChangedPositionComponent));
             }
     }
 

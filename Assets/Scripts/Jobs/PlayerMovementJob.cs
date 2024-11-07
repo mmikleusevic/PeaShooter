@@ -28,6 +28,7 @@ public partial struct PlayerMovementJob : IJobEntity
 
         velocity.Linear = moveDirection * player.moveSpeed * deltaTime;
         transform.Position = math.clamp(transform.Position, -size.x, size.x);
-        player.position = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
+        player.gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
+        player.position = transform.Position;
     }
 }

@@ -15,14 +15,16 @@ public partial struct GridSpawnJob : IJobEntity
         GridComponent gridComponent = new GridComponent
         {
             gridNodes = new NativeHashMap<int2, byte>(numberOfPositionPairs, Allocator.Persistent),
-            enemyPositions = new NativeHashMap<int2, NativeList<Entity>>(numberOfPositionPairs, Allocator.Persistent)
+            enemyPositions = new NativeParallelMultiHashMap<int2, Entity>(numberOfPositionPairs, Allocator.Persistent)
         };
 
         for (int i = -gridSpawnerComponent.size.x; i <= gridSpawnerComponent.size.x; i++)
-        for (int j = -gridSpawnerComponent.size.y; j <= gridSpawnerComponent.size.y; j++)
         {
-            int2 position = new int2(i, j);
-            gridComponent.gridNodes[position] = 1;
+            for (int j = -gridSpawnerComponent.size.y; j <= gridSpawnerComponent.size.y; j++)
+            {
+                int2 position = new int2(i, j);
+                gridComponent.gridNodes[position] = 1;
+            }
         }
 
         gridComponent.size = gridSpawnerComponent.size;

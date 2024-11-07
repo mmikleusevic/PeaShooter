@@ -7,7 +7,6 @@ public class GameStateManager : MonoBehaviour
 
     private bool isDead;
     private bool isPausedForLevelUp;
-    private PlayerExperienceSystem playerExperienceSystem;
 
     private PlayerHealthSystem playerHealthSystem;
 
@@ -19,11 +18,8 @@ public class GameStateManager : MonoBehaviour
     private void Start()
     {
         playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
-        playerExperienceSystem =
-            World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
 
         if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied += OnPlayerDied;
-        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp += OnLevelUp;
 
         ResumeGame();
     }
@@ -31,7 +27,6 @@ public class GameStateManager : MonoBehaviour
     private void OnDestroy()
     {
         if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied -= OnPlayerDied;
-        if (playerExperienceSystem != null) playerExperienceSystem.OnLevelUp -= OnLevelUp;
     }
 
     private void OnPlayerDied()
@@ -41,7 +36,7 @@ public class GameStateManager : MonoBehaviour
         PauseGame();
     }
 
-    private void OnLevelUp()
+    public void PauseOnLevelUp()
     {
         isPausedForLevelUp = true;
 

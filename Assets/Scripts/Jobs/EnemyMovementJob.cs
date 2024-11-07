@@ -1,3 +1,4 @@
+using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -41,13 +42,14 @@ public partial struct EnemyMovementJob : IJobEntity
         {
             int2 oldPosition = enemy.gridPosition;
 
-            ecb.AddComponent(sortKey, entity, new GridEnemyPositionUpdateComponent
+            ecb.SetComponent(sortKey, entity, new GridEnemyPositionUpdateComponent
             {
                 entity = entity,
                 oldPosition = oldPosition,
                 position = gridPosition,
                 status = UpdateStatus.Move
             });
+            ecb.AddComponent(sortKey, entity, new HasChangedPositionComponent());
 
             enemy.gridPosition = gridPosition;
         }

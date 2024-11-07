@@ -17,7 +17,7 @@ public class PlayerControllerAuthoring : MonoBehaviour
             {
                 moveSpeed = authoring.speed,
                 rotationSpeed = authoring.rotationSpeed,
-                position = default
+                gridPosition = default
             });
 
             AddComponent(entity, new InputComponent

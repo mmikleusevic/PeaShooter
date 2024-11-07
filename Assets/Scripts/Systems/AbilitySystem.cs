@@ -2,33 +2,33 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
 public partial struct AbilitySystem : ISystem
 {
     private EntityQuery playerEntityQuery;
+    private EntityQuery gridEntityQuery;
     private EntityQuery projectileEntityQuery;
-    private EntityQuery enemyEntityQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent, LocalTransform, PlayerAliveComponent>()
+            .WithAll<PlayerComponent, PlayerAliveComponent>()
+            .Build(ref state);
+
+        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+            .WithAll<GridComponent>()
             .Build(ref state);
 
         projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)
             .WithDisabled<ProjectileComponent>()
             .Build(ref state);
 
-        enemyEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<EnemyComponent>()
-            .Build(ref state);
-
         state.RequireForUpdate(playerEntityQuery);
-        state.RequireForUpdate(enemyEntityQuery);
+        state.RequireForUpdate(gridEntityQuery);
+        state.RequireForUpdate<EnemyComponent>();
         state.RequireForUpdate<AbilityComponent>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
@@ -36,8 +36,6 @@ public partial struct AbilitySystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
-
         BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
             SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
@@ -49,20 +47,19 @@ public partial struct AbilitySystem : ISystem
 
         projectileEntities.Dispose();
 
-        NativeArray<Entity> enemyEntities = enemyEntityQuery.ToEntityArray(Allocator.TempJob);
+        GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
         AbilityJob job = new AbilityJob
         {
             ecb = ecb.AsParallelWriter(),
-            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
-            enemyEntities = enemyEntities,
             projectileEntity = projectileEntity,
-            playerTransform = playerTransform,
+            gridComponent = gridComponent,
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
+            playerComponent = playerEntityQuery.GetSingleton<PlayerComponent>(),
             deltaTime = SystemAPI.Time.DeltaTime
         };
 
         JobHandle handle = job.ScheduleParallel(state.Dependency);
-
-        state.Dependency = JobHandle.CombineDependencies(handle, enemyEntities.Dispose(handle));
+        state.Dependency = handle;
     }
 }

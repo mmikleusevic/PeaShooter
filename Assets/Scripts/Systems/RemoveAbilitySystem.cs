@@ -1,17 +1,29 @@
 using Components;
+using Jobs;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+    [RequireMatchingQueriesForUpdate]
     public partial struct RemoveAbilitySystem : ISystem
     {
+        private EntityQuery removeAbilityQuery;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<RemoveAbilityComponent>();
+            removeAbilityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<RemoveAbilityComponent>()
+                .Build(ref state);
+
+            removeAbilityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<RemoveAbilityComponent>());
+
+            state.RequireForUpdate(removeAbilityQuery);
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -22,10 +34,13 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (removeAbility, entity) in SystemAPI.Query<RefRO<RemoveAbilityComponent>>().WithEntityAccess())
+            RemoveAbilityJob job = new RemoveAbilityJob
             {
-                ecb.DestroyEntity(entity);
-            }
+                ecb = ecb.AsParallelWriter()
+            };
+
+            JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = jobHandle;
         }
     }
 }

@@ -125,6 +125,14 @@ public struct CollisionDamageJob : ICollisionEventsJob
                 if (enemyHealthComponent.ValueRO.HitPoints <= 0)
                 {
                     ecb.AddComponent(otherEntity, new EnemyDeadComponent());
+                    ecb.SetComponent(otherEntity, new GridEnemyPositionUpdateComponent
+                    {
+                        entity = otherEntity,
+                        oldPosition = targetComponent.enemy.gridPosition,
+                        status = UpdateStatus.Remove,
+                        position = targetComponent.enemy.gridPosition
+                    });
+                    ecb.AddComponent(otherEntity, new HasChangedPositionComponent());
                     ecb.AddComponent(otherEntity, new DestroyComponent());
                 }
             }

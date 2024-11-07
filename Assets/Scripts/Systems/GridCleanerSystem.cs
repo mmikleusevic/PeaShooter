@@ -1,6 +1,4 @@
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEditor;
 
 [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
@@ -32,16 +30,19 @@ public partial class GridCleanerSystem : SystemBase
 
     private void Cleanup()
     {
-        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent) && gridComponent.gridNodes.IsCreated)
+        if (SystemAPI.TryGetSingleton(out GridComponent gridComponent))
         {
             Dependency.Complete();
 
-            gridComponent.gridNodes.Dispose();
+            if (gridComponent.enemyPositions.IsCreated)
+            {
+                gridComponent.enemyPositions.Dispose();
+            }
 
-            foreach (KVPair<int2, NativeList<Entity>> enemyPosition in gridComponent.enemyPositions)
-                enemyPosition.Value.Dispose();
-
-            gridComponent.enemyPositions.Dispose();
+            if (gridComponent.gridNodes.IsCreated)
+            {
+                gridComponent.gridNodes.Dispose();
+            }
 
             Entity entity = SystemAPI.GetSingletonEntity<GridComponent>();
 

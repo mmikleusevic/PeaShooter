@@ -69,6 +69,8 @@ public class PickAbilityUIController : MonoBehaviour
 
         if (randomAbilities.Count == 0) return;
 
+        GameStateManager.Instance.PauseOnLevelUp();
+
         isWaitingForPick = true;
 
         for (int i = 0; i < randomAbilities.Count; i++)
