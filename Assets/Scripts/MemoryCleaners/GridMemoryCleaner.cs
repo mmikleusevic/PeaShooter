@@ -22,15 +22,7 @@ public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
-            if (gridComponent.enemyPositions.IsCreated)
-            {
-                gridComponent.enemyPositions.Dispose();
-            }
-
-            if (gridComponent.gridNodes.IsCreated)
-            {
-                gridComponent.gridNodes.Dispose();
-            }
+            gridComponent.Dispose();
 
             entityManager.DestroyEntity(gridEntityQuery);
         }

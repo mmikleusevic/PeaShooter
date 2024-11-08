@@ -1,7 +1,8 @@
+using System;
 using Game;
 using Unity.Entities;
 
-public struct AbilityComponent : IComponentData
+public struct AbilityComponent : IComponentData, IDisposable
 {
     public Abilities ability;
     public int level;
@@ -13,5 +14,13 @@ public struct AbilityComponent : IComponentData
     public Entity projectileEntity;
     public float projectileScale;
     public byte hasProjectile;
-    public BlobAssetReference<PositionsBlob> positionsToCheck;
+    public BlobAssetReference<PositionsComponent> positionsToCheck;
+
+    public void Dispose()
+    {
+        if (positionsToCheck.IsCreated)
+        {
+            positionsToCheck.Dispose();
+        }
+    }
 }

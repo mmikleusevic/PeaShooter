@@ -9,6 +9,7 @@ namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+    [UpdateAfter(typeof(UpdateProjectilesSystem))]
     [RequireMatchingQueriesForUpdate]
     public partial struct RemoveAbilitySystem : ISystem
     {
@@ -18,7 +19,7 @@ namespace Systems
         public void OnCreate(ref SystemState state)
         {
             removeAbilityQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<RemoveAbilityComponent>()
+                .WithAll<RemoveAbilityComponent, AbilityComponent>()
                 .Build(ref state);
 
             removeAbilityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<RemoveAbilityComponent>());
@@ -36,10 +37,10 @@ namespace Systems
 
             RemoveAbilityJob job = new RemoveAbilityJob
             {
-                ecb = ecb.AsParallelWriter()
+                ecb = ecb
             };
 
-            JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
+            JobHandle jobHandle = job.Schedule(state.Dependency);
             state.Dependency = jobHandle;
         }
     }

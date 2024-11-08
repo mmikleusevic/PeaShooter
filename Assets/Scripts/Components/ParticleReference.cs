@@ -4,6 +4,6 @@ using UnityEngine;
 public class ParticleReference : ICleanupComponentData
 {
     public float damage;
-    public bool updateTransform;
+    public byte updateTransform;
     public GameObject value;
 }

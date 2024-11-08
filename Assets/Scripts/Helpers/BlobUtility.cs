@@ -14,16 +14,17 @@ namespace Helpers
         {
             using (BlobBuilder builder = new BlobBuilder(Allocator.Temp))
             {
-                ref PositionsBlob positionsBlob = ref builder.ConstructRoot<PositionsBlob>();
+                ref PositionsComponent positionsComponent = ref builder.ConstructRoot<PositionsComponent>();
 
-                BlobBuilderArray<int2> positionsArray = builder.Allocate(ref positionsBlob.positions, positions.Length);
+                BlobBuilderArray<int2> positionsArray =
+                    builder.Allocate(ref positionsComponent.positions, positions.Length);
 
                 for (int i = 0; i < positions.Length; i++)
                 {
                     positionsArray[i] = positions[i];
                 }
 
-                ability.positionsToCheck = builder.CreateBlobAssetReference<PositionsBlob>(Allocator.Temp);
+                ability.positionsToCheck = builder.CreateBlobAssetReference<PositionsComponent>(Allocator.Persistent);
             }
 
             positions.Dispose();

@@ -12,11 +12,10 @@ namespace Managers
     public class AbilityManager : MonoBehaviour
     {
         [SerializeField] private List<AbilityData> allAbilities;
+
         private readonly List<AbilityData> ownedAbilities = new List<AbilityData>();
         private EntityQuery abilityEntityQuery;
-
         private EntityManager entityManager;
-        private EntityQuery projectileAbilityEntityQuery;
         public static AbilityManager Instance { get; private set; }
 
         private void Awake()
@@ -34,10 +33,6 @@ namespace Managers
 
             abilityEntityQuery = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<AbilityComponent>()
-                .Build(entityManager);
-
-            projectileAbilityEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithPresentRW<ProjectileAbilityComponent>()
                 .Build(entityManager);
         }
 
@@ -142,35 +137,18 @@ namespace Managers
 
             if (selectedAbility.HasProjectile)
             {
-                UpdateProjectiles(newAbilityEntity, lastAbilityEntity);
+                Entity projectileUpdateEntity = entityManager.CreateEntity();
+                entityManager.AddComponentData(projectileUpdateEntity, new UpdateProjectilesComponent
+                {
+                    newAbilityEntity = newAbilityEntity,
+                    oldAbilityEntity = lastAbilityEntity
+                });
             }
 
             if (!lastAbilityEntity.Equals(default))
             {
                 entityManager.AddComponent(lastAbilityEntity, typeof(RemoveAbilityComponent));
             }
-        }
-
-        private void UpdateProjectiles(Entity newAbilityEntity, Entity oldAbilityEntity)
-        {
-            NativeArray<Entity> projectileEntities = projectileAbilityEntityQuery.ToEntityArray(Allocator.Temp);
-            NativeArray<ProjectileAbilityComponent> projectiles =
-                projectileAbilityEntityQuery.ToComponentDataArray<ProjectileAbilityComponent>(Allocator.Temp);
-
-            for (int i = 0; i < projectiles.Length; i++)
-            {
-                ProjectileAbilityComponent projectile = projectiles[i];
-
-                if (projectile.parentEntity == oldAbilityEntity)
-                {
-                    projectile.parentEntity = newAbilityEntity;
-
-                    entityManager.SetComponentData(projectileEntities[i], projectile);
-                }
-            }
-
-            projectileEntities.Dispose();
-            projectiles.Dispose();
         }
     }
 }

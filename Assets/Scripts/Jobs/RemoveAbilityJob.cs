@@ -8,16 +8,13 @@ namespace Jobs
     [WithAll(typeof(RemoveAbilityComponent))]
     public partial struct RemoveAbilityJob : IJobEntity
     {
-        public EntityCommandBuffer.ParallelWriter ecb;
+        public EntityCommandBuffer ecb;
 
-        public void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, AbilityComponent ability)
+        public void Execute(in Entity entity, ref AbilityComponent ability)
         {
-            if (ability.positionsToCheck.IsCreated)
-            {
-                ability.positionsToCheck.Dispose();
-            }
+            ability.Dispose();
 
-            ecb.DestroyEntity(sortKey, entity);
+            ecb.DestroyEntity(entity);
         }
     }
 }

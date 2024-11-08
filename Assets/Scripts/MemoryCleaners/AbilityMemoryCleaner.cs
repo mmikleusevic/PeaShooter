@@ -26,10 +26,7 @@ namespace MemoryCleaners
             {
                 AbilityComponent ability = entityManager.GetComponentData<AbilityComponent>(entity);
 
-                if (ability.positionsToCheck.IsCreated)
-                {
-                    ability.positionsToCheck.Dispose();
-                }
+                ability.Dispose();
 
                 entityManager.SetComponentData(entity, ability);
             }

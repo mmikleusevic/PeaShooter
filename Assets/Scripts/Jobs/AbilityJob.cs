@@ -29,7 +29,7 @@ public partial struct AbilityJob : IJobEntity
                 bool foundEnemyInRadius = false;
                 int gridSize = gridComponent.size.x;
 
-                if (ability.positionsToCheck.Equals(default)) GetPositions(ref ability);
+                if (!ability.positionsToCheck.IsCreated) GetPositions(ref ability);
 
                 for (int i = 0; i < ability.positionsToCheck.Value.positions.Length; i++)
                 {
