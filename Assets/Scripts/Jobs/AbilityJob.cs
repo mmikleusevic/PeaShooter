@@ -1,4 +1,5 @@
 using Components;
+using Helpers;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -16,13 +17,6 @@ public partial struct AbilityJob : IJobEntity
     [ReadOnly] public PlayerComponent playerComponent;
     [ReadOnly] public float deltaTime;
 
-    private static readonly int2[] Directions =
-    {
-        new(-1, 1), new(0, 1), new(1, 1),
-        new(-1, 0), new(1, 0),
-        new(-1, -1), new(0, -1), new(1, -1)
-    };
-
     private void Execute([ChunkIndexInQuery] int sortKey, ref AbilityComponent ability, in Entity entity)
     {
         if (ability.cooldownRemaining <= 0f)
@@ -32,31 +26,23 @@ public partial struct AbilityJob : IJobEntity
                 int2 playerGridPosition = playerComponent.gridPosition;
                 Entity closestEnemyEntity = Entity.Null;
                 EnemyComponent closestValidEnemy = default;
-                float radius = ability.range;
                 bool foundEnemyInRadius = false;
                 int gridSize = gridComponent.size.x;
 
-                CheckPosition(playerGridPosition, ref closestEnemyEntity, ref closestValidEnemy,
-                    ref foundEnemyInRadius);
+                if (ability.positionsToCheck.Equals(default)) GetPositions(ref ability);
 
-                for (int i = 1; i < radius; i++)
+                for (int i = 0; i < ability.positionsToCheck.Value.positions.Length; i++)
                 {
+                    int2 positionToCheck = ability.positionsToCheck.Value.positions[i];
+                    int2 gridPosition = playerGridPosition + positionToCheck;
+
+                    if (gridPosition.x > gridSize || gridPosition.y > gridSize || gridPosition.x < -gridSize ||
+                        gridPosition.y < -gridSize) continue;
+
+                    CheckPosition(gridPosition, ref closestEnemyEntity, ref closestValidEnemy,
+                        ref foundEnemyInRadius);
+
                     if (foundEnemyInRadius) break;
-
-                    for (int j = 0; j < Directions.Length; j++)
-                    {
-                        int2 newGridDirection = new int2(Directions[j].x * i, Directions[j].y * i);
-
-                        int2 gridPosition = playerGridPosition + newGridDirection;
-
-                        if (gridPosition.x > gridSize || gridPosition.y > gridSize || gridPosition.x < -gridSize ||
-                            gridPosition.y < -gridSize) continue;
-
-                        CheckPosition(gridPosition, ref closestEnemyEntity, ref closestValidEnemy,
-                            ref foundEnemyInRadius);
-
-                        if (foundEnemyInRadius) break;
-                    }
                 }
 
                 if (!foundEnemyInRadius) return;
@@ -98,6 +84,52 @@ public partial struct AbilityJob : IJobEntity
     }
 
     [BurstCompile]
+    private void GetPositions(ref AbilityComponent ability)
+    {
+        int maxDistance = ability.range;
+        int numberOfPositions = 1 + 8 * maxDistance * (maxDistance + 1) / 2;
+
+        NativeArray<int2> positions = new NativeArray<int2>(numberOfPositions, Allocator.Temp);
+
+        int i = 0;
+        positions[i] = new int2(0, 0);
+        i++;
+
+        for (int d = 1; d <= maxDistance; d++)
+        {
+            // Top edge: from (-d, d) to (d, d)
+            for (int x = -d; x <= d; x++)
+            {
+                positions[i] = new int2(x, d);
+                i++;
+            }
+
+            // Right edge: from (d, d - 1) to (d, -d)
+            for (int y = d - 1; y >= -d; y--)
+            {
+                positions[i] = new int2(d, y);
+                i++;
+            }
+
+            // Bottom edge: from (d - 1, -d) to (-d, -d)
+            for (int x = d - 1; x >= -d; x--)
+            {
+                positions[i] = new int2(x, -d);
+                i++;
+            }
+
+            // Left edge: from (-d, -d + 1) to (-d, d - 1)
+            for (int y = -d + 1; y <= d - 1; y++)
+            {
+                positions[i] = new int2(-d, y);
+                i++;
+            }
+        }
+
+        BlobUtility.CreateAndAssignPositionsBlob(ref positions, ref ability);
+    }
+
+    [BurstCompile]
     private void CheckPosition(int2 gridPosition, ref Entity closestEnemyEntity, ref EnemyComponent closestValidEnemy,
         ref bool foundEnemyInRadius)
     {
@@ -115,6 +147,8 @@ public partial struct AbilityJob : IJobEntity
                     closestEnemyEntity = enemyEntity;
                     closestValidEnemy = enemy;
                     foundEnemyInRadius = true;
+
+                    return;
                 }
             } while (gridComponent.enemyPositions.TryGetNextValue(out enemyEntity, ref iterator));
         }

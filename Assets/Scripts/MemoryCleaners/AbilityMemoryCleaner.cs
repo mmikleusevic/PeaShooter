@@ -14,12 +14,28 @@ namespace MemoryCleaners
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
             abilityEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<AbilityComponent>()
+                .WithAllRW<AbilityComponent>()
                 .Build(entityManager);
         }
 
         public void Cleanup()
         {
+            NativeArray<Entity> entities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
+
+            foreach (Entity entity in entities)
+            {
+                AbilityComponent ability = entityManager.GetComponentData<AbilityComponent>(entity);
+
+                if (ability.positionsToCheck.IsCreated)
+                {
+                    ability.positionsToCheck.Dispose();
+                }
+
+                entityManager.SetComponentData(entity, ability);
+            }
+
+            entities.Dispose();
+
             entityManager.DestroyEntity(abilityEntityQuery);
         }
     }

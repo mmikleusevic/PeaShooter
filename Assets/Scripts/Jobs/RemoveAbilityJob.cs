@@ -10,8 +10,13 @@ namespace Jobs
     {
         public EntityCommandBuffer.ParallelWriter ecb;
 
-        public void Execute([ChunkIndexInQuery] int sortKey, in Entity entity)
+        public void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, AbilityComponent ability)
         {
+            if (ability.positionsToCheck.IsCreated)
+            {
+                ability.positionsToCheck.Dispose();
+            }
+
             ecb.DestroyEntity(sortKey, entity);
         }
     }

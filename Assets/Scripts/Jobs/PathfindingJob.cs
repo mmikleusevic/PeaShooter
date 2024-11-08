@@ -21,7 +21,7 @@ internal partial struct PathfindingJob : IJobEntity
         new(-1, -1), new(0, -1), new(1, -1)
     };
 
-    public void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
+    private void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
     {
         float timeOfNextPathfinding = math.min(0.5f, defaultMoveSpeed / enemy.moveSpeed) + enemy.timeOfLastPathfinding;
 
@@ -185,7 +185,7 @@ internal partial struct PathfindingJob : IJobEntity
     }
 
     [BurstCompile]
-    public byte IsValidPosition(int2 position)
+    private byte IsValidPosition(int2 position)
     {
         if (!gridNodes.ContainsKey(position)) return 0;
 

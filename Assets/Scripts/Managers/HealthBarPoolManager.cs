@@ -21,8 +21,7 @@ public class HealthBarPoolManager : MonoBehaviour
             .WithAll<Prefabs>()
             .Build(entityManager);
 
-        healthBarPool = new ObjectPool<GameObject>(
-            () => InstantiateObject(),
+        healthBarPool = new ObjectPool<GameObject>(InstantiateObject,
             bar => bar.SetActive(true),
             bar => bar.SetActive(false),
             Destroy
