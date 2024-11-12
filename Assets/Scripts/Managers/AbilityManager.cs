@@ -128,7 +128,6 @@ namespace Managers
                 damage = selectedAbility.damage,
                 level = selectedAbility.Level,
                 range = selectedAbility.range,
-                rotationSpeed = selectedAbility.rotationSpeed,
                 speed = selectedAbility.speed,
                 cooldownRemaining = selectedAbility.cooldownRemaining,
                 hasProjectile = (byte)(selectedAbility.HasProjectile ? 1 : 0),

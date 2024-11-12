@@ -10,7 +10,6 @@ public struct AbilityComponent : IComponentData, IDisposable
     public float cooldownRemaining;
     public int range;
     public float speed;
-    public float rotationSpeed;
     public float damage;
     public Entity projectileEntity;
     public float projectileScale;

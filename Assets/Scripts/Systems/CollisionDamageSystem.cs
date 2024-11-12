@@ -36,7 +36,7 @@ public partial struct CollisionDamageSystem : ISystem
             obstacleLookup = SystemAPI.GetComponentLookup<ObstacleComponent>(true),
             enemyDamageLookup = SystemAPI.GetComponentLookup<EnemyDamageComponent>(true),
             activeForCollisionLookup = SystemAPI.GetComponentLookup<ActiveForCollisionComponent>(true),
-            deltaTime = SystemAPI.Time.DeltaTime
+            deltaTime = SystemAPI.Time.fixedDeltaTime
         };
 
         SimulationSingleton simulationSingleton = SystemAPI.GetSingleton<SimulationSingleton>();

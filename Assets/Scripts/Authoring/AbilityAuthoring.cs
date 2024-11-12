@@ -19,7 +19,6 @@ public class AbilityAuthoring : MonoBehaviour
                 cooldown = authoring.abilityData.cooldown,
                 cooldownRemaining = authoring.abilityData.cooldownRemaining,
                 range = authoring.abilityData.range,
-                rotationSpeed = authoring.abilityData.rotationSpeed,
                 speed = authoring.abilityData.speed,
                 damage = authoring.abilityData.damage,
                 projectileEntity = GetEntity(authoring.abilityData.projectilePrefab, TransformUsageFlags.None),

@@ -23,11 +23,9 @@ public partial struct EnemyMovementSystem : ISystem
             SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        float deltaTime = SystemAPI.Time.DeltaTime;
-
         EnemyMovementJob job = new EnemyMovementJob
         {
-            deltaTime = deltaTime,
+            deltaTime = SystemAPI.Time.fixedDeltaTime,
             ecb = ecb.AsParallelWriter()
         };
 

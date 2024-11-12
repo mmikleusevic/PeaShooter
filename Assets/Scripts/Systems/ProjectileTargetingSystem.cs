@@ -20,7 +20,7 @@ public partial struct ProjectileTargetingSystem : ISystem
     {
         ProjectileTargetingJob job = new ProjectileTargetingJob
         {
-            deltaTime = SystemAPI.Time.DeltaTime,
+            deltaTime = SystemAPI.Time.fixedDeltaTime,
             AbilityLookup = SystemAPI.GetComponentLookup<AbilityComponent>(true)
         };
 

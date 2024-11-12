@@ -25,7 +25,7 @@ public partial struct ProjectileDisablingSystem : ISystem
 
         ProjectileDisablingJob job = new ProjectileDisablingJob
         {
-            deltaTime = SystemAPI.Time.DeltaTime,
+            deltaTime = SystemAPI.Time.fixedDeltaTime,
             enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
             ecb = ecb.AsParallelWriter()
         };

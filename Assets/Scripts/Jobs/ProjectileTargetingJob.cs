@@ -20,12 +20,22 @@ public partial struct ProjectileTargetingJob : IJobEntity
 
         RefRO<AbilityComponent> abilityComponent = AbilityLookup.GetRefRO(projectileAbility.parentEntity);
 
-        float3 direction = math.normalize(target.enemy.position - transform.Position);
-        quaternion currentRotation = transform.Rotation;
-        quaternion targetRotation = quaternion.LookRotation(direction, transform.Forward());
-        float rotationSpeed = abilityComponent.ValueRO.rotationSpeed * deltaTime;
+        float projectileSpeed = abilityComponent.ValueRO.speed * deltaTime;
 
-        transform.Rotation = math.slerp(currentRotation, targetRotation, rotationSpeed);
-        physicsVelocity.Linear = transform.Forward() * abilityComponent.ValueRO.speed * deltaTime;
+        transform.Position = MoveTowards(transform.Position, target.enemy.position, projectileSpeed);
+    }
+
+    [BurstCompile]
+    private float3 MoveTowards(float3 current, float3 target, float maxDistanceDelta)
+    {
+        float num1 = target.x - current.x;
+        float num2 = target.y - current.y;
+        float num3 = target.z - current.z;
+        float d = (float)(num1 * (double)num1 + num2 * (double)num2 + num3 * (double)num3);
+        if (d == 0.0 || (maxDistanceDelta >= 0.0 && d <= maxDistanceDelta * (double)maxDistanceDelta))
+            return target;
+        float num4 = (float)math.sqrt((double)d);
+        return new float3(current.x + num1 / num4 * maxDistanceDelta, current.y + num2 / num4 * maxDistanceDelta,
+            current.z + num3 / num4 * maxDistanceDelta);
     }
 }
