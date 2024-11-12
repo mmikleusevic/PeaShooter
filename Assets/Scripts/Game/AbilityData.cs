@@ -14,6 +14,7 @@ namespace Game
         public float cooldown;
         public float cooldownRemaining;
         public int range;
+        public float rotationSpeed;
         public float speed;
         public float damage;
         public GameObject projectilePrefab;
