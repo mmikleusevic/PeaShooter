@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 729389ac760943cf92d42359df40d9d6, type: 3}
   m_Name: FireflyBoltsLevel1
   m_EditorClassIdentifier: 
+  lastLevelAbility: {fileID: 0}
   icon: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
   abilityName: Firefly Bolts
-  abilityDescription: Level 1
+  abilityDescription: Shoots fireflies in four directions
   cooldown: 0
   cooldownRemaining: 0
   range: 0

@@ -8,13 +8,13 @@ namespace Game
     [CreateAssetMenu(fileName = "New Ability", menuName = "Ability")]
     public class AbilityData : ScriptableObject
     {
+        public AbilityData lastLevelAbility;
         public Sprite icon;
         public string abilityName;
         public string abilityDescription;
         public float cooldown;
         public float cooldownRemaining;
         public int range;
-        public float rotationSpeed;
         public float speed;
         public float damage;
         public GameObject projectilePrefab;
@@ -24,6 +24,8 @@ namespace Game
 
         public Abilities Ability => ability;
         public int Level => level;
+        public string Description { get; private set; }
+
         public bool HasProjectile { get; private set; }
 
         private void OnValidate()
@@ -35,7 +37,61 @@ namespace Game
 
             int.TryParse(name.Substring(levelIndex + 5), out level);
 
+            SetDescription();
+
             HasProjectile = projectilePrefab;
+        }
+
+        private void SetDescription()
+        {
+            string descriptionText = string.Empty;
+
+            if (!lastLevelAbility)
+            {
+                descriptionText = $"Level: {level} \n" +
+                                  $"{abilityDescription} \n" +
+                                  $"Cooldown: {cooldown} \n" +
+                                  $"Range: {range} \n" +
+                                  $"Speed: {speed} \n" +
+                                  $"Damage: {damage} \n";
+            }
+            else
+            {
+                bool isLevelHigher = level > lastLevelAbility.level;
+                bool isCooldownLower = cooldown < lastLevelAbility.cooldown;
+                bool isRangeHigher = range > lastLevelAbility.range;
+                bool isSpeedHigher = speed > lastLevelAbility.speed;
+                bool isDamageHigher = damage > lastLevelAbility.damage;
+
+                string levelText = !isLevelHigher
+                    ? $"Level: {level} \n"
+                    : $"Level: <color=red>{lastLevelAbility.level}</color> > <color=green>{level}</color> \n";
+
+                string cooldownText = !isCooldownLower
+                    ? $"Cooldown: {cooldown} \n"
+                    : $"Cooldown: <color=red>{lastLevelAbility.cooldown}</color> > <color=green>{cooldown}</color> \n";
+
+                string rangeText = !isRangeHigher
+                    ? $"Range: {range} \n"
+                    : $"Range: <color=red>{lastLevelAbility.range}</color> > <color=green>{range}</color> \n";
+
+                string speedText = !isSpeedHigher
+                    ? $"Speed: {speed} \n"
+                    : $"Speed: <color=red>{lastLevelAbility.speed}</color> > <color=green>{speed}</color> \n";
+
+                string damageText = !isDamageHigher
+                    ? $"Damage: {damage} \n"
+                    : $"Damage: <color=red>{lastLevelAbility.damage}</color> > <color=green>{damage}</color> \n";
+
+                descriptionText = levelText +
+                                  $"{abilityDescription} \n" +
+                                  cooldownText +
+                                  rangeText +
+                                  speedText +
+                                  damageText;
+            }
+
+            Description = descriptionText;
         }
     }
 }

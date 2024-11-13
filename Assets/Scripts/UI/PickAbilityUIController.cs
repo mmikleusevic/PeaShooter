@@ -86,7 +86,7 @@ public class PickAbilityUIController : MonoBehaviour
 
             image.style.backgroundImage = new StyleBackground(abilityData.icon);
             name.text = abilityData.abilityName;
-            description.text = abilityData.abilityDescription;
+            description.text = abilityData.Description;
 
             abilityCard.userData = abilityData;
             abilityCard.focusable = true;
@@ -102,16 +102,6 @@ public class PickAbilityUIController : MonoBehaviour
 
         Show();
     }
-
-    // private void FocusAbilityCard(FocusInEvent evt, VisualElement abilityCard)
-    // {
-    //     abilityCard.AddToClassList("abilityTemplateFocus");
-    // }
-    //
-    // private void UnfocusAbilityCard(FocusOutEvent evt, VisualElement abilityCard)
-    // {
-    //     abilityCard.RemoveFromClassList("abilityTemplateFocus");
-    // }
 
     private void OnAbilityChosen(EventBase evt)
     {
@@ -130,24 +120,6 @@ public class PickAbilityUIController : MonoBehaviour
         isWaitingForPick = false;
 
         Hide();
-
-        // TODO: Remove later if making particle abilities works
-        // if (!prefabsQuery.HasSingleton<Prefabs>()) return;
-        //
-        // GameObject vfxPrefab = prefabsQuery.GetSingleton<Prefabs>().fireflyBoltsVFX;
-        // GameObject newVfx = Instantiate(vfxPrefab, vfxPrefab.transform.position, vfxPrefab.transform.rotation);
-        //
-        // if (!playerEntityQuery.HasSingleton<PlayerComponent>()) return;
-        //
-        // Entity entity = playerEntityQuery.GetSingletonEntity();
-        //
-        // ParticleReference particleReference = new ParticleReference
-        // {
-        //     value = newVfx,
-        //     updateTransform = false
-        // };
-        //
-        // entityManager.AddComponentData(entity, particleReference);
     }
 
     private void Hide()

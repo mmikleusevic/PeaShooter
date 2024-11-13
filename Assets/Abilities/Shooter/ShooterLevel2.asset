@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 729389ac760943cf92d42359df40d9d6, type: 3}
   m_Name: ShooterLevel2
   m_EditorClassIdentifier: 
+  lastLevelAbility: {fileID: 11400000, guid: f4c265c141a4f054689add42e196f619, type: 2}
   icon: {fileID: 21300000, guid: 4a0aca3a5f2effb41b43cc0a1661d845, type: 3}
   abilityName: Shooter
-  abilityDescription: Level 2
+  abilityDescription: Shoots Peas
   cooldown: 1
   cooldownRemaining: 0
   range: 6
-  rotationSpeed: 500
   speed: 20
   damage: 20
   projectilePrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
