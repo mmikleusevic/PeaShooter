@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_ShapeType
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Capsule.Radius
@@ -39,6 +39,10 @@ PrefabInstance:
     - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_PrimitiveOrientation.Value.x
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 293649454764462136, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: m_ConvexHullGenerationParameters.m_BevelRadius
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: value

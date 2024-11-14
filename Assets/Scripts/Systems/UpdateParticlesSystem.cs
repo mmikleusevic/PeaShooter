@@ -37,7 +37,6 @@
 //         {
 //             ParticleSystem particleSystem = particleReference.value.GetComponent<ParticleSystem>();
 //             Particle[] particles = new Particle[particleSystem.main.maxParticles];
-//
 //             int numberOfActiveParticles = particleSystem.GetParticles(particles);
 //
 //             for (int i = 0; i < numberOfActiveParticles; i++)
@@ -50,7 +49,7 @@
 //
 //             float3 newParticlePosition = new float3(transform.ValueRO.Position.x, 0, transform.ValueRO.Position.z);
 //
-//             if (particleReference.updateTransform)
+//             if (particleReference.updateTransform == 1)
 //             {
 //                 UpdateTransform(particleReference, newParticlePosition);
 //             }
@@ -105,4 +104,5 @@
 //         particleReference.value.transform.position = position;
 //     }
 // }
+//
 

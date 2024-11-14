@@ -27,7 +27,6 @@ public partial struct AbilityJob : IJobEntity
                 Entity closestEnemyEntity = Entity.Null;
                 EnemyComponent closestValidEnemy = default;
                 bool foundEnemyInRadius = false;
-                int gridSize = gridComponent.size.x;
 
                 if (!ability.positionsToCheck.IsCreated) GetPositions(ref ability);
 
@@ -36,8 +35,7 @@ public partial struct AbilityJob : IJobEntity
                     int2 positionToCheck = ability.positionsToCheck.Value.positions[i];
                     int2 gridPosition = playerGridPosition + positionToCheck;
 
-                    if (gridPosition.x > gridSize || gridPosition.y > gridSize || gridPosition.x < -gridSize ||
-                        gridPosition.y < -gridSize) continue;
+                    if (!gridComponent.enemyPositions.ContainsKey(gridPosition)) continue;
 
                     CheckPosition(gridPosition, ref closestEnemyEntity, ref closestValidEnemy,
                         ref foundEnemyInRadius);

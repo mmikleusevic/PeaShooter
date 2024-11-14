@@ -19,31 +19,37 @@ public struct CollisionDamageJob : ICollisionEventsJob
     [ReadOnly] public ComponentLookup<ActiveForCollisionComponent> activeForCollisionLookup;
     [ReadOnly] public float deltaTime;
 
+    [BurstCompile]
     private bool HasHealth(Entity entity)
     {
         return healthLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
     private bool HasObstacle(Entity entity)
     {
         return obstacleLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
     private bool HasEnemy(Entity entity)
     {
         return enemyDamageLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
     private bool HasActiveForCollision(Entity entity)
     {
         return activeForCollisionLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
     private bool HasProjectile(Entity entity)
     {
         return projectileLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
     private bool HasTarget(Entity entity)
     {
         return targetLookup.HasComponent(entity);
