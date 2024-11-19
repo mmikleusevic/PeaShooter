@@ -5,45 +5,48 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-[BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
-public partial struct EnemySpawnerSystem : ISystem
+namespace Systems
 {
-    private EntityQuery gridEntityQuery;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
+    public partial struct EnemySpawnerSystem : ISystem
     {
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(ref state);
+        private EntityQuery gridEntityQuery;
 
-        state.RequireForUpdate(gridEntityQuery);
-        state.RequireForUpdate<EnemySpawnerComponent>();
-        state.RequireForUpdate<EndInitializationEntityCommandBufferSystem.Singleton>();
-        state.RequireForUpdate<PlayerAliveComponent>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
-
-        EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
-
-        EnemySpawnJob job = new EnemySpawnJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            ecb = ecb.AsParallelWriter(),
-            elapsedTime = SystemAPI.Time.ElapsedTime,
-            gridNodes = gridComponent.gridNodes,
-            seed = seed
-        };
+            gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GridComponent>()
+                .Build(ref state);
 
-        JobHandle handle = job.Schedule(state.Dependency);
-        state.Dependency = handle;
+            state.RequireForUpdate(gridEntityQuery);
+            state.RequireForUpdate<EnemySpawnerComponent>();
+            state.RequireForUpdate<EndInitializationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<PlayerAliveComponent>();
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
+
+            EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
+
+            EnemySpawnJob job = new EnemySpawnJob
+            {
+                ecb = ecb.AsParallelWriter(),
+                elapsedTime = SystemAPI.Time.ElapsedTime,
+                gridNodes = gridComponent.gridNodes,
+                seed = seed
+            };
+
+            JobHandle handle = job.Schedule(state.Dependency);
+            state.Dependency = handle;
+        }
     }
 }

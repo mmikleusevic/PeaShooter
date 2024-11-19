@@ -4,59 +4,62 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-public partial class PlayerControllerSystem : SystemBase
+namespace Systems
 {
-    private EntityQuery inputEntityQuery;
-    private PlayerInput playerInput;
-
-    protected override void OnCreate()
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+    public partial class PlayerControllerSystem : SystemBase
     {
-        base.OnCreate();
+        private EntityQuery inputEntityQuery;
+        private PlayerInput playerInput;
 
-        playerInput = new PlayerInput();
+        protected override void OnCreate()
+        {
+            base.OnCreate();
 
-        playerInput.Enable();
-        playerInput.Player.Movement.performed += OnMovementPerformed;
-        playerInput.Player.Movement.canceled += OnMovementCanceled;
+            playerInput = new PlayerInput();
 
-        inputEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAllRW<InputComponent>()
-            .Build(EntityManager);
+            playerInput.Enable();
+            playerInput.Player.Movement.performed += OnMovementPerformed;
+            playerInput.Player.Movement.canceled += OnMovementCanceled;
 
-        RequireForUpdate(inputEntityQuery);
-        RequireForUpdate<PlayerAliveComponent>();
-    }
+            inputEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAllRW<InputComponent>()
+                .Build(EntityManager);
 
-    protected override void OnUpdate()
-    {
-    }
+            RequireForUpdate(inputEntityQuery);
+            RequireForUpdate<PlayerAliveComponent>();
+        }
 
-    private void OnMovementPerformed(InputAction.CallbackContext obj)
-    {
-        SetMovement(new float2(playerInput.Player.Movement.ReadValue<Vector2>()));
-    }
+        protected override void OnUpdate()
+        {
+        }
 
-    private void OnMovementCanceled(InputAction.CallbackContext obj)
-    {
-        SetMovement(float2.zero);
-    }
+        private void OnMovementPerformed(InputAction.CallbackContext obj)
+        {
+            SetMovement(new float2(playerInput.Player.Movement.ReadValue<Vector2>()));
+        }
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
+        private void OnMovementCanceled(InputAction.CallbackContext obj)
+        {
+            SetMovement(float2.zero);
+        }
 
-        playerInput.Player.Movement.performed -= OnMovementPerformed;
-        playerInput.Player.Movement.canceled -= OnMovementCanceled;
-        playerInput.Disable();
-    }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
 
-    private void SetMovement(float2 value)
-    {
-        if (inputEntityQuery.CalculateEntityCount() == 0) return;
+            playerInput.Player.Movement.performed -= OnMovementPerformed;
+            playerInput.Player.Movement.canceled -= OnMovementCanceled;
+            playerInput.Disable();
+        }
 
-        RefRW<InputComponent> input = inputEntityQuery.GetSingletonRW<InputComponent>();
+        private void SetMovement(float2 value)
+        {
+            if (inputEntityQuery.CalculateEntityCount() == 0) return;
 
-        input.ValueRW.move = value;
+            RefRW<InputComponent> input = inputEntityQuery.GetSingletonRW<InputComponent>();
+
+            input.ValueRW.move = value;
+        }
     }
 }

@@ -3,28 +3,37 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
 
-[BurstCompile]
-[UpdateInGroup(typeof(PhysicsSystemGroup))]
-[UpdateAfter(typeof(CollisionDamageSystem))]
-public partial struct ProjectileTargetingSystem : ISystem
+namespace Systems
 {
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(PhysicsSystemGroup))]
+    [UpdateAfter(typeof(CollisionDamageSystem))]
+    public partial struct ProjectileTargetingSystem : ISystem
     {
-        state.RequireForUpdate<TargetComponent>();
-        state.RequireForUpdate<PlayerAliveComponent>();
-    }
+        private ComponentLookup<AbilityComponent> abilityLookup;
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        ProjectileTargetingJob job = new ProjectileTargetingJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            deltaTime = SystemAPI.Time.fixedDeltaTime,
-            AbilityLookup = SystemAPI.GetComponentLookup<AbilityComponent>(true)
-        };
+            state.RequireForUpdate<TargetComponent>();
+            state.RequireForUpdate<PlayerAliveComponent>();
 
-        JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = jobHandle;
+            abilityLookup = state.GetComponentLookup<AbilityComponent>(true);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            abilityLookup.Update(ref state);
+
+            ProjectileTargetingJob job = new ProjectileTargetingJob
+            {
+                deltaTime = SystemAPI.Time.fixedDeltaTime,
+                AbilityLookup = abilityLookup
+            };
+
+            JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = jobHandle;
+        }
     }
 }

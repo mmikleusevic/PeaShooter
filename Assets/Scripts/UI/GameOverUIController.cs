@@ -1,63 +1,68 @@
+using Managers;
+using Systems;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class GameOverUIController : MonoBehaviour
+namespace UI
 {
-    private VisualElement gameOverScreen;
-    private Button mainMenuButton;
-    private Button playAgainButton;
-    private PlayerHealthSystem playerHealthSystem;
-
-    private void Start()
+    public class GameOverUIController : MonoBehaviour
     {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
+        private VisualElement gameOverScreen;
+        private Button mainMenuButton;
+        private Button playAgainButton;
+        private PlayerHealthSystem playerHealthSystem;
 
-        gameOverScreen = uiVisualELement.Q<VisualElement>("ui");
-        playAgainButton = uiVisualELement.Q<Button>("play-again");
-        mainMenuButton = uiVisualELement.Q<Button>("main-menu");
+        private void Start()
+        {
+            VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
 
-        playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
+            gameOverScreen = uiVisualELement.Q<VisualElement>("ui");
+            playAgainButton = uiVisualELement.Q<Button>("play-again");
+            mainMenuButton = uiVisualELement.Q<Button>("main-menu");
 
-        if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied += OnPlayerDied;
-        if (playAgainButton != null) playAgainButton.clicked += PlayAgainPressed;
-        if (mainMenuButton != null) mainMenuButton.clicked += MainMenuPressed;
-    }
+            playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
 
-    private void OnDestroy()
-    {
-        if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied -= OnPlayerDied;
-        if (playAgainButton != null) playAgainButton.clicked -= PlayAgainPressed;
-        if (mainMenuButton != null) mainMenuButton.clicked -= MainMenuPressed;
-    }
+            if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied += OnPlayerDied;
+            if (playAgainButton != null) playAgainButton.clicked += PlayAgainPressed;
+            if (mainMenuButton != null) mainMenuButton.clicked += MainMenuPressed;
+        }
 
-    private void OnPlayerDied()
-    {
-        ShowUI();
-    }
+        private void OnDestroy()
+        {
+            if (playerHealthSystem != null) playerHealthSystem.OnPlayerDied -= OnPlayerDied;
+            if (playAgainButton != null) playAgainButton.clicked -= PlayAgainPressed;
+            if (mainMenuButton != null) mainMenuButton.clicked -= MainMenuPressed;
+        }
 
-    private void PlayAgainPressed()
-    {
-        LevelManager.Instance.LoadGameScene();
-        HideUI();
-    }
+        private void OnPlayerDied()
+        {
+            ShowUI();
+        }
 
-    private void MainMenuPressed()
-    {
-        LevelManager.Instance.LoadMainMenu();
-        HideUI();
-    }
+        private void PlayAgainPressed()
+        {
+            LevelManager.Instance.LoadGameScene();
+            HideUI();
+        }
 
-    private void ShowUI()
-    {
-        gameOverScreen.style.visibility = Visibility.Visible;
+        private void MainMenuPressed()
+        {
+            LevelManager.Instance.LoadMainMenu();
+            HideUI();
+        }
 
-        gameOverScreen.schedule.Execute(() => playAgainButton.Focus())
-            .Until(() => gameOverScreen.focusController.focusedElement == playAgainButton);
-    }
+        private void ShowUI()
+        {
+            gameOverScreen.style.visibility = Visibility.Visible;
 
-    private void HideUI()
-    {
-        gameOverScreen.style.visibility = Visibility.Hidden;
+            gameOverScreen.schedule.Execute(() => playAgainButton.Focus())
+                .Until(() => gameOverScreen.focusController.focusedElement == playAgainButton);
+        }
+
+        private void HideUI()
+        {
+            gameOverScreen.style.visibility = Visibility.Hidden;
+        }
     }
 }

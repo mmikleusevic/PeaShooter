@@ -1,36 +1,35 @@
+using Managers;
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Jobs;
+using Unity.Transforms;
 
 namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
-    [UpdateBefore(typeof(HealthBarDisableAndPoolSystem))]
-    [UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
-    public partial struct DestroySystem : ISystem
+    [UpdateAfter(typeof(UpdateHealthBarValueSystem))]
+    public partial struct HealthBarDisableAndPoolSystem : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<HealthBarUIReference>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-            state.RequireForUpdate<PlayerAliveComponent>();
         }
 
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            DestroyJob job = new DestroyJob
+            foreach ((HealthBarUIReference healthBarUI, Entity entity) in SystemAPI.Query<HealthBarUIReference>()
+                         .WithNone<LocalTransform>()
+                         .WithEntityAccess())
             {
-                ecb = ecb.AsParallelWriter()
-            };
-
-            JobHandle spawnHandle = job.ScheduleParallel(state.Dependency);
-            state.Dependency = spawnHandle;
+                HealthBarPoolManager.Instance.ReturnHealthBar(healthBarUI.value);
+                ecb.RemoveComponent<HealthBarUIReference>(entity);
+            }
         }
     }
 }

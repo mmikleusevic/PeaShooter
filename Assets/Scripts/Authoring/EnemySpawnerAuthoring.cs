@@ -1,32 +1,35 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class EnemySpawnerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private float spawnRate;
-    [SerializeField] [Range(100, 500)] private float speed;
-    [SerializeField] private float enemyMoveTimerTarget;
-    [SerializeField] private float destroySpawnerTimerTarget;
-
-    public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
+    public class EnemySpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(EnemySpawnerAuthoring authoring)
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private float spawnRate;
+        [SerializeField] [Range(100, 500)] private float speed;
+        [SerializeField] private float enemyMoveTimerTarget;
+        [SerializeField] private float destroySpawnerTimerTarget;
+
+        public class EnemySpawnerBaker : Baker<EnemySpawnerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            DependsOn(authoring.prefab);
-
-            AddComponent(entity, new EnemySpawnerComponent
+            public override void Bake(EnemySpawnerAuthoring authoring)
             {
-                prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                nextSpawnTime = authoring.spawnRate,
-                spawnRate = authoring.spawnRate,
-                moveSpeed = authoring.speed,
-                scale = authoring.prefab.transform.localScale.x,
-                enemyMoveTimerTarget = authoring.enemyMoveTimerTarget,
-                destroySpawnerTimerTarget = authoring.destroySpawnerTimerTarget
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                DependsOn(authoring.prefab);
+
+                AddComponent(entity, new EnemySpawnerComponent
+                {
+                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    nextSpawnTime = authoring.spawnRate,
+                    spawnRate = authoring.spawnRate,
+                    moveSpeed = authoring.speed,
+                    scale = authoring.prefab.transform.localScale.x,
+                    enemyMoveTimerTarget = authoring.enemyMoveTimerTarget,
+                    destroySpawnerTimerTarget = authoring.destroySpawnerTimerTarget
+                });
+            }
         }
     }
 }

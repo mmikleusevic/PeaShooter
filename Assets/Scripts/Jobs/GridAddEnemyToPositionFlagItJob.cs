@@ -8,7 +8,7 @@ using Unity.Mathematics;
 namespace Jobs
 {
     [BurstCompile]
-    public struct AddEnemyToPositionFlagItJob : IJobChunk
+    public struct GridAddEnemyToPositionFlagItJob : IJobChunk
     {
         public EntityCommandBuffer.ParallelWriter ecb;
 
@@ -45,7 +45,7 @@ namespace Jobs
                     removalPositionsParallel.Add(enemyPositionUpdate.oldPosition, entity);
                 }
 
-                ecb.RemoveComponent<HasChangedPositionComponent>(i, entity);
+                ecb.RemoveComponent<PositionChangedComponent>(i, entity);
             }
         }
     }

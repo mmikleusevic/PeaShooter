@@ -4,6 +4,7 @@ using Components;
 using Game;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,6 +17,7 @@ namespace Managers
         private readonly List<AbilityData> ownedAbilities = new List<AbilityData>();
         private EntityQuery abilityEntityQuery;
         private EntityManager entityManager;
+        private EntityQuery playerEntityQuery;
         public static AbilityManager Instance { get; private set; }
 
         private void Awake()
@@ -30,6 +32,10 @@ namespace Managers
             allAbilities.RemoveAt(0);
 
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+            playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<PlayerAliveComponent, LocalTransform>()
+                .Build(entityManager);
 
             abilityEntityQuery = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<AbilityComponent>()
@@ -121,6 +127,15 @@ namespace Managers
 
             Entity newAbilityEntity = entityManager.CreateEntity();
 
+            LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
+
+            entityManager.AddComponentData(newAbilityEntity, new LocalTransform
+            {
+                Position = playerTransform.Position,
+                Rotation = playerTransform.Rotation,
+                Scale = 0
+            });
+
             entityManager.AddComponentData(newAbilityEntity, new AbilityComponent
             {
                 ability = selectedAbility.Ability,
@@ -130,24 +145,36 @@ namespace Managers
                 range = selectedAbility.range,
                 speed = selectedAbility.speed,
                 cooldownRemaining = selectedAbility.cooldownRemaining,
-                hasProjectile = (byte)(selectedAbility.HasProjectile ? 1 : 0),
-                projectileEntity = lastAbility.projectileEntity,
-                projectileScale = selectedAbility.projectileScale
+                scale = selectedAbility.scale,
+                hasProjectile = (byte)(selectedAbility.hasProjectile ? 1 : 0),
+                abilityEntity = lastAbility.abilityEntity
             });
 
-            if (selectedAbility.HasProjectile)
+            if (selectedAbility.hasProjectile)
             {
                 Entity projectileUpdateEntity = entityManager.CreateEntity();
-                entityManager.AddComponentData(projectileUpdateEntity, new UpdateProjectilesComponent
+                entityManager.AddComponentData(projectileUpdateEntity, new ProjectilesUpdateComponent
                 {
                     newAbilityEntity = newAbilityEntity,
                     oldAbilityEntity = lastAbilityEntity
                 });
             }
+            else
+            {
+                GameObject particleSystem = Instantiate(selectedAbility.abilityPrefab,
+                    new Vector3(playerTransform.Position.x, 0.5f, playerTransform.Position.z),
+                    selectedAbility.abilityPrefab.transform.rotation);
+
+                entityManager.AddComponentData(newAbilityEntity, new ParticleObjectReferenceComponent
+                {
+                    updateTransform = (byte)(selectedAbility.updatePosition ? 1 : 0),
+                    value = particleSystem
+                });
+            }
 
             if (!lastAbilityEntity.Equals(default))
             {
-                entityManager.AddComponent(lastAbilityEntity, typeof(RemoveAbilityComponent));
+                entityManager.AddComponent(lastAbilityEntity, typeof(AbilityRemoveComponent));
             }
         }
     }

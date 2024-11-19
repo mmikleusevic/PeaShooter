@@ -2,7 +2,7 @@ using Unity.Entities;
 
 namespace Components
 {
-    public struct UpdateProjectilesComponent : IComponentData
+    public struct ProjectilesUpdateComponent : IComponentData
     {
         public Entity oldAbilityEntity;
         public Entity newAbilityEntity;

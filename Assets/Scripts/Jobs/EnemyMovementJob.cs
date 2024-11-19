@@ -49,7 +49,7 @@ public partial struct EnemyMovementJob : IJobEntity
                 position = gridPosition,
                 status = UpdateStatus.Move
             });
-            ecb.AddComponent(sortKey, entity, new HasChangedPositionComponent());
+            ecb.AddComponent(sortKey, entity, new PositionChangedComponent());
 
             enemy.gridPosition = gridPosition;
         }

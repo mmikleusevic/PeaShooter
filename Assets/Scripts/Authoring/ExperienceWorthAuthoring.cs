@@ -1,20 +1,23 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class ExperienceWorthAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private uint value;
-
-    public class ExperienceWorthBaker : Baker<ExperienceWorthAuthoring>
+    public class ExperienceWorthAuthoring : MonoBehaviour
     {
-        public override void Bake(ExperienceWorthAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        [SerializeField] private uint value;
 
-            AddComponent(entity, new EnemyExperienceWorthComponent
+        public class ExperienceWorthBaker : Baker<ExperienceWorthAuthoring>
+        {
+            public override void Bake(ExperienceWorthAuthoring authoring)
             {
-                value = authoring.value
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new EnemyExperienceWorthComponent
+                {
+                    value = authoring.value
+                });
+            }
         }
     }
 }

@@ -1,40 +1,44 @@
+using Systems;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class ExperienceUIController : MonoBehaviour
+namespace UI
 {
-    private ProgressBar experienceBar;
-    private PlayerExperienceSystem playerExperienceSystem;
-
-    private void Awake()
+    public class ExperienceUIController : MonoBehaviour
     {
-        playerExperienceSystem =
-            World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
+        private ProgressBar experienceBar;
+        private PlayerExperienceSystem playerExperienceSystem;
 
-        if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp += OnGainedExp;
-    }
+        private void Awake()
+        {
+            playerExperienceSystem =
+                World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerExperienceSystem>();
 
-    private void Start()
-    {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-        experienceBar = uiVisualELement.Q<ProgressBar>("experience");
-    }
+            if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp += OnGainedExp;
+        }
 
-    private void OnDestroy()
-    {
-        if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp -= OnGainedExp;
-    }
+        private void Start()
+        {
+            VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
+            experienceBar = uiVisualELement.Q<ProgressBar>("experience");
+        }
 
-    private void OnGainedExp(uint currentEXP, uint maxEXP)
-    {
-        SetProgressBar(currentEXP, maxEXP);
-    }
+        private void OnDestroy()
+        {
+            if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp -= OnGainedExp;
+        }
 
-    private void SetProgressBar(uint currentEXP, uint maxEXP)
-    {
-        experienceBar.value = currentEXP;
-        experienceBar.highValue = maxEXP;
-        experienceBar.title = "EXP: " + experienceBar.value + "/" + experienceBar.highValue;
+        private void OnGainedExp(uint currentEXP, uint maxEXP)
+        {
+            SetProgressBar(currentEXP, maxEXP);
+        }
+
+        private void SetProgressBar(uint currentEXP, uint maxEXP)
+        {
+            experienceBar.value = currentEXP;
+            experienceBar.highValue = maxEXP;
+            experienceBar.title = "EXP: " + experienceBar.value + "/" + experienceBar.highValue;
+        }
     }
 }

@@ -1,38 +1,42 @@
 using System;
+using Systems;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class HealthUIController : MonoBehaviour
+namespace UI
 {
-    private ProgressBar healthBar;
-    private PlayerHealthSystem playerHealthSystem;
-
-    private void Awake()
+    public class HealthUIController : MonoBehaviour
     {
-        playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
+        private ProgressBar healthBar;
+        private PlayerHealthSystem playerHealthSystem;
 
-        if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged += OnHealthChanged;
-    }
+        private void Awake()
+        {
+            playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
 
-    private void Start()
-    {
-        VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-        healthBar = uiVisualELement.Q<ProgressBar>("health");
-    }
+            if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged += OnHealthChanged;
+        }
 
-    private void OnDestroy()
-    {
-        if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged -= OnHealthChanged;
-    }
+        private void Start()
+        {
+            VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
+            healthBar = uiVisualELement.Q<ProgressBar>("health");
+        }
 
-    private void OnHealthChanged(float currentHP)
-    {
-        SetProgressBar(currentHP);
-    }
+        private void OnDestroy()
+        {
+            if (playerHealthSystem != null) playerHealthSystem.OnHealthChanged -= OnHealthChanged;
+        }
 
-    private void SetProgressBar(float currentHP)
-    {
-        healthBar.value = (float)Math.Round(currentHP, 2);
+        private void OnHealthChanged(float currentHP)
+        {
+            SetProgressBar(currentHP);
+        }
+
+        private void SetProgressBar(float currentHP)
+        {
+            healthBar.value = (float)Math.Round(currentHP, 2);
+        }
     }
 }

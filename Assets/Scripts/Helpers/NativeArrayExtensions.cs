@@ -1,12 +1,15 @@
 using Unity.Burst;
 using Unity.Collections;
 
-[BurstCompile]
-public static class NativeArrayExtensions
+namespace Helpers
 {
     [BurstCompile]
-    public static bool IsEmpty<T>(this NativeArray<T> array) where T : struct
+    public static class NativeArrayExtensions
     {
-        return array.Length == 0;
+        [BurstCompile]
+        public static bool IsEmpty<T>(this NativeArray<T> array) where T : struct
+        {
+            return array.Length == 0;
+        }
     }
 }

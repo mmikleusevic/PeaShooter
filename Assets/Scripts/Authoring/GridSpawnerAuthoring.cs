@@ -2,24 +2,27 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class GridSpawnerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private int2 size;
-
-    public class GridSpawnerBaker : Baker<GridSpawnerAuthoring>
+    public class GridSpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(GridSpawnerAuthoring authoring)
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private int2 size;
+
+        public class GridSpawnerBaker : Baker<GridSpawnerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            DependsOn(authoring.prefab);
-
-            AddComponent(entity, new GridSpawnerComponent
+            public override void Bake(GridSpawnerAuthoring authoring)
             {
-                prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                size = authoring.size
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                DependsOn(authoring.prefab);
+
+                AddComponent(entity, new GridSpawnerComponent
+                {
+                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    size = authoring.size
+                });
+            }
         }
     }
 }

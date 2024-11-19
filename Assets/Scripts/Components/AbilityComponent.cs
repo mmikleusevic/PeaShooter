@@ -11,9 +11,9 @@ public struct AbilityComponent : IComponentData, IDisposable
     public int range;
     public float speed;
     public float damage;
-    public Entity projectileEntity;
-    public float projectileScale;
+    public Entity abilityEntity;
     public byte hasProjectile;
+    public float scale;
     public BlobAssetReference<PositionsComponent> positionsToCheck;
 
     public void Dispose()

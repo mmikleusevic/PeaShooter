@@ -1,20 +1,23 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class EnemyDamageAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private float damage;
-
-    public class EnemyDamageBaker : Baker<EnemyDamageAuthoring>
+    public class EnemyDamageAuthoring : MonoBehaviour
     {
-        public override void Bake(EnemyDamageAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        [SerializeField] private float damage;
 
-            AddComponent(entity, new EnemyDamageComponent
+        public class EnemyDamageBaker : Baker<EnemyDamageAuthoring>
+        {
+            public override void Bake(EnemyDamageAuthoring authoring)
             {
-                damagePerSecond = authoring.damage
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new EnemyDamageComponent
+                {
+                    damagePerSecond = authoring.damage
+                });
+            }
         }
     }
 }

@@ -1,30 +1,34 @@
+using Interfaces;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
+namespace MemoryCleaners
 {
-    private EntityManager entityManager;
-    private EntityQuery gridEntityQuery;
-
-    private void Start()
+    public class GridMemoryCleaner : MonoBehaviour, IMemoryCleaner
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        private EntityManager entityManager;
+        private EntityQuery gridEntityQuery;
 
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(entityManager);
-    }
-
-    public void Cleanup()
-    {
-        if (gridEntityQuery.CalculateEntityCount() != 0 && gridEntityQuery.HasSingleton<GridComponent>())
+        private void Start()
         {
-            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
+            entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-            gridComponent.Dispose();
+            gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GridComponent>()
+                .Build(entityManager);
+        }
 
-            entityManager.DestroyEntity(gridEntityQuery);
+        public void Cleanup()
+        {
+            if (gridEntityQuery.CalculateEntityCount() != 0 && gridEntityQuery.HasSingleton<GridComponent>())
+            {
+                GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
+
+                gridComponent.Dispose();
+
+                entityManager.DestroyEntity(gridEntityQuery);
+            }
         }
     }
 }

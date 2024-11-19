@@ -1,24 +1,27 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class ObstacleSpawnerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private int numberToSpawn;
-
-    public class ObstacleSpawnerBaker : Baker<ObstacleSpawnerAuthoring>
+    public class ObstacleSpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(ObstacleSpawnerAuthoring authoring)
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private int numberToSpawn;
+
+        public class ObstacleSpawnerBaker : Baker<ObstacleSpawnerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            DependsOn(authoring.prefab);
-
-            AddComponent(entity, new ObstacleSpawnerComponent
+            public override void Bake(ObstacleSpawnerAuthoring authoring)
             {
-                prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
-                numberToSpawn = authoring.numberToSpawn
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                DependsOn(authoring.prefab);
+
+                AddComponent(entity, new ObstacleSpawnerComponent
+                {
+                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
+                    numberToSpawn = authoring.numberToSpawn
+                });
+            }
         }
     }
 }

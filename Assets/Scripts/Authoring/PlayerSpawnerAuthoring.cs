@@ -1,27 +1,30 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class PlayerSpawnerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private GameObject startingAbilityPrefab;
-
-    public class PlayerSpawnerBaker : Baker<PlayerSpawnerAuthoring>
+    public class PlayerSpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(PlayerSpawnerAuthoring authoring)
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private GameObject startingAbilityPrefab;
+
+        public class PlayerSpawnerBaker : Baker<PlayerSpawnerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            DependsOn(authoring.prefab);
-
-            AddComponent(entity, new PlayerSpawnerComponent
+            public override void Bake(PlayerSpawnerAuthoring authoring)
             {
-                prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                startingAbilityPrefab = GetEntity(authoring.startingAbilityPrefab, TransformUsageFlags.Renderable),
-                position = authoring.prefab.transform.position,
-                rotation = authoring.prefab.transform.rotation,
-                scale = authoring.prefab.transform.localScale.x
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                DependsOn(authoring.prefab);
+
+                AddComponent(entity, new PlayerSpawnerComponent
+                {
+                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    startingAbilityPrefab = GetEntity(authoring.startingAbilityPrefab, TransformUsageFlags.Renderable),
+                    position = authoring.prefab.transform.position,
+                    rotation = authoring.prefab.transform.rotation,
+                    scale = authoring.prefab.transform.localScale.x
+                });
+            }
         }
     }
 }

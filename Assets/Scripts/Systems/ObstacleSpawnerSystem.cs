@@ -5,44 +5,48 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
-[BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-[UpdateAfter(typeof(PlayerSpawnerSystem))]
-public partial struct ObstacleSpawnerSystem : ISystem
+namespace Systems
 {
-    private EntityQuery gridEntityQuery;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    [UpdateBefore(typeof(BeginInitializationEntityCommandBufferSystem))]
+    [UpdateAfter(typeof(PlayerSpawnerSystem))]
+    public partial struct ObstacleSpawnerSystem : ISystem
     {
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(ref state);
+        private EntityQuery gridEntityQuery;
 
-        state.RequireForUpdate(gridEntityQuery);
-        state.RequireForUpdate<ObstacleSpawnerComponent>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
-
-        uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
-
-        ObstacleSpawnJob job = new ObstacleSpawnJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            ecb = ecb,
-            gridNodes = grid.gridNodes,
-            seed = seed
-        };
+            gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GridComponent>()
+                .Build(ref state);
 
-        JobHandle spawnHandle = job.Schedule(state.Dependency);
-        state.Dependency = spawnHandle;
+            state.RequireForUpdate(gridEntityQuery);
+            state.RequireForUpdate<ObstacleSpawnerComponent>();
+            state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
+
+            uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
+
+            ObstacleSpawnJob job = new ObstacleSpawnJob
+            {
+                ecb = ecb,
+                gridNodes = grid.gridNodes,
+                seed = seed
+            };
+
+            JobHandle spawnHandle = job.Schedule(state.Dependency);
+            state.Dependency = spawnHandle;
+        }
     }
 }

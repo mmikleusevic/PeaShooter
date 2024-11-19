@@ -8,7 +8,7 @@ using Unity.Mathematics;
 namespace Jobs
 {
     [BurstCompile]
-    public struct RemoveEntityFromPositionJob : IJob
+    public struct GridEnemyRemoveFromPositionJob : IJob
     {
         public NativeParallelMultiHashMap<int2, Entity> enemyPositions;
         public NativeParallelMultiHashMap<int2, Entity> entitiesOnPositionsToRemove;

@@ -1,52 +1,56 @@
+using Managers;
 using Unity.Collections;
 using Unity.Entities;
 
-[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
-public partial class LoadNewWaveSystem : SystemBase
+namespace Systems
 {
-    private EntityQuery loadNewWaveEntityQuery;
-
-    private float timer;
-
-    protected override void OnCreate()
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    public partial class LoadNewWaveSystem : SystemBase
     {
-        base.OnCreate();
+        private EntityQuery loadNewWaveEntityQuery;
 
-        loadNewWaveEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<LoadNewWaveComponent>()
-            .Build(EntityManager);
+        private float timer;
 
-        RequireForUpdate(loadNewWaveEntityQuery);
-        RequireForUpdate<PlayerAliveComponent>();
-    }
+        protected override void OnCreate()
+        {
+            base.OnCreate();
 
-    protected override void OnStartRunning()
-    {
-        base.OnStartRunning();
+            loadNewWaveEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<LoadNewWaveComponent>()
+                .Build(EntityManager);
 
-        if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded += OnSubSceneLoaded;
-    }
+            RequireForUpdate(loadNewWaveEntityQuery);
+            RequireForUpdate<PlayerAliveComponent>();
+        }
 
-    protected override void OnStopRunning()
-    {
-        base.OnStopRunning();
+        protected override void OnStartRunning()
+        {
+            base.OnStartRunning();
 
-        if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded -= OnSubSceneLoaded;
-    }
+            if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded += OnSubSceneLoaded;
+        }
 
-    private void OnSubSceneLoaded(int obj)
-    {
-        timer = 0;
-    }
+        protected override void OnStopRunning()
+        {
+            base.OnStopRunning();
 
-    protected override void OnUpdate()
-    {
-        LoadNewWaveComponent loadNewWaveComponent = loadNewWaveEntityQuery.GetSingleton<LoadNewWaveComponent>();
+            if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded -= OnSubSceneLoaded;
+        }
 
-        timer += SystemAPI.Time.DeltaTime;
+        private void OnSubSceneLoaded(int obj)
+        {
+            timer = 0;
+        }
 
-        if (timer < loadNewWaveComponent.loadTimerTarget || !LevelManager.Instance) return;
+        protected override void OnUpdate()
+        {
+            LoadNewWaveComponent loadNewWaveComponent = loadNewWaveEntityQuery.GetSingleton<LoadNewWaveComponent>();
 
-        LevelManager.Instance.LoadNewSubScene();
+            timer += SystemAPI.Time.DeltaTime;
+
+            if (timer < loadNewWaveComponent.loadTimerTarget || !LevelManager.Instance) return;
+
+            LevelManager.Instance.LoadNewSubScene();
+        }
     }
 }

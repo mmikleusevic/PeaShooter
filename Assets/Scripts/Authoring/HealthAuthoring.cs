@@ -1,27 +1,30 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class HealthAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private float hitPoints;
-    [SerializeField] private Vector3 healthBarOffset;
-
-    public class HealthBaker : Baker<HealthAuthoring>
+    public class HealthAuthoring : MonoBehaviour
     {
-        public override void Bake(HealthAuthoring authoring)
+        [SerializeField] private float hitPoints;
+        [SerializeField] private Vector3 healthBarOffset;
+
+        public class HealthBaker : Baker<HealthAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            AddComponent(entity, new HealthComponent
+            public override void Bake(HealthAuthoring authoring)
             {
-                HitPoints = authoring.hitPoints,
-                maxHitPoints = authoring.hitPoints
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new HealthBarOffset
-            {
-                value = authoring.healthBarOffset
-            });
+                AddComponent(entity, new HealthComponent
+                {
+                    HitPoints = authoring.hitPoints,
+                    maxHitPoints = authoring.hitPoints
+                });
+
+                AddComponent(entity, new HealthBarOffset
+                {
+                    value = authoring.healthBarOffset
+                });
+            }
         }
     }
 }

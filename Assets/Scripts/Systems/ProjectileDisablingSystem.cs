@@ -3,34 +3,43 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
 
-[BurstCompile]
-[UpdateInGroup(typeof(PhysicsSystemGroup))]
-[UpdateAfter(typeof(ProjectileTargetingSystem))]
-public partial struct ProjectileDisablingSystem : ISystem
+namespace Systems
 {
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(PhysicsSystemGroup))]
+    [UpdateAfter(typeof(ProjectileTargetingSystem))]
+    public partial struct ProjectileDisablingSystem : ISystem
     {
-        state.RequireForUpdate<ProjectileComponent>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-        state.RequireForUpdate<PlayerAliveComponent>();
-    }
+        private ComponentLookup<EnemyComponent> enemyLookup;
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        ProjectileDisablingJob job = new ProjectileDisablingJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            deltaTime = SystemAPI.Time.fixedDeltaTime,
-            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
-            ecb = ecb.AsParallelWriter()
-        };
+            state.RequireForUpdate<ProjectileComponent>();
+            state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<PlayerAliveComponent>();
 
-        JobHandle handle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+            enemyLookup = state.GetComponentLookup<EnemyComponent>(true);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            enemyLookup.Update(ref state);
+
+            EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            ProjectileDisablingJob job = new ProjectileDisablingJob
+            {
+                deltaTime = SystemAPI.Time.fixedDeltaTime,
+                enemyLookup = enemyLookup,
+                ecb = ecb.AsParallelWriter()
+            };
+
+            JobHandle handle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = handle;
+        }
     }
 }

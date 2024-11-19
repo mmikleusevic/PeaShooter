@@ -1,30 +1,33 @@
 using System;
 using Unity.Entities;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-public partial class PlayerHealthSystem : SystemBase
+namespace Systems
 {
-    public event Action OnPlayerDied;
-    public event Action<float> OnHealthChanged;
-
-    protected override void OnCreate()
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    public partial class PlayerHealthSystem : SystemBase
     {
-        base.OnCreate();
+        public event Action OnPlayerDied;
+        public event Action<float> OnHealthChanged;
 
-        RequireForUpdate<PlayerAliveComponent>();
-        RequireForUpdate<HealthComponent>();
-    }
-
-    protected override void OnUpdate()
-    {
-        foreach (RefRO<HealthComponent> playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
-                     .WithChangeFilter<HealthComponent>()
-                     .WithAll<PlayerAliveComponent>())
+        protected override void OnCreate()
         {
-            OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
+            base.OnCreate();
 
-            if (playerHealth.ValueRO.IsDead) OnPlayerDied?.Invoke();
+            RequireForUpdate<PlayerAliveComponent>();
+            RequireForUpdate<HealthComponent>();
+        }
+
+        protected override void OnUpdate()
+        {
+            foreach (RefRO<HealthComponent> playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
+                         .WithChangeFilter<HealthComponent>()
+                         .WithAll<PlayerAliveComponent>())
+            {
+                OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
+
+                if (playerHealth.ValueRO.IsDead) OnPlayerDied?.Invoke();
+            }
         }
     }
 }

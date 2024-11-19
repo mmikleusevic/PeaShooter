@@ -4,55 +4,58 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-public class CameraDOTSFollow : MonoBehaviour
+namespace Game
 {
-    private EntityManager entityManager;
-    private Entity playerEntity;
-    private EntityQuery playerEntityQuery;
-    private CinemachineCamera virtualCamera;
-
-    private void Start()
+    public class CameraDOTSFollow : MonoBehaviour
     {
-        virtualCamera = GetComponent<CinemachineCamera>();
+        private EntityManager entityManager;
+        private Entity playerEntity;
+        private EntityQuery playerEntityQuery;
+        private CinemachineCamera virtualCamera;
 
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent>()
-            .Build(entityManager);
-
-        playerEntity = GetPlayerEntity();
-    }
-
-    private void LateUpdate()
-    {
-        if (playerEntity == Entity.Null)
+        private void Start()
         {
-            playerEntity = GetPlayerEntity();
+            virtualCamera = GetComponent<CinemachineCamera>();
 
-            if (playerEntity == Entity.Null) return;
+            entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<PlayerComponent>()
+                .Build(entityManager);
+
+            playerEntity = GetPlayerEntity();
         }
 
-        if (entityManager.HasComponent<PlayerComponent>(playerEntity))
+        private void LateUpdate()
         {
-            LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
-            Transform cameraTargetTransform = virtualCamera.Follow;
-
-            if (!cameraTargetTransform)
+            if (playerEntity == Entity.Null)
             {
-                GameObject cameraTarget = new GameObject("CameraTarget");
-                cameraTargetTransform = cameraTarget.transform;
-                virtualCamera.Follow = cameraTargetTransform;
-                virtualCamera.LookAt = cameraTargetTransform;
+                playerEntity = GetPlayerEntity();
+
+                if (playerEntity == Entity.Null) return;
             }
 
-            cameraTargetTransform.position = playerTranslation.Position;
+            if (entityManager.HasComponent<PlayerComponent>(playerEntity))
+            {
+                LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
+                Transform cameraTargetTransform = virtualCamera.Follow;
+
+                if (!cameraTargetTransform)
+                {
+                    GameObject cameraTarget = new GameObject("CameraTarget");
+                    cameraTargetTransform = cameraTarget.transform;
+                    virtualCamera.Follow = cameraTargetTransform;
+                    virtualCamera.LookAt = cameraTargetTransform;
+                }
+
+                cameraTargetTransform.position = playerTranslation.Position;
+            }
         }
-    }
 
-    private Entity GetPlayerEntity()
-    {
-        if (playerEntityQuery.CalculateEntityCount() > 0) return playerEntityQuery.GetSingletonEntity();
+        private Entity GetPlayerEntity()
+        {
+            if (playerEntityQuery.CalculateEntityCount() > 0) return playerEntityQuery.GetSingletonEntity();
 
-        return Entity.Null;
+            return Entity.Null;
+        }
     }
 }

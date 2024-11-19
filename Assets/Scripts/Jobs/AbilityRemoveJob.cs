@@ -5,8 +5,8 @@ using Unity.Entities;
 namespace Jobs
 {
     [BurstCompile]
-    [WithAll(typeof(RemoveAbilityComponent))]
-    public partial struct RemoveAbilityJob : IJobEntity
+    [WithAll(typeof(AbilityRemoveComponent))]
+    public partial struct AbilityRemoveJob : IJobEntity
     {
         public EntityCommandBuffer ecb;
 
@@ -14,7 +14,7 @@ namespace Jobs
         {
             ability.Dispose();
 
-            ecb.DestroyEntity(entity);
+            ecb.AddComponent<DestroyComponent>(entity);
         }
     }
 }

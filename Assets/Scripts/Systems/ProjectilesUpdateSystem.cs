@@ -8,10 +8,10 @@ using Unity.Jobs;
 namespace Systems
 {
     [BurstCompile]
-    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-    [UpdateAfter(typeof(AbilitySystem))]
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    [UpdateBefore(typeof(BeginInitializationEntityCommandBufferSystem))]
     [RequireMatchingQueriesForUpdate]
-    public partial struct UpdateProjectilesSystem : ISystem
+    public partial struct ProjectilesUpdateSystem : ISystem
     {
         private EntityQuery projectileUpdateQuery;
 
@@ -19,30 +19,28 @@ namespace Systems
         public void OnCreate(ref SystemState state)
         {
             projectileUpdateQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<UpdateProjectilesComponent>()
+                .WithAll<ProjectilesUpdateComponent>()
                 .Build(ref state);
 
-            projectileUpdateQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UpdateProjectilesComponent>());
+            projectileUpdateQuery.SetChangedVersionFilter(ComponentType.ReadOnly<ProjectilesUpdateComponent>());
 
-            state.RequireForUpdate<EndInitializationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate(projectileUpdateQuery);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            EndInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
-                SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+            BeginInitializationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            UpdateProjectilesJob job = new UpdateProjectilesJob
+            ProjectilesUpdateJob job = new ProjectilesUpdateJob
             {
-                updateProjectiles = projectileUpdateQuery.GetSingleton<UpdateProjectilesComponent>()
+                ProjectilesUpdate = projectileUpdateQuery.GetSingleton<ProjectilesUpdateComponent>()
             };
 
             JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
-
-            jobHandle.Complete();
 
             ecb.DestroyEntity(projectileUpdateQuery, EntityQueryCaptureMode.AtPlayback);
 

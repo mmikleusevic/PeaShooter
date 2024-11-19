@@ -4,34 +4,37 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
 
-[BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateAfter(typeof(PhysicsSystemGroup))]
-public partial struct PlayerMovementSystem : ISystem
+namespace Systems
 {
-    private EntityQuery gridEntityQuery;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(PhysicsSystemGroup))]
+    public partial struct PlayerMovementSystem : ISystem
     {
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(ref state);
+        private EntityQuery gridEntityQuery;
 
-        state.RequireForUpdate(gridEntityQuery);
-        state.RequireForUpdate<PlayerAliveComponent>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        PlayerMovementJob job = new PlayerMovementJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            deltaTime = SystemAPI.Time.fixedDeltaTime,
-            size = gridEntityQuery.GetSingleton<GridComponent>().size
-        };
+            gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GridComponent>()
+                .Build(ref state);
 
-        JobHandle handle = job.Schedule(state.Dependency);
-        state.Dependency = handle;
+            state.RequireForUpdate(gridEntityQuery);
+            state.RequireForUpdate<PlayerAliveComponent>();
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            PlayerMovementJob job = new PlayerMovementJob
+            {
+                deltaTime = SystemAPI.Time.fixedDeltaTime,
+                size = gridEntityQuery.GetSingleton<GridComponent>().size
+            };
+
+            JobHandle handle = job.Schedule(state.Dependency);
+            state.Dependency = handle;
+        }
     }
 }

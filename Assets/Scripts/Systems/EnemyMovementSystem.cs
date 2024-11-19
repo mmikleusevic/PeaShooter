@@ -3,33 +3,36 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Physics.Systems;
 
-[BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateAfter(typeof(PhysicsSystemGroup))]
-public partial struct EnemyMovementSystem : ISystem
+namespace Systems
 {
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(PhysicsSystemGroup))]
+    public partial struct EnemyMovementSystem : ISystem
     {
-        state.RequireForUpdate<PlayerAliveComponent>();
-        state.RequireForUpdate<EnemyComponent>();
-        state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        EnemyMovementJob job = new EnemyMovementJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            deltaTime = SystemAPI.Time.fixedDeltaTime,
-            ecb = ecb.AsParallelWriter()
-        };
+            state.RequireForUpdate<PlayerAliveComponent>();
+            state.RequireForUpdate<EnemyComponent>();
+            state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+        }
 
-        JobHandle handle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            EnemyMovementJob job = new EnemyMovementJob
+            {
+                deltaTime = SystemAPI.Time.fixedDeltaTime,
+                ecb = ecb.AsParallelWriter()
+            };
+
+            JobHandle handle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = handle;
+        }
     }
 }

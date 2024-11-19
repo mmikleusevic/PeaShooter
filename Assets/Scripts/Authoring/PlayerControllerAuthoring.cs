@@ -2,28 +2,31 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class PlayerControllerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private float speed = 100f;
-    [SerializeField] private float rotationSpeed = 5f;
-
-    public class PlayerControllerBaker : Baker<PlayerControllerAuthoring>
+    public class PlayerControllerAuthoring : MonoBehaviour
     {
-        public override void Bake(PlayerControllerAuthoring authoring)
+        [SerializeField] private float speed = 100f;
+        [SerializeField] private float rotationSpeed = 5f;
+
+        public class PlayerControllerBaker : Baker<PlayerControllerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            AddComponent(entity, new PlayerComponent
+            public override void Bake(PlayerControllerAuthoring authoring)
             {
-                moveSpeed = authoring.speed,
-                rotationSpeed = authoring.rotationSpeed,
-                gridPosition = default
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new InputComponent
-            {
-                move = new float2(0, 0)
-            });
+                AddComponent(entity, new PlayerComponent
+                {
+                    moveSpeed = authoring.speed,
+                    rotationSpeed = authoring.rotationSpeed,
+                    gridPosition = default
+                });
+
+                AddComponent(entity, new InputComponent
+                {
+                    move = new float2(0, 0)
+                });
+            }
         }
     }
 }

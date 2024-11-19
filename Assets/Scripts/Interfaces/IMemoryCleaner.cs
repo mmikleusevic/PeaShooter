@@ -1,4 +1,7 @@
-public interface IMemoryCleaner
+namespace Interfaces
 {
-    public void Cleanup();
+    public interface IMemoryCleaner
+    {
+        public void Cleanup();
+    }
 }

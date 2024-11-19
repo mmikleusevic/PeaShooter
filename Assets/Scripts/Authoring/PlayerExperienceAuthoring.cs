@@ -1,19 +1,22 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class PlayerExperienceAuthoring : MonoBehaviour
+namespace Authoring
 {
-    public class PlayerExperienceBaker : Baker<PlayerExperienceAuthoring>
+    public class PlayerExperienceAuthoring : MonoBehaviour
     {
-        public override void Bake(PlayerExperienceAuthoring authoring)
+        public class PlayerExperienceBaker : Baker<PlayerExperienceAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            AddComponent(entity, new PlayerExperienceComponent
+            public override void Bake(PlayerExperienceAuthoring authoring)
             {
-                points = 0,
-                currentLevel = 1
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new PlayerExperienceComponent
+                {
+                    points = 0,
+                    currentLevel = 1
+                });
+            }
         }
     }
 }

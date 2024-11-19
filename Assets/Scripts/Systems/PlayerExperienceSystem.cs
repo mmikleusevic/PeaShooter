@@ -3,76 +3,80 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-public partial class PlayerExperienceSystem : SystemBase
+namespace Systems
 {
-    private EntityQuery levelsEntityQuery;
-
-    private EntityQuery playerExperienceEntityQuery;
-    public event Action<uint, uint> OnGainedExp;
-    public event Action OnLevelUp;
-
-    protected override void OnCreate()
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    public partial class PlayerExperienceSystem : SystemBase
     {
-        base.OnCreate();
+        private EntityQuery levelsEntityQuery;
 
-        playerExperienceEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAllRW<PlayerExperienceComponent, PlayerAliveComponent>()
-            .Build(EntityManager);
+        private EntityQuery playerExperienceEntityQuery;
+        public event Action<uint, uint> OnGainedExp;
+        public event Action OnLevelUp;
 
-        levelsEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<LevelsComponent>()
-            .Build(EntityManager);
-
-        RequireForUpdate(playerExperienceEntityQuery);
-        RequireForUpdate(levelsEntityQuery);
-        RequireForUpdate<EnemyDeadComponent>();
-        RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-    }
-
-    protected override void OnUpdate()
-    {
-        EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
-
-        LevelsComponent levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>();
-        RefRW<PlayerExperienceComponent> playerExperience =
-            playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
-
-        foreach ((RefRW<EnemyExperienceWorthComponent> experienceComponent,
-                     RefRO<EnemyDeadComponent> enemyDeadComponent, Entity entity) in SystemAPI
-                     .Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
-                     .WithEntityAccess())
+        protected override void OnCreate()
         {
-            uint maxEXP = levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
-            uint currentEXP = playerExperience.ValueRO.points + experienceComponent.ValueRO.value;
+            base.OnCreate();
 
-            ecb.RemoveComponent<EnemyExperienceWorthComponent>(entity);
+            playerExperienceEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAllRW<PlayerExperienceComponent, PlayerAliveComponent>()
+                .Build(EntityManager);
 
-            if (currentEXP == maxEXP) return;
+            levelsEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<LevelsComponent>()
+                .Build(EntityManager);
 
-            uint playerExp = math.min(currentEXP, maxEXP);
+            RequireForUpdate(playerExperienceEntityQuery);
+            RequireForUpdate(levelsEntityQuery);
+            RequireForUpdate<EnemyDeadComponent>();
+            RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        }
 
-            playerExperience.ValueRW.points = playerExp;
+        protected override void OnUpdate()
+        {
+            EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-            int currentLevel = playerExperience.ValueRO.currentLevel;
-            uint currentLevelMaxEXP = levelsComponent.levels.Value.experience[currentLevel - 1];
+            LevelsComponent levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>();
+            RefRW<PlayerExperienceComponent> playerExperience =
+                playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
 
-            if (playerExp >= currentLevelMaxEXP)
+            foreach ((RefRW<EnemyExperienceWorthComponent> experienceComponent,
+                         RefRO<EnemyDeadComponent> enemyDeadComponent, Entity entity) in SystemAPI
+                         .Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
+                         .WithEntityAccess())
             {
-                playerExperience.ValueRW.currentLevel++;
+                uint maxEXP =
+                    levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
+                uint currentEXP = playerExperience.ValueRO.points + experienceComponent.ValueRO.value;
 
-                int newCurrentLevel = playerExperience.ValueRW.currentLevel;
-                uint newCurrentLevelMaxEXP = levelsComponent.levels.Value.experience[newCurrentLevel - 1];
+                ecb.RemoveComponent<EnemyExperienceWorthComponent>(entity);
 
-                OnGainedExp?.Invoke(playerExp, newCurrentLevelMaxEXP);
-                OnLevelUp?.Invoke();
-            }
-            else
-            {
-                OnGainedExp?.Invoke(playerExp, currentLevelMaxEXP);
+                if (currentEXP == maxEXP) return;
+
+                uint playerExp = math.min(currentEXP, maxEXP);
+
+                playerExperience.ValueRW.points = playerExp;
+
+                int currentLevel = playerExperience.ValueRO.currentLevel;
+                uint currentLevelMaxEXP = levelsComponent.levels.Value.experience[currentLevel - 1];
+
+                if (playerExp >= currentLevelMaxEXP)
+                {
+                    playerExperience.ValueRW.currentLevel++;
+
+                    int newCurrentLevel = playerExperience.ValueRW.currentLevel;
+                    uint newCurrentLevelMaxEXP = levelsComponent.levels.Value.experience[newCurrentLevel - 1];
+
+                    OnGainedExp?.Invoke(playerExp, newCurrentLevelMaxEXP);
+                    OnLevelUp?.Invoke();
+                }
+                else
+                {
+                    OnGainedExp?.Invoke(playerExp, currentLevelMaxEXP);
+                }
             }
         }
     }

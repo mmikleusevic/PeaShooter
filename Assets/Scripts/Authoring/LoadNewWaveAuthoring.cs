@@ -1,20 +1,23 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class LoadNewWaveAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private float loadTimerTarget;
-
-    public class LoadNewWaveBaker : Baker<LoadNewWaveAuthoring>
+    public class LoadNewWaveAuthoring : MonoBehaviour
     {
-        public override void Bake(LoadNewWaveAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        [SerializeField] private float loadTimerTarget;
 
-            AddComponent(entity, new LoadNewWaveComponent
+        public class LoadNewWaveBaker : Baker<LoadNewWaveAuthoring>
+        {
+            public override void Bake(LoadNewWaveAuthoring authoring)
             {
-                loadTimerTarget = authoring.loadTimerTarget
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new LoadNewWaveComponent
+                {
+                    loadTimerTarget = authoring.loadTimerTarget
+                });
+            }
         }
     }
 }

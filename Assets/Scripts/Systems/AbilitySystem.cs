@@ -3,63 +3,72 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-[BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-public partial struct AbilitySystem : ISystem
+namespace Systems
 {
-    private EntityQuery playerEntityQuery;
-    private EntityQuery gridEntityQuery;
-    private EntityQuery projectileEntityQuery;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
+    [UpdateBefore(typeof(BeginSimulationEntityCommandBufferSystem))]
+    public partial struct AbilitySystem : ISystem
     {
-        playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<PlayerComponent, PlayerAliveComponent>()
-            .Build(ref state);
+        private EntityQuery playerEntityQuery;
+        private EntityQuery gridEntityQuery;
+        private EntityQuery projectileEntityQuery;
+        private ComponentLookup<EnemyComponent> enemyLookup;
 
-        gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithAll<GridComponent>()
-            .Build(ref state);
-
-        projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)
-            .WithDisabled<ProjectileComponent>()
-            .Build(ref state);
-
-        state.RequireForUpdate(playerEntityQuery);
-        state.RequireForUpdate(gridEntityQuery);
-        state.RequireForUpdate<EnemyComponent>();
-        state.RequireForUpdate<AbilityComponent>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
-            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-
-        NativeArray<Entity> projectileEntities = projectileEntityQuery.ToEntityArray(Allocator.Temp);
-        Entity projectileEntity = Entity.Null;
-
-        if (projectileEntities.Length > 0) projectileEntity = projectileEntities[0];
-
-        projectileEntities.Dispose();
-
-        GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
-
-        AbilityJob job = new AbilityJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            ecb = ecb.AsParallelWriter(),
-            projectileEntity = projectileEntity,
-            gridComponent = gridComponent,
-            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(true),
-            playerComponent = playerEntityQuery.GetSingleton<PlayerComponent>(),
-            deltaTime = SystemAPI.Time.DeltaTime
-        };
+            playerEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<PlayerComponent, PlayerAliveComponent>()
+                .Build(ref state);
 
-        JobHandle handle = job.ScheduleParallel(state.Dependency);
-        state.Dependency = handle;
+            gridEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GridComponent>()
+                .Build(ref state);
+
+            projectileEntityQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithDisabled<ProjectileComponent>()
+                .Build(ref state);
+
+            state.RequireForUpdate(playerEntityQuery);
+            state.RequireForUpdate(gridEntityQuery);
+            state.RequireForUpdate<EnemyComponent>();
+            state.RequireForUpdate<AbilityComponent>();
+            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+
+            enemyLookup = state.GetComponentLookup<EnemyComponent>(true);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            enemyLookup.Update(ref state);
+
+            BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
+                SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            NativeArray<Entity> projectileEntities = projectileEntityQuery.ToEntityArray(Allocator.Temp);
+            Entity projectileEntity = Entity.Null;
+
+            if (projectileEntities.Length > 0) projectileEntity = projectileEntities[0];
+
+            projectileEntities.Dispose();
+
+            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
+
+            AbilityJob job = new AbilityJob
+            {
+                ecb = ecb.AsParallelWriter(),
+                projectileEntity = projectileEntity,
+                gridComponent = gridComponent,
+                enemyLookup = enemyLookup,
+                playerComponent = playerEntityQuery.GetSingleton<PlayerComponent>(),
+                deltaTime = SystemAPI.Time.DeltaTime
+            };
+
+            JobHandle handle = job.ScheduleParallel(state.Dependency);
+            state.Dependency = handle;
+        }
     }
 }

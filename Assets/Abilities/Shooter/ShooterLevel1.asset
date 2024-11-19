@@ -21,5 +21,6 @@ MonoBehaviour:
   range: 6
   speed: 20
   damage: 10
-  projectilePrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
-  projectileScale: 0.5
+  abilityPrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
+  hasProjectile: 1
+  scale: 0.5

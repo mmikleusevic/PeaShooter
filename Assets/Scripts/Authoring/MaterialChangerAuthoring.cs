@@ -1,20 +1,23 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class MaterialChangerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private Material material;
-
-    public class MaterialChangerBaker : Baker<MaterialChangerAuthoring>
+    public class MaterialChangerAuthoring : MonoBehaviour
     {
-        public override void Bake(MaterialChangerAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        [SerializeField] private Material material;
 
-            AddComponentObject(entity, new MaterialChangerComponent
+        public class MaterialChangerBaker : Baker<MaterialChangerAuthoring>
+        {
+            public override void Bake(MaterialChangerAuthoring authoring)
             {
-                material = authoring.material
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponentObject(entity, new MaterialChangerComponent
+                {
+                    material = authoring.material
+                });
+            }
         }
     }
 }

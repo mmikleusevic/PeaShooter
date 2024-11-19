@@ -9,9 +9,9 @@ namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
-    [UpdateAfter(typeof(UpdateProjectilesSystem))]
+    [UpdateBefore(typeof(BeginSimulationEntityCommandBufferSystem))]
     [RequireMatchingQueriesForUpdate]
-    public partial struct RemoveAbilitySystem : ISystem
+    public partial struct AbilityRemoveSystem : ISystem
     {
         private EntityQuery removeAbilityQuery;
 
@@ -19,10 +19,10 @@ namespace Systems
         public void OnCreate(ref SystemState state)
         {
             removeAbilityQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<RemoveAbilityComponent, AbilityComponent>()
+                .WithAll<AbilityRemoveComponent, AbilityComponent>()
                 .Build(ref state);
 
-            removeAbilityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<RemoveAbilityComponent>());
+            removeAbilityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<AbilityRemoveComponent>());
 
             state.RequireForUpdate(removeAbilityQuery);
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
@@ -35,7 +35,7 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            RemoveAbilityJob job = new RemoveAbilityJob
+            AbilityRemoveJob job = new AbilityRemoveJob
             {
                 ecb = ecb
             };

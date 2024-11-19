@@ -1,9 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class ParticleReference : ICleanupComponentData
+public class ParticleObjectReferenceComponent : ICleanupComponentData
 {
-    public float damage;
     public byte updateTransform;
     public GameObject value;
 }

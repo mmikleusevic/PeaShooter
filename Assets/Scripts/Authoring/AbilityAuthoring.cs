@@ -2,29 +2,32 @@ using Game;
 using Unity.Entities;
 using UnityEngine;
 
-public class AbilityAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private AbilityData abilityData;
-
-    public class AbilityBaker : Baker<AbilityAuthoring>
+    public class AbilityAuthoring : MonoBehaviour
     {
-        public override void Bake(AbilityAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        [SerializeField] private AbilityData abilityData;
 
-            AddComponent(entity, new AbilityComponent
+        public class AbilityBaker : Baker<AbilityAuthoring>
+        {
+            public override void Bake(AbilityAuthoring authoring)
             {
-                ability = authoring.abilityData.Ability,
-                level = authoring.abilityData.Level,
-                cooldown = authoring.abilityData.cooldown,
-                cooldownRemaining = authoring.abilityData.cooldownRemaining,
-                range = authoring.abilityData.range,
-                speed = authoring.abilityData.speed,
-                damage = authoring.abilityData.damage,
-                projectileEntity = GetEntity(authoring.abilityData.projectilePrefab, TransformUsageFlags.None),
-                projectileScale = authoring.abilityData.projectileScale,
-                hasProjectile = (byte)(authoring.abilityData.HasProjectile ? 1 : 0)
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new AbilityComponent
+                {
+                    ability = authoring.abilityData.Ability,
+                    level = authoring.abilityData.Level,
+                    cooldown = authoring.abilityData.cooldown,
+                    cooldownRemaining = authoring.abilityData.cooldownRemaining,
+                    range = authoring.abilityData.range,
+                    speed = authoring.abilityData.speed,
+                    damage = authoring.abilityData.damage,
+                    abilityEntity = GetEntity(authoring.abilityData.abilityPrefab, TransformUsageFlags.None),
+                    scale = authoring.abilityData.scale,
+                    hasProjectile = (byte)(authoring.abilityData.hasProjectile ? 1 : 0)
+                });
+            }
         }
     }
 }

@@ -17,16 +17,16 @@ namespace Game
         public int range;
         public float speed;
         public float damage;
-        public GameObject projectilePrefab;
-        public float projectileScale;
+        public GameObject abilityPrefab;
+        public bool hasProjectile;
+        public float scale;
+        public bool updatePosition;
         private Abilities ability;
         private int level;
 
         public Abilities Ability => ability;
         public int Level => level;
         public string Description { get; private set; }
-
-        public bool HasProjectile { get; private set; }
 
         private void OnValidate()
         {
@@ -38,8 +38,6 @@ namespace Game
             int.TryParse(name.Substring(levelIndex + 5), out level);
 
             SetDescription();
-
-            HasProjectile = projectilePrefab;
         }
 
         private void SetDescription()

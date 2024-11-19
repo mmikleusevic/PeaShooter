@@ -3,23 +3,26 @@ using Unity.Mathematics;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
-public class RandomDataAuthoring : MonoBehaviour
+namespace Authoring
 {
-    public int2 minimumPosition;
-    public int2 maximumPosition;
-
-    public class RandomDataBaker : Baker<RandomDataAuthoring>
+    public class RandomDataAuthoring : MonoBehaviour
     {
-        public override void Bake(RandomDataAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.None);
+        public int2 minimumPosition;
+        public int2 maximumPosition;
 
-            AddComponent(entity, new RandomDataComponent
+        public class RandomDataBaker : Baker<RandomDataAuthoring>
+        {
+            public override void Bake(RandomDataAuthoring authoring)
             {
-                seed = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue)),
-                maximumPosition = authoring.maximumPosition,
-                minimumPosition = authoring.minimumPosition
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                AddComponent(entity, new RandomDataComponent
+                {
+                    seed = new Random((uint)UnityEngine.Random.Range(1, uint.MaxValue)),
+                    maximumPosition = authoring.maximumPosition,
+                    minimumPosition = authoring.minimumPosition
+                });
+            }
         }
     }
 }

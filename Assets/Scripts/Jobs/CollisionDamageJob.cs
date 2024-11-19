@@ -16,7 +16,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
     [ReadOnly] public ComponentLookup<ProjectileAbilityComponent> projectileAbilityLookup;
     [ReadOnly] public ComponentLookup<ObstacleComponent> obstacleLookup;
     [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
-    [ReadOnly] public ComponentLookup<ActiveForCollisionComponent> activeForCollisionLookup;
+    [ReadOnly] public ComponentLookup<CollisionActiveComponent> activeForCollisionLookup;
     [ReadOnly] public float deltaTime;
 
     [BurstCompile]
@@ -138,7 +138,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
                         status = UpdateStatus.Remove,
                         position = targetComponent.enemy.gridPosition
                     });
-                    ecb.AddComponent(otherEntity, new HasChangedPositionComponent());
+                    ecb.AddComponent(otherEntity, new PositionChangedComponent());
                     ecb.AddComponent(otherEntity, new DestroyComponent());
                 }
             }

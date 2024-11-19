@@ -47,7 +47,7 @@ public partial struct AbilityJob : IJobEntity
 
                 if (projectileEntity == Entity.Null)
                 {
-                    projectileEntity = ecb.Instantiate(sortKey, ability.projectileEntity);
+                    projectileEntity = ecb.Instantiate(sortKey, ability.abilityEntity);
 
                     ecb.AddComponent(sortKey, projectileEntity, new ProjectileAbilityComponent
                     {
@@ -63,7 +63,7 @@ public partial struct AbilityJob : IJobEntity
                 {
                     Position = playerComponent.position,
                     Rotation = quaternion.identity,
-                    Scale = ability.projectileScale
+                    Scale = ability.scale
                 });
 
                 ecb.AddComponent(sortKey, projectileEntity, new TargetComponent
@@ -138,12 +138,12 @@ public partial struct AbilityJob : IJobEntity
             {
                 if (enemyLookup.HasComponent(enemyEntity))
                 {
-                    EnemyComponent enemy = enemyLookup[enemyEntity];
+                    RefRO<EnemyComponent> enemy = enemyLookup.GetRefRO(enemyEntity);
 
-                    if (enemy.isFullySpawned == 0) continue;
+                    if (enemy.ValueRO.isFullySpawned == 0) continue;
 
                     closestEnemyEntity = enemyEntity;
-                    closestValidEnemy = enemy;
+                    closestValidEnemy = enemy.ValueRO;
                     foundEnemyInRadius = true;
 
                     return;

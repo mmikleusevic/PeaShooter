@@ -1,24 +1,27 @@
 using Unity.Entities;
 using UnityEngine;
 
-public class PlaneSpawnerAuthoring : MonoBehaviour
+namespace Authoring
 {
-    [SerializeField] private GameObject prefab;
-
-    public class PlaneSpawnerBaker : Baker<PlaneSpawnerAuthoring>
+    public class PlaneSpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(PlaneSpawnerAuthoring authoring)
+        [SerializeField] private GameObject prefab;
+
+        public class PlaneSpawnerBaker : Baker<PlaneSpawnerAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-
-            DependsOn(authoring.prefab);
-
-            AddComponent(entity, new PlaneSpawnerComponent
+            public override void Bake(PlaneSpawnerAuthoring authoring)
             {
-                prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
-                position = authoring.prefab.transform.position,
-                rotation = authoring.prefab.transform.rotation
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+
+                DependsOn(authoring.prefab);
+
+                AddComponent(entity, new PlaneSpawnerComponent
+                {
+                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
+                    position = authoring.prefab.transform.position,
+                    rotation = authoring.prefab.transform.rotation
+                });
+            }
         }
     }
 }
