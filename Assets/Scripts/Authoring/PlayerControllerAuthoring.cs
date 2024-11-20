@@ -24,7 +24,7 @@ namespace Authoring
 
                 AddComponent(entity, new InputComponent
                 {
-                    move = new float2(0, 0)
+                    moveInput = new float2(0, 0)
                 });
             }
         }

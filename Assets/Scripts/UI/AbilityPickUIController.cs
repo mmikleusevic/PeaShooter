@@ -13,9 +13,9 @@ namespace UI
     {
         [SerializeField] private PauseUIController pauseUIController;
         [SerializeField] private VisualTreeAsset abilityCardTemplate;
-
         private VisualElement abilityCardContainer;
-        private VisualElement abilityPicker;
+
+        private VisualElement abilityPickerUI;
 
         private bool isWaitingForPick;
         private PlayerExperienceSystem playerExperienceSystem;
@@ -38,7 +38,7 @@ namespace UI
         private void Start()
         {
             rootElement = GetComponent<UIDocument>().rootVisualElement;
-            abilityPicker = rootElement.Q<VisualElement>("abilityPicker");
+            abilityPickerUI = rootElement.Q<VisualElement>("abilityPickerUI");
             abilityCardContainer = rootElement.Q<VisualElement>("abilityCardContainer");
         }
 
@@ -129,12 +129,12 @@ namespace UI
         {
             if (!isWaitingForPick) CleanupCards();
 
-            abilityPicker.style.visibility = Visibility.Hidden;
+            abilityPickerUI.style.visibility = Visibility.Hidden;
         }
 
         private void Show()
         {
-            abilityPicker.style.visibility = Visibility.Visible;
+            abilityPickerUI.style.visibility = Visibility.Visible;
 
             abilityCardContainer.schedule.Execute(() => abilityCardContainer[0].Focus())
                 .Until(() => abilityCardContainer.focusController.focusedElement == abilityCardContainer[0]);

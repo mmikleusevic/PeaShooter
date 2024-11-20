@@ -18,7 +18,7 @@ namespace Authoring
 
                 AddComponent(entity, new ObstacleSpawnerComponent
                 {
-                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
+                    prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.None),
                     numberToSpawn = authoring.numberToSpawn
                 });
             }

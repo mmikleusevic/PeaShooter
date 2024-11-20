@@ -14,7 +14,7 @@ namespace Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-            state.RequireForUpdate<PlayerAliveComponent>();
+            state.RequireForUpdate<DestroyComponent>();
         }
 
         [BurstCompile]

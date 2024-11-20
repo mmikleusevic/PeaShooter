@@ -46,7 +46,7 @@ namespace Systems
                 defaultMoveSpeed = 100f,
                 playerPosition = playerPosition,
                 gridNodes = grid.gridNodes,
-                input = inputEntityQuery.GetSingleton<InputComponent>()
+                inputComponent = inputEntityQuery.GetSingleton<InputComponent>()
             };
 
             JobHandle handle = job.ScheduleParallel(state.Dependency);

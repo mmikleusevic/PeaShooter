@@ -13,18 +13,18 @@ namespace Systems
     [RequireMatchingQueriesForUpdate]
     public partial struct AbilityRemoveSystem : ISystem
     {
-        private EntityQuery removeAbilityQuery;
+        private EntityQuery removeAbilityEntityQuery;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            removeAbilityQuery = new EntityQueryBuilder(Allocator.Temp)
+            removeAbilityEntityQuery = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<AbilityRemoveComponent, AbilityComponent>()
                 .Build(ref state);
 
-            removeAbilityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<AbilityRemoveComponent>());
+            removeAbilityEntityQuery.SetChangedVersionFilter(ComponentType.ReadOnly<AbilityRemoveComponent>());
 
-            state.RequireForUpdate(removeAbilityQuery);
+            state.RequireForUpdate(removeAbilityEntityQuery);
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         }
 

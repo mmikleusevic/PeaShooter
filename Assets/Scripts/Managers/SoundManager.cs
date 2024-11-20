@@ -7,7 +7,7 @@ namespace Managers
         private const string MUSIC = "Music";
         private const string MUSIC_VOLUME = "MusicVolume";
 
-        [SerializeField] private AudioSource musicSource;
+        [SerializeField] private AudioSource musicAudioSource;
         public static SoundManager Instance { get; private set; }
 
         private void Awake()
@@ -28,36 +28,36 @@ namespace Managers
         private void SetPlayerPrefValues()
         {
             bool.TryParse(PlayerPrefs.GetString(MUSIC), out bool isMuted);
-            musicSource.mute = isMuted;
+            musicAudioSource.mute = isMuted;
 
             float volume = PlayerPrefs.GetFloat(MUSIC_VOLUME);
-            musicSource.volume = volume;
+            musicAudioSource.volume = volume;
         }
 
         public void SavePlayerPrefs()
         {
-            PlayerPrefs.SetString(MUSIC, musicSource.mute.ToString());
-            PlayerPrefs.SetFloat(MUSIC_VOLUME, musicSource.volume);
+            PlayerPrefs.SetString(MUSIC, musicAudioSource.mute.ToString());
+            PlayerPrefs.SetFloat(MUSIC_VOLUME, musicAudioSource.volume);
         }
 
         public void SetMusic(bool value)
         {
-            musicSource.mute = value;
+            musicAudioSource.mute = value;
         }
 
         public void SetVolume(float value)
         {
-            musicSource.volume = value;
+            musicAudioSource.volume = value;
         }
 
         public bool GetIsMusicEnabled()
         {
-            return !musicSource.mute;
+            return !musicAudioSource.mute;
         }
 
         public float GetMusicVolume()
         {
-            return musicSource.volume;
+            return musicAudioSource.volume;
         }
     }
 }

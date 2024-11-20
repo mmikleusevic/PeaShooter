@@ -6,5 +6,6 @@ namespace Components
     {
         public Entity oldAbilityEntity;
         public Entity newAbilityEntity;
+        public Entity projectileUpdateEntity;
     }
 }

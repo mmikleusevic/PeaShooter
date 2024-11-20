@@ -3,6 +3,6 @@ using Unity.Mathematics;
 
 public struct GridSpawnerComponent : IComponentData
 {
-    public Entity prefab;
+    public Entity prefabEntity;
     public int2 size;
 }

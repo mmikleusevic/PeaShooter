@@ -8,17 +8,17 @@ namespace UI
 {
     public class MainMenuUIController : MonoBehaviour
     {
-        private VisualElement mainMenuElement;
+        private VisualElement mainMenuUI;
         private Button optionsButton;
         private Button playButton;
         private Button quitButton;
 
         private void Start()
         {
-            mainMenuElement = GetComponent<UIDocument>().rootVisualElement.Q("mainMenu");
-            playButton = mainMenuElement.Q<Button>("play");
-            optionsButton = mainMenuElement.Q<Button>("options");
-            quitButton = mainMenuElement.Q<Button>("quit");
+            mainMenuUI = GetComponent<UIDocument>().rootVisualElement.Q("mainMenuUI");
+            playButton = mainMenuUI.Q<Button>("play");
+            optionsButton = mainMenuUI.Q<Button>("options");
+            quitButton = mainMenuUI.Q<Button>("quit");
 
             if (playButton != null) playButton.clicked += PlayPressed;
             if (optionsButton != null) optionsButton.clicked += OptionsPressed;
@@ -44,7 +44,7 @@ namespace UI
         private void OptionsPressed()
         {
             OptionsUIController.Instance.Show();
-            mainMenuElement.style.visibility = Visibility.Hidden;
+            mainMenuUI.style.visibility = Visibility.Hidden;
         }
 
         private void QuitPressed()
@@ -57,9 +57,9 @@ namespace UI
 
         private void OnOptionsClosed()
         {
-            mainMenuElement.style.visibility = Visibility.Visible;
-            mainMenuElement.schedule.Execute(() => playButton.Focus())
-                .Until(() => mainMenuElement.focusController.focusedElement == playButton);
+            mainMenuUI.style.visibility = Visibility.Visible;
+            mainMenuUI.schedule.Execute(() => playButton.Focus())
+                .Until(() => mainMenuUI.focusController.focusedElement == playButton);
         }
     }
 }

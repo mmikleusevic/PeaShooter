@@ -10,11 +10,11 @@ namespace Jobs
     {
         public EntityCommandBuffer ecb;
 
-        public void Execute(in Entity entity, ref AbilityComponent ability)
+        private void Execute(ref AbilityComponent abilityComponent, in Entity abilityEntity)
         {
-            ability.Dispose();
+            abilityComponent.Dispose();
 
-            ecb.AddComponent<DestroyComponent>(entity);
+            ecb.AddComponent<DestroyComponent>(abilityEntity);
         }
     }
 }

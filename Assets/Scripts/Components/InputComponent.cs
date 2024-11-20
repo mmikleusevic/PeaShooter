@@ -3,5 +3,5 @@ using Unity.Mathematics;
 
 public struct InputComponent : IComponentData
 {
-    public float2 move;
+    public float2 moveInput;
 }

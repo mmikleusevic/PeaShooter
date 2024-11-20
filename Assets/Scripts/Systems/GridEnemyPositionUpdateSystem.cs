@@ -18,7 +18,7 @@ namespace Systems
         private EntityQuery changedEntityQuery;
         private ComponentTypeHandle<GridEnemyPositionUpdateComponent> gridEnemyPositionUpdateComponentTypeHandle;
         private EntityTypeHandle gridEnemyPositionUpdateTypeHandle;
-        private NativeParallelMultiHashMap<int2, Entity> removalPositions;
+        private NativeParallelMultiHashMap<int2, Entity> positionRemovals;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -35,7 +35,7 @@ namespace Systems
             gridEnemyPositionUpdateComponentTypeHandle =
                 state.GetComponentTypeHandle<GridEnemyPositionUpdateComponent>(true);
             gridEnemyPositionUpdateTypeHandle = state.GetEntityTypeHandle();
-            removalPositions = new NativeParallelMultiHashMap<int2, Entity>(2000, Allocator.Persistent);
+            positionRemovals = new NativeParallelMultiHashMap<int2, Entity>(2000, Allocator.Persistent);
 
             state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate<PlayerAliveComponent>();
@@ -60,9 +60,9 @@ namespace Systems
             {
                 ecb = ecb.AsParallelWriter(),
                 enemyPositionsWriter = gridComponent.enemyPositions.AsParallelWriter(),
-                removalPositionsParallel = removalPositions.AsParallelWriter(),
-                GridEnemyPositionUpdateTypeHandle = gridEnemyPositionUpdateComponentTypeHandle,
-                EntityTypeHandle = gridEnemyPositionUpdateTypeHandle
+                positionRemovalsParallel = positionRemovals.AsParallelWriter(),
+                gridEnemyPositionUpdateTypeHandle = gridEnemyPositionUpdateComponentTypeHandle,
+                entityTypeHandle = gridEnemyPositionUpdateTypeHandle
             };
 
             JobHandle addAndFlagJobHandle =
@@ -71,7 +71,7 @@ namespace Systems
             GridEnemyRemoveFromPositionJob gridEnemyRemoveJob = new GridEnemyRemoveFromPositionJob
             {
                 enemyPositions = gridComponent.enemyPositions,
-                entitiesOnPositionsToRemove = removalPositions
+                entitiesOnPositionsToRemove = positionRemovals
             };
 
             JobHandle removeEntityJobHandle = gridEnemyRemoveJob.Schedule(addAndFlagJobHandle);
@@ -82,7 +82,7 @@ namespace Systems
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
-            removalPositions.Dispose();
+            positionRemovals.Dispose();
         }
     }
 }

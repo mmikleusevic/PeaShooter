@@ -3,6 +3,6 @@ using UnityEngine;
 
 public class ParticleObjectReferenceComponent : ICleanupComponentData
 {
+    public GameObject gameObject;
     public byte updateTransform;
-    public GameObject value;
 }

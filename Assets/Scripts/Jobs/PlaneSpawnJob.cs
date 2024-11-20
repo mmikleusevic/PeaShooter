@@ -7,14 +7,14 @@ public partial struct PlaneSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
 
-    private void Execute(in PlaneSpawnerComponent planeSpawner, in Entity spawnerEntity)
+    private void Execute(in PlaneSpawnerComponent planeSpawnerComponent, in Entity spawnerEntity)
     {
-        Entity spawnedEntity = ecb.Instantiate(planeSpawner.prefab);
+        Entity spawnedEntity = ecb.Instantiate(planeSpawnerComponent.prefab);
 
         ecb.SetComponent(spawnedEntity, new LocalTransform
         {
-            Position = planeSpawner.position,
-            Rotation = planeSpawner.rotation,
+            Position = planeSpawnerComponent.position,
+            Rotation = planeSpawnerComponent.rotation,
             Scale = 1f
         });
 

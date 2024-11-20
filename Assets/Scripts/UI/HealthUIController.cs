@@ -8,7 +8,7 @@ namespace UI
 {
     public class HealthUIController : MonoBehaviour
     {
-        private ProgressBar healthBar;
+        private ProgressBar healthProgressBar;
         private PlayerHealthSystem playerHealthSystem;
 
         private void Awake()
@@ -21,7 +21,7 @@ namespace UI
         private void Start()
         {
             VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-            healthBar = uiVisualELement.Q<ProgressBar>("health");
+            healthProgressBar = uiVisualELement.Q<ProgressBar>("health");
         }
 
         private void OnDestroy()
@@ -36,7 +36,7 @@ namespace UI
 
         private void SetProgressBar(float currentHP)
         {
-            healthBar.value = (float)Math.Round(currentHP, 2);
+            healthProgressBar.value = (float)Math.Round(currentHP, 2);
         }
     }
 }

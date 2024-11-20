@@ -23,13 +23,13 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((ParticleObjectReferenceComponent particleComponent, Entity entity) in SystemAPI
+            foreach ((ParticleObjectReferenceComponent particleComponent, Entity particleEntity) in SystemAPI
                          .Query<ParticleObjectReferenceComponent>()
                          .WithNone<LocalTransform>()
                          .WithEntityAccess())
             {
-                Object.Destroy(particleComponent.value);
-                ecb.RemoveComponent<ParticleObjectReferenceComponent>(entity);
+                Object.Destroy(particleComponent.gameObject);
+                ecb.RemoveComponent<ParticleObjectReferenceComponent>(particleEntity);
             }
         }
     }

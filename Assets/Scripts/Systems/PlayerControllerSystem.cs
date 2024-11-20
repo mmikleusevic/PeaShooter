@@ -57,9 +57,9 @@ namespace Systems
         {
             if (inputEntityQuery.CalculateEntityCount() == 0) return;
 
-            RefRW<InputComponent> input = inputEntityQuery.GetSingletonRW<InputComponent>();
+            RefRW<InputComponent> inputRW = inputEntityQuery.GetSingletonRW<InputComponent>();
 
-            input.ValueRW.move = value;
+            inputRW.ValueRW.moveInput = value;
         }
     }
 }

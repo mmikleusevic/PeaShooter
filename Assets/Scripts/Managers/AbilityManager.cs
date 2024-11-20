@@ -44,18 +44,18 @@ namespace Managers
 
         public List<AbilityData> GetRandomAbilityChoices()
         {
-            List<AbilityData> choices = new List<AbilityData>();
+            List<AbilityData> possibleAbilities = new List<AbilityData>();
 
-            while (choices.Count < 3)
+            while (possibleAbilities.Count < 3)
             {
                 if (allAbilities.Count == 0)
                 {
-                    return ReturnAndResetChosenAbilities(choices);
+                    return ReturnAndResetChosenAbilities(possibleAbilities);
                 }
 
                 AbilityData randomAbility = allAbilities[Random.Range(0, allAbilities.Count)];
 
-                if (choices.Contains(randomAbility)) continue;
+                if (possibleAbilities.Contains(randomAbility)) continue;
 
                 AbilityData ownedAbility = ownedAbilities.FirstOrDefault(a => a.Ability == randomAbility.Ability);
                 AbilityData ownedAbilityLeveledUp = allAbilities.FirstOrDefault(a =>
@@ -63,17 +63,17 @@ namespace Managers
 
                 if (randomAbility != ownedAbilityLeveledUp)
                 {
-                    choices.Add(randomAbility);
+                    possibleAbilities.Add(randomAbility);
                     allAbilities.Remove(randomAbility);
                 }
                 else
                 {
-                    choices.Add(ownedAbilityLeveledUp);
+                    possibleAbilities.Add(ownedAbilityLeveledUp);
                     allAbilities.Remove(ownedAbilityLeveledUp);
                 }
             }
 
-            return ReturnAndResetChosenAbilities(choices);
+            return ReturnAndResetChosenAbilities(possibleAbilities);
         }
 
         private List<AbilityData> ReturnAndResetChosenAbilities(List<AbilityData> choices)
@@ -155,26 +155,22 @@ namespace Managers
                 Entity projectileUpdateEntity = entityManager.CreateEntity();
                 entityManager.AddComponentData(projectileUpdateEntity, new ProjectilesUpdateComponent
                 {
+                    oldAbilityEntity = lastAbilityEntity,
                     newAbilityEntity = newAbilityEntity,
-                    oldAbilityEntity = lastAbilityEntity
+                    projectileUpdateEntity = projectileUpdateEntity
                 });
             }
             else
             {
-                GameObject particleSystem = Instantiate(selectedAbility.abilityPrefab,
+                GameObject particleSystemGameObject = Instantiate(selectedAbility.abilityPrefab,
                     new Vector3(playerTransform.Position.x, 0.5f, playerTransform.Position.z),
                     selectedAbility.abilityPrefab.transform.rotation);
 
                 entityManager.AddComponentData(newAbilityEntity, new ParticleObjectReferenceComponent
                 {
                     updateTransform = (byte)(selectedAbility.updatePosition ? 1 : 0),
-                    value = particleSystem
+                    gameObject = particleSystemGameObject
                 });
-            }
-
-            if (!lastAbilityEntity.Equals(default))
-            {
-                entityManager.AddComponent(lastAbilityEntity, typeof(AbilityRemoveComponent));
             }
         }
     }

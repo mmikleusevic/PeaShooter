@@ -13,19 +13,20 @@ public partial struct ObstacleSpawnJob : IJobEntity
 
     [ReadOnly] public uint seed;
 
-    private void Execute(in ObstacleSpawnerComponent spawner, ref RandomDataComponent randomData, in Entity entity)
+    private void Execute(in ObstacleSpawnerComponent obstacleSpawnerComponent,
+        ref RandomDataComponent randomDataComponent, in Entity obstacleSpawnerEntity)
     {
-        randomData.seed = new Random(seed);
+        randomDataComponent.seed = new Random(seed);
 
-        for (int i = 0; i < spawner.numberToSpawn; i++)
+        for (int i = 0; i < obstacleSpawnerComponent.numberToSpawn; i++)
         {
-            Entity spawnedEntity = ecb.Instantiate(spawner.prefab);
+            Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
 
             int2 newPosition = default;
 
             do
             {
-                newPosition = randomData.nextPosition;
+                newPosition = randomDataComponent.nextPosition;
             } while (!IsValidPosition(newPosition));
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
@@ -40,7 +41,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
             gridNodes[newPosition] = 0;
         }
 
-        ecb.DestroyEntity(entity);
+        ecb.DestroyEntity(obstacleSpawnerEntity);
     }
 
     [BurstCompile]

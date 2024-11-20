@@ -7,15 +7,14 @@ namespace Managers
     {
         [SerializeField] private GameObject hpBarPrefab;
 
-        private ObjectPool<GameObject> healthBarPool;
-
+        private ObjectPool<GameObject> healthBarObjectPool;
         public static HealthBarPoolManager Instance { get; private set; }
 
         private void Awake()
         {
             Instance = this;
 
-            healthBarPool = new ObjectPool<GameObject>(InstantiateObject,
+            healthBarObjectPool = new ObjectPool<GameObject>(InstantiateObject,
                 bar => bar.SetActive(true),
                 bar => bar.SetActive(false),
                 Destroy
@@ -29,15 +28,15 @@ namespace Managers
 
         public GameObject GetHealthBar(Vector3 spawnPosition)
         {
-            GameObject healthBar = healthBarPool.Get();
-            healthBar.transform.position = spawnPosition;
-            healthBar.transform.rotation = healthBar.transform.rotation;
-            return healthBar;
+            GameObject healthBarGameObject = healthBarObjectPool.Get();
+            healthBarGameObject.transform.position = spawnPosition;
+            healthBarGameObject.transform.rotation = healthBarGameObject.transform.rotation;
+            return healthBarGameObject;
         }
 
         public void ReturnHealthBar(GameObject healthBar)
         {
-            healthBarPool.Release(healthBar);
+            healthBarObjectPool.Release(healthBar);
         }
     }
 }

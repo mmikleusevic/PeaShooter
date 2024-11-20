@@ -1,4 +1,4 @@
-public enum SceneEnums
+public enum Scenes
 {
     Game,
     MainMenu

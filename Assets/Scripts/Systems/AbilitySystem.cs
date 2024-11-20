@@ -13,7 +13,7 @@ namespace Systems
         private EntityQuery playerEntityQuery;
         private EntityQuery gridEntityQuery;
         private EntityQuery projectileEntityQuery;
-        private ComponentLookup<EnemyComponent> enemyLookup;
+        private ComponentLookup<EnemyComponent> enemyComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -36,13 +36,13 @@ namespace Systems
             state.RequireForUpdate<AbilityComponent>();
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
 
-            enemyLookup = state.GetComponentLookup<EnemyComponent>(true);
+            enemyComponentLookup = state.GetComponentLookup<EnemyComponent>(true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            enemyLookup.Update(ref state);
+            enemyComponentLookup.Update(ref state);
 
             BeginSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
@@ -62,7 +62,7 @@ namespace Systems
                 ecb = ecb.AsParallelWriter(),
                 projectileEntity = projectileEntity,
                 gridComponent = gridComponent,
-                enemyLookup = enemyLookup,
+                enemyComponentLookup = enemyComponentLookup,
                 playerComponent = playerEntityQuery.GetSingleton<PlayerComponent>(),
                 deltaTime = SystemAPI.Time.DeltaTime
             };

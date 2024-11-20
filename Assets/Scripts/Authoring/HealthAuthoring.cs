@@ -22,7 +22,7 @@ namespace Authoring
 
                 AddComponent(entity, new HealthBarOffset
                 {
-                    value = authoring.healthBarOffset
+                    offset = authoring.healthBarOffset
                 });
             }
         }

@@ -12,14 +12,14 @@ namespace Systems
     [UpdateAfter(typeof(PhysicsSimulationGroup))]
     public partial struct CollisionDamageSystem : ISystem
     {
-        private ComponentLookup<ProjectileComponent> projectileLookup;
-        private ComponentLookup<HealthComponent> healthLookup;
-        private ComponentLookup<TargetComponent> targetLookup;
-        private ComponentLookup<AbilityComponent> abilityLookup;
-        private ComponentLookup<ProjectileAbilityComponent> projectileAbilityLookup;
-        private ComponentLookup<ObstacleComponent> obstacleLookup;
-        private ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
-        private ComponentLookup<CollisionActiveComponent> activeForCollisionLookup;
+        private ComponentLookup<ProjectileComponent> projectileComponentLookup;
+        private ComponentLookup<HealthComponent> healthComponentLookup;
+        private ComponentLookup<TargetComponent> targetComponentLookup;
+        private ComponentLookup<AbilityComponent> abilityComponentLookup;
+        private ComponentLookup<ProjectileAbilityComponent> projectileAbilityComponentLookup;
+        private ComponentLookup<ObstacleComponent> obstacleComponentLookup;
+        private ComponentLookup<EnemyDamageComponent> enemyDamageComponentLookup;
+        private ComponentLookup<CollisionActiveComponent> activeForCollisionComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -28,27 +28,27 @@ namespace Systems
             state.RequireForUpdate<PlayerAliveComponent>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
 
-            projectileLookup = state.GetComponentLookup<ProjectileComponent>();
-            healthLookup = state.GetComponentLookup<HealthComponent>();
-            targetLookup = state.GetComponentLookup<TargetComponent>(true);
-            abilityLookup = state.GetComponentLookup<AbilityComponent>(true);
-            projectileAbilityLookup = state.GetComponentLookup<ProjectileAbilityComponent>(true);
-            obstacleLookup = state.GetComponentLookup<ObstacleComponent>(true);
-            enemyDamageLookup = state.GetComponentLookup<EnemyDamageComponent>(true);
-            activeForCollisionLookup = state.GetComponentLookup<CollisionActiveComponent>(true);
+            projectileComponentLookup = state.GetComponentLookup<ProjectileComponent>();
+            healthComponentLookup = state.GetComponentLookup<HealthComponent>();
+            targetComponentLookup = state.GetComponentLookup<TargetComponent>(true);
+            abilityComponentLookup = state.GetComponentLookup<AbilityComponent>(true);
+            projectileAbilityComponentLookup = state.GetComponentLookup<ProjectileAbilityComponent>(true);
+            obstacleComponentLookup = state.GetComponentLookup<ObstacleComponent>(true);
+            enemyDamageComponentLookup = state.GetComponentLookup<EnemyDamageComponent>(true);
+            activeForCollisionComponentLookup = state.GetComponentLookup<CollisionActiveComponent>(true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            projectileLookup.Update(ref state);
-            healthLookup.Update(ref state);
-            targetLookup.Update(ref state);
-            abilityLookup.Update(ref state);
-            projectileAbilityLookup.Update(ref state);
-            obstacleLookup.Update(ref state);
-            enemyDamageLookup.Update(ref state);
-            activeForCollisionLookup.Update(ref state);
+            projectileComponentLookup.Update(ref state);
+            healthComponentLookup.Update(ref state);
+            targetComponentLookup.Update(ref state);
+            abilityComponentLookup.Update(ref state);
+            projectileAbilityComponentLookup.Update(ref state);
+            obstacleComponentLookup.Update(ref state);
+            enemyDamageComponentLookup.Update(ref state);
+            activeForCollisionComponentLookup.Update(ref state);
 
             EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -57,14 +57,14 @@ namespace Systems
             CollisionDamageJob job = new CollisionDamageJob
             {
                 ecb = ecb,
-                projectileLookup = projectileLookup,
-                healthLookup = healthLookup,
-                targetLookup = targetLookup,
-                abilityLookup = abilityLookup,
-                projectileAbilityLookup = projectileAbilityLookup,
-                obstacleLookup = obstacleLookup,
-                enemyDamageLookup = enemyDamageLookup,
-                activeForCollisionLookup = activeForCollisionLookup,
+                projectileComponentLookup = projectileComponentLookup,
+                healthComponentLookup = healthComponentLookup,
+                targetComponentLookup = targetComponentLookup,
+                abilityComponentLookup = abilityComponentLookup,
+                projectileAbilityComponentLookup = projectileAbilityComponentLookup,
+                obstacleComponentLookup = obstacleComponentLookup,
+                enemyDamageComponentLookup = enemyDamageComponentLookup,
+                activeForCollisionComponentLookup = activeForCollisionComponentLookup,
                 deltaTime = SystemAPI.Time.fixedDeltaTime
             };
 

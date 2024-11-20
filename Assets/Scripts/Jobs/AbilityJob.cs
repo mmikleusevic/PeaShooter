@@ -13,26 +13,27 @@ public partial struct AbilityJob : IJobEntity
     public Entity projectileEntity;
 
     [ReadOnly] public GridComponent gridComponent;
-    [ReadOnly] public ComponentLookup<EnemyComponent> enemyLookup;
+    [ReadOnly] public ComponentLookup<EnemyComponent> enemyComponentLookup;
     [ReadOnly] public PlayerComponent playerComponent;
     [ReadOnly] public float deltaTime;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, ref AbilityComponent ability, in Entity entity)
+    private void Execute([ChunkIndexInQuery] int sortKey, ref AbilityComponent abilityComponent,
+        in Entity abilityEntity)
     {
-        if (ability.cooldownRemaining <= 0f)
+        if (abilityComponent.cooldownRemaining <= 0f)
         {
-            if (ability.hasProjectile == 1)
+            if (abilityComponent.hasProjectile == 1)
             {
                 int2 playerGridPosition = playerComponent.gridPosition;
                 Entity closestEnemyEntity = Entity.Null;
                 EnemyComponent closestValidEnemy = default;
                 bool foundEnemyInRadius = false;
 
-                if (!ability.positionsToCheck.IsCreated) GetPositions(ref ability);
+                if (!abilityComponent.positionsToCheck.IsCreated) GetPositions(ref abilityComponent);
 
-                for (int i = 0; i < ability.positionsToCheck.Value.positions.Length; i++)
+                for (int i = 0; i < abilityComponent.positionsToCheck.Value.positions.Length; i++)
                 {
-                    int2 positionToCheck = ability.positionsToCheck.Value.positions[i];
+                    int2 positionToCheck = abilityComponent.positionsToCheck.Value.positions[i];
                     int2 gridPosition = playerGridPosition + positionToCheck;
 
                     if (!gridComponent.enemyPositions.ContainsKey(gridPosition)) continue;
@@ -47,11 +48,11 @@ public partial struct AbilityJob : IJobEntity
 
                 if (projectileEntity == Entity.Null)
                 {
-                    projectileEntity = ecb.Instantiate(sortKey, ability.abilityEntity);
+                    projectileEntity = ecb.Instantiate(sortKey, abilityComponent.abilityEntity);
 
                     ecb.AddComponent(sortKey, projectileEntity, new ProjectileAbilityComponent
                     {
-                        parentEntity = entity
+                        parentEntity = abilityEntity
                     });
                 }
                 else
@@ -63,28 +64,28 @@ public partial struct AbilityJob : IJobEntity
                 {
                     Position = playerComponent.position,
                     Rotation = quaternion.identity,
-                    Scale = ability.scale
+                    Scale = abilityComponent.scale
                 });
 
                 ecb.AddComponent(sortKey, projectileEntity, new TargetComponent
                 {
-                    enemy = closestValidEnemy,
+                    enemyComponent = closestValidEnemy,
                     enemyEntity = closestEnemyEntity
                 });
             }
 
-            ability.cooldownRemaining = ability.cooldown;
+            abilityComponent.cooldownRemaining = abilityComponent.cooldown;
         }
         else
         {
-            ability.cooldownRemaining -= deltaTime;
+            abilityComponent.cooldownRemaining -= deltaTime;
         }
     }
 
     [BurstCompile]
-    private void GetPositions(ref AbilityComponent ability)
+    private void GetPositions(ref AbilityComponent abilityComponent)
     {
-        int maxDistance = ability.range;
+        int maxDistance = abilityComponent.range;
         int numberOfPositions = 1 + 8 * maxDistance * (maxDistance + 1) / 2;
 
         NativeArray<int2> positions = new NativeArray<int2>(numberOfPositions, Allocator.Temp);
@@ -124,11 +125,12 @@ public partial struct AbilityJob : IJobEntity
             }
         }
 
-        BlobUtility.CreateAndAssignPositionsBlob(ref positions, ref ability);
+        BlobUtility.CreateAndAssignPositionsBlob(ref positions, ref abilityComponent);
     }
 
     [BurstCompile]
-    private void CheckPosition(int2 gridPosition, ref Entity closestEnemyEntity, ref EnemyComponent closestValidEnemy,
+    private void CheckPosition(int2 gridPosition, ref Entity closestEnemyEntity,
+        ref EnemyComponent closestValidEnemyComponent,
         ref bool foundEnemyInRadius)
     {
         if (gridComponent.enemyPositions.TryGetFirstValue(gridPosition, out Entity enemyEntity,
@@ -136,14 +138,14 @@ public partial struct AbilityJob : IJobEntity
         {
             do
             {
-                if (enemyLookup.HasComponent(enemyEntity))
+                if (enemyComponentLookup.HasComponent(enemyEntity))
                 {
-                    RefRO<EnemyComponent> enemy = enemyLookup.GetRefRO(enemyEntity);
+                    RefRO<EnemyComponent> enemy = enemyComponentLookup.GetRefRO(enemyEntity);
 
                     if (enemy.ValueRO.isFullySpawned == 0) continue;
 
                     closestEnemyEntity = enemyEntity;
-                    closestValidEnemy = enemy.ValueRO;
+                    closestValidEnemyComponent = enemy.ValueRO;
                     foundEnemyInRadius = true;
 
                     return;

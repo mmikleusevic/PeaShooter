@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class HealthBarUIReference : ICleanupComponentData
 {
-    public GameObject value;
+    public GameObject gameObject;
 }

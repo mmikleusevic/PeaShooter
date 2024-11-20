@@ -2,6 +2,6 @@ using Unity.Entities;
 
 public struct TargetComponent : IComponentData
 {
-    public EnemyComponent enemy;
+    public EnemyComponent enemyComponent;
     public Entity enemyEntity;
 }

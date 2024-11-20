@@ -64,18 +64,18 @@ namespace Systems
 
             if (abilityEntityQuery.CalculateEntityCount() > 0)
             {
-                NativeArray<Entity> entities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
+                NativeArray<Entity> abilityEntities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
 
-                foreach (Entity entity in entities)
+                foreach (Entity abilityEntity in abilityEntities)
                 {
-                    AbilityComponent ability = EntityManager.GetComponentData<AbilityComponent>(entity);
+                    AbilityComponent abilityComponent = EntityManager.GetComponentData<AbilityComponent>(abilityEntity);
 
-                    ability.Dispose();
+                    abilityComponent.Dispose();
 
-                    EntityManager.SetComponentData(entity, ability);
+                    EntityManager.SetComponentData(abilityEntity, abilityComponent);
                 }
 
-                entities.Dispose();
+                abilityEntities.Dispose();
 
                 EntityManager.DestroyEntity(abilityEntityQuery);
             }

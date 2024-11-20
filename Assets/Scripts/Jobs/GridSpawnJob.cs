@@ -8,7 +8,7 @@ public partial struct GridSpawnJob : IJobEntity
 {
     public EntityCommandBuffer ecb;
 
-    private void Execute(in GridSpawnerComponent gridSpawnerComponent, in Entity gridSpawner)
+    private void Execute(in GridSpawnerComponent gridSpawnerComponent, in Entity gridSpawnerEntity)
     {
         int numberOfPositionPairs = math.square(gridSpawnerComponent.size.x + gridSpawnerComponent.size.y + 1);
 
@@ -29,9 +29,9 @@ public partial struct GridSpawnJob : IJobEntity
 
         gridComponent.size = gridSpawnerComponent.size;
 
-        Entity spawnedEntity = ecb.Instantiate(gridSpawnerComponent.prefab);
+        Entity gridSpawnedEntity = ecb.Instantiate(gridSpawnerComponent.prefabEntity);
 
-        ecb.AddComponent(spawnedEntity, gridComponent);
-        ecb.DestroyEntity(gridSpawner);
+        ecb.AddComponent(gridSpawnedEntity, gridComponent);
+        ecb.DestroyEntity(gridSpawnerEntity);
     }
 }

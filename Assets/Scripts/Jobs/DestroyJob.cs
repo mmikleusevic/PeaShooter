@@ -7,8 +7,8 @@ public partial struct DestroyJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, in Entity entity)
+    private void Execute([ChunkIndexInQuery] int sortKey, in Entity entityToDestroy)
     {
-        ecb.DestroyEntity(sortKey, entity);
+        ecb.DestroyEntity(sortKey, entityToDestroy);
     }
 }

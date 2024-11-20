@@ -34,14 +34,14 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            GridComponent grid = gridEntityQuery.GetSingleton<GridComponent>();
+            GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
             uint seed = math.hash(new int2(Time.frameCount, (int)(SystemAPI.Time.ElapsedTime * 1000)));
 
             ObstacleSpawnJob job = new ObstacleSpawnJob
             {
                 ecb = ecb,
-                gridNodes = grid.gridNodes,
+                gridNodes = gridComponent.gridNodes,
                 seed = seed
             };
 

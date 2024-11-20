@@ -40,42 +40,42 @@ namespace Systems
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
             LevelsComponent levelsComponent = levelsEntityQuery.GetSingleton<LevelsComponent>();
-            RefRW<PlayerExperienceComponent> playerExperience =
+            RefRW<PlayerExperienceComponent> playerExperienceComponentRW =
                 playerExperienceEntityQuery.GetSingletonRW<PlayerExperienceComponent>();
 
-            foreach ((RefRW<EnemyExperienceWorthComponent> experienceComponent,
-                         RefRO<EnemyDeadComponent> enemyDeadComponent, Entity entity) in SystemAPI
-                         .Query<RefRW<EnemyExperienceWorthComponent>, RefRO<EnemyDeadComponent>>()
+            foreach ((RefRW<EnemyExperienceWorthComponent> experienceComponentRW,
+                         Entity enemyEntity) in SystemAPI.Query<RefRW<EnemyExperienceWorthComponent>>()
+                         .WithAll<EnemyDeadComponent>()
                          .WithEntityAccess())
             {
-                uint maxEXP =
+                uint maxExp =
                     levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
-                uint currentEXP = playerExperience.ValueRO.points + experienceComponent.ValueRO.value;
+                uint currentExp = playerExperienceComponentRW.ValueRO.points + experienceComponentRW.ValueRO.experience;
 
-                ecb.RemoveComponent<EnemyExperienceWorthComponent>(entity);
+                ecb.RemoveComponent<EnemyExperienceWorthComponent>(enemyEntity);
 
-                if (currentEXP == maxEXP) return;
+                if (currentExp == maxExp) return;
 
-                uint playerExp = math.min(currentEXP, maxEXP);
+                uint playerExp = math.min(currentExp, maxExp);
 
-                playerExperience.ValueRW.points = playerExp;
+                playerExperienceComponentRW.ValueRW.points = playerExp;
 
-                int currentLevel = playerExperience.ValueRO.currentLevel;
-                uint currentLevelMaxEXP = levelsComponent.levels.Value.experience[currentLevel - 1];
+                int currentLevel = playerExperienceComponentRW.ValueRO.currentLevel;
+                uint currentLevelMaxExp = levelsComponent.levels.Value.experience[currentLevel - 1];
 
-                if (playerExp >= currentLevelMaxEXP)
+                if (playerExp >= currentLevelMaxExp)
                 {
-                    playerExperience.ValueRW.currentLevel++;
+                    playerExperienceComponentRW.ValueRW.currentLevel++;
 
-                    int newCurrentLevel = playerExperience.ValueRW.currentLevel;
-                    uint newCurrentLevelMaxEXP = levelsComponent.levels.Value.experience[newCurrentLevel - 1];
+                    int newCurrentLevel = playerExperienceComponentRW.ValueRW.currentLevel;
+                    uint newCurrentLevelMaxExp = levelsComponent.levels.Value.experience[newCurrentLevel - 1];
 
-                    OnGainedExp?.Invoke(playerExp, newCurrentLevelMaxEXP);
+                    OnGainedExp?.Invoke(playerExp, newCurrentLevelMaxExp);
                     OnLevelUp?.Invoke();
                 }
                 else
                 {
-                    OnGainedExp?.Invoke(playerExp, currentLevelMaxEXP);
+                    OnGainedExp?.Invoke(playerExp, currentLevelMaxExp);
                 }
             }
         }

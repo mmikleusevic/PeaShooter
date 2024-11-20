@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: value
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: experience
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3110060693954028518, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Enabled
       value: 1

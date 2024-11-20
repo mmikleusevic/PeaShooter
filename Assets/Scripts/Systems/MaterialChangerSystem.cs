@@ -33,29 +33,29 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-            foreach ((MaterialChangerComponent changer, RefRW<MaterialMeshInfo> materialMeshInfo,
-                         RefRO<EnemyComponent> enemyComponent, Entity entity) in SystemAPI
+            foreach ((MaterialChangerComponent changer, RefRW<MaterialMeshInfo> materialMeshInfoRW,
+                         RefRO<EnemyComponent> enemyComponentRO, Entity enemyEntity) in SystemAPI
                          .Query<MaterialChangerComponent, RefRW<MaterialMeshInfo>, RefRO<EnemyComponent>>()
                          .WithEntityAccess()
                          .WithNone<MaterialChangedComponent>())
-                if (enemyComponent.ValueRO.moveTimer >= enemyComponent.ValueRO.moveTimerTarget)
+                if (enemyComponentRO.ValueRO.moveTimer >= enemyComponentRO.ValueRO.moveTimerTarget)
                 {
                     Material material = changer.material;
 
                     RegisterMaterial(changer.material);
 
-                    materialMeshInfo.ValueRW.MaterialID = materialMapping[material];
+                    materialMeshInfoRW.ValueRW.MaterialID = materialMapping[material];
 
-                    ecb.AddComponent(entity, typeof(MaterialChangedComponent));
-                    ecb.AddComponent(entity, typeof(CollisionActiveComponent));
-                    ecb.AddComponent(entity, new GridEnemyPositionUpdateComponent
+                    ecb.AddComponent(enemyEntity, typeof(MaterialChangedComponent));
+                    ecb.AddComponent(enemyEntity, typeof(CollisionActiveComponent));
+                    ecb.AddComponent(enemyEntity, new GridEnemyPositionUpdateComponent
                     {
-                        entity = entity,
-                        position = enemyComponent.ValueRO.gridPosition,
-                        oldPosition = enemyComponent.ValueRO.gridPosition,
+                        enemyEntity = enemyEntity,
+                        position = enemyComponentRO.ValueRO.gridPosition,
+                        oldPosition = enemyComponentRO.ValueRO.gridPosition,
                         status = UpdateStatus.Add
                     });
-                    ecb.AddComponent(entity, typeof(PositionChangedComponent));
+                    ecb.AddComponent(enemyEntity, typeof(PositionChangedComponent));
                 }
         }
 

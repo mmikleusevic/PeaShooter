@@ -27,14 +27,14 @@ namespace Systems
         {
             base.OnStartRunning();
 
-            if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded += OnSubSceneLoaded;
+            if (LevelManager.Instance) LevelManager.Instance.OnSubSceneLoaded += OnSubSceneLoaded;
         }
 
         protected override void OnStopRunning()
         {
             base.OnStopRunning();
 
-            if (LevelManager.Instance != null) LevelManager.Instance.OnSubSceneLoaded -= OnSubSceneLoaded;
+            if (LevelManager.Instance) LevelManager.Instance.OnSubSceneLoaded -= OnSubSceneLoaded;
         }
 
         private void OnSubSceneLoaded(int obj)

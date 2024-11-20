@@ -20,13 +20,13 @@ namespace Systems
 
         protected override void OnUpdate()
         {
-            foreach (RefRO<HealthComponent> playerHealth in SystemAPI.Query<RefRO<HealthComponent>>()
+            foreach (RefRO<HealthComponent> playerHealthRO in SystemAPI.Query<RefRO<HealthComponent>>()
                          .WithChangeFilter<HealthComponent>()
                          .WithAll<PlayerAliveComponent>())
             {
-                OnHealthChanged?.Invoke(playerHealth.ValueRO.HitPoints);
+                OnHealthChanged?.Invoke(playerHealthRO.ValueRO.HitPoints);
 
-                if (playerHealth.ValueRO.IsDead) OnPlayerDied?.Invoke();
+                if (playerHealthRO.ValueRO.IsDead) OnPlayerDied?.Invoke();
             }
         }
     }

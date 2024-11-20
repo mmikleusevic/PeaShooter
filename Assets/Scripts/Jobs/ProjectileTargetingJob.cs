@@ -11,18 +11,18 @@ using Unity.Transforms;
 public partial struct ProjectileTargetingJob : IJobEntity
 {
     [ReadOnly] public float deltaTime;
-    [ReadOnly] public ComponentLookup<AbilityComponent> AbilityLookup;
+    [ReadOnly] public ComponentLookup<AbilityComponent> abilityComponentLookup;
 
-    private void Execute(in TargetComponent target, ref LocalTransform transform,
+    private void Execute(in TargetComponent target, ref LocalTransform localTransform,
         in ProjectileAbilityComponent projectileAbility, ref PhysicsVelocity physicsVelocity)
     {
-        if (!AbilityLookup.HasComponent(projectileAbility.parentEntity)) return;
+        if (!abilityComponentLookup.HasComponent(projectileAbility.parentEntity)) return;
 
-        RefRO<AbilityComponent> abilityComponent = AbilityLookup.GetRefRO(projectileAbility.parentEntity);
+        RefRO<AbilityComponent> abilityComponent = abilityComponentLookup.GetRefRO(projectileAbility.parentEntity);
 
         float projectileSpeed = abilityComponent.ValueRO.speed * deltaTime;
 
-        transform.Position = MoveTowards(transform.Position, target.enemy.position, projectileSpeed);
+        localTransform.Position = MoveTowards(localTransform.Position, target.enemyComponent.position, projectileSpeed);
     }
 
     [BurstCompile]

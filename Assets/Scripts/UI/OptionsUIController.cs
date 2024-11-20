@@ -11,7 +11,7 @@ namespace UI
         private Button closeButton;
         private Toggle musicToggle;
 
-        private VisualElement optionsElement;
+        private VisualElement optionsUI;
         private Slider volumeSlider;
         private VisualElement volumeSliderElement;
         private Label volumeSliderLabel;
@@ -32,12 +32,12 @@ namespace UI
 
         private void Start()
         {
-            optionsElement = GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("optionsUI");
-            musicToggle = optionsElement.Q<Toggle>("music");
-            volumeSlider = optionsElement.Q<Slider>("musicVolume");
-            closeButton = optionsElement.Q<Button>("close");
+            optionsUI = GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("optionsUI");
+            musicToggle = optionsUI.Q<Toggle>("music");
+            volumeSlider = optionsUI.Q<Slider>("musicVolume");
+            closeButton = optionsUI.Q<Button>("close");
 
-            optionsElement?.RegisterCallback<NavigationCancelEvent>(OnCancel);
+            optionsUI?.RegisterCallback<NavigationCancelEvent>(OnCancel);
 
             if (musicToggle != null)
             {
@@ -60,7 +60,7 @@ namespace UI
 
         private void OnDestroy()
         {
-            optionsElement?.UnregisterCallback<NavigationCancelEvent>(OnCancel);
+            optionsUI?.UnregisterCallback<NavigationCancelEvent>(OnCancel);
             musicToggle?.UnregisterValueChangedCallback(ToggleMusic);
             volumeSlider?.UnregisterValueChangedCallback(SetVolume);
             volumeSliderElement?.UnregisterCallback<FocusInEvent>(FocusVolume);
@@ -98,15 +98,15 @@ namespace UI
 
         public void Show()
         {
-            optionsElement.style.visibility = Visibility.Visible;
-            optionsElement.schedule.Execute(() => musicToggle.Focus())
-                .Until(() => optionsElement.focusController.focusedElement == musicToggle);
+            optionsUI.style.visibility = Visibility.Visible;
+            optionsUI.schedule.Execute(() => musicToggle.Focus())
+                .Until(() => optionsUI.focusController.focusedElement == musicToggle);
         }
 
         private void Hide()
         {
             SoundManager.Instance.SavePlayerPrefs();
-            optionsElement.style.visibility = Visibility.Hidden;
+            optionsUI.style.visibility = Visibility.Hidden;
             OnOptionsClosed?.Invoke();
         }
     }

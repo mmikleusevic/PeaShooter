@@ -11,12 +11,12 @@ namespace Managers
 {
     public class LevelManager : MonoBehaviour
     {
-        [SerializeField] private EntitySceneReference[] entitySubsceneReferences;
+        [SerializeField] private EntitySceneReference[] entitySubSceneReferences;
 
-        private readonly List<Entity> currentSubsceneEntities = new();
+        private readonly List<Entity> currentSubSceneEntities = new List<Entity>();
         private IMemoryCleaner[] memoryCleaners;
 
-        private int subsceneIndex;
+        private int subSceneIndex;
         public static LevelManager Instance { get; private set; }
 
         private void Awake()
@@ -41,56 +41,55 @@ namespace Managers
 
         public void LoadGameScene()
         {
-            subsceneIndex = 0;
+            subSceneIndex = 0;
 
-            CleanupSubscene();
+            CleanupSubScene();
             UnloadSubScene();
-            LoadScene(SceneEnums.Game);
+            LoadScene(Scenes.Game);
             LoadSubScene();
         }
 
         public void LoadMainMenu()
         {
-            CleanupSubscene();
+            CleanupSubScene();
             UnloadSubScene();
-            LoadScene(SceneEnums.MainMenu);
+            LoadScene(Scenes.MainMenu);
         }
 
         public void LoadNewSubScene()
         {
-            subsceneIndex++;
+            subSceneIndex++;
 
             LoadSubScene();
         }
 
-        private void LoadScene(SceneEnums sceneEnum)
+        private void LoadScene(Scenes scene)
         {
-            SceneManager.LoadScene(sceneEnum.ToString(), LoadSceneMode.Single);
+            SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
         }
 
         private void UnloadSubScene()
         {
-            if (currentSubsceneEntities.Count > 0)
-            {
-                foreach (Entity currentSubsceneEntity in currentSubsceneEntities)
-                    UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubsceneEntity,
-                        UnloadParameters.DestroyMetaEntities);
+            if (currentSubSceneEntities.Count == 0) return;
 
-                currentSubsceneEntities.Clear();
-            }
+            foreach (Entity currentSubSceneEntity in currentSubSceneEntities)
+                UnloadScene(World.DefaultGameObjectInjectionWorld.Unmanaged, currentSubSceneEntity,
+                    UnloadParameters.DestroyMetaEntities);
+
+            currentSubSceneEntities.Clear();
         }
 
         private void LoadSubScene()
         {
-            if (subsceneIndex >= entitySubsceneReferences.Length) return;
+            if (subSceneIndex >= entitySubSceneReferences.Length) return;
 
-            currentSubsceneEntities.Add(LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged,
-                entitySubsceneReferences[subsceneIndex]));
+            currentSubSceneEntities.Add(LoadSceneAsync(World.DefaultGameObjectInjectionWorld.Unmanaged,
+                entitySubSceneReferences[subSceneIndex]));
 
-            OnSubSceneLoaded?.Invoke(subsceneIndex);
+            OnSubSceneLoaded?.Invoke(subSceneIndex);
         }
 
-        private void CleanupSubscene()
+        private void CleanupSubScene()
         {
             World.DefaultGameObjectInjectionWorld.EntityManager.CompleteAllTrackedJobs();
 

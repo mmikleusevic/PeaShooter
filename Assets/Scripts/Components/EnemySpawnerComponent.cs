@@ -2,7 +2,7 @@ using Unity.Entities;
 
 public struct EnemySpawnerComponent : IComponentData
 {
-    public Entity prefab;
+    public Entity prefabEntity;
     public float nextSpawnTime;
     public float spawnRate;
     public float moveSpeed;

@@ -27,30 +27,30 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((RefRO<HealthComponent> health, RefRO<LocalTransform> transform,
-                         RefRO<HealthBarOffset> healthBarOffset, Entity entity) in SystemAPI
+            foreach ((RefRO<HealthComponent> healthRO, RefRO<LocalTransform> localTransformRO,
+                         RefRO<HealthBarOffset> healthBarOffsetRO, Entity enemyEntity) in SystemAPI
                          .Query<RefRO<HealthComponent>, RefRO<LocalTransform>, RefRO<HealthBarOffset>>()
                          .WithNone<HealthBarUIReference, PlayerComponent>()
                          .WithAll<MaterialChangedComponent>()
                          .WithEntityAccess())
             {
-                float3 spawnPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;
+                float3 spawnPosition = localTransformRO.ValueRO.Position + healthBarOffsetRO.ValueRO.offset;
 
-                GameObject newHealthBar = HealthBarPoolManager.Instance.GetHealthBar(spawnPosition);
+                GameObject healthBarGameObject = HealthBarPoolManager.Instance.GetHealthBar(spawnPosition);
 
-                ecb.AddComponent(entity, new HealthBarUIReference
+                ecb.AddComponent(enemyEntity, new HealthBarUIReference
                 {
-                    value = newHealthBar
+                    gameObject = healthBarGameObject
                 });
 
-                SetHealthBar(newHealthBar, health.ValueRO);
+                SetHealthBar(healthBarGameObject, healthRO.ValueRO);
             }
         }
 
         [BurstCompile]
-        public void SetHealthBar(GameObject healthBarObject, HealthComponent health)
+        private void SetHealthBar(GameObject healthBarGameObject, HealthComponent health)
         {
-            Slider hpBarSlider = healthBarObject.GetComponent<Slider>();
+            Slider hpBarSlider = healthBarGameObject.GetComponent<Slider>();
             hpBarSlider.minValue = 0;
             hpBarSlider.maxValue = health.maxHitPoints;
             hpBarSlider.value = health.HitPoints;

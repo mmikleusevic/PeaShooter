@@ -33,7 +33,7 @@ namespace Jobs
                             entitiesToReAdd.Add(new PositionEntityPairComponent
                             {
                                 position = position,
-                                entity = foundEntity
+                                enemyEntity = foundEntity
                             });
                         }
                     } while (enemyPositions.TryGetNextValue(out foundEntity, ref iterator));
@@ -44,7 +44,7 @@ namespace Jobs
 
             foreach (PositionEntityPairComponent entityPosition in entitiesToReAdd)
             {
-                enemyPositions.Add(entityPosition.position, entityPosition.entity);
+                enemyPositions.Add(entityPosition.position, entityPosition.enemyEntity);
             }
 
             positions.Dispose();

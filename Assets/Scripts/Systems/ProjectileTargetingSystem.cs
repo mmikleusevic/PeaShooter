@@ -10,7 +10,7 @@ namespace Systems
     [UpdateAfter(typeof(CollisionDamageSystem))]
     public partial struct ProjectileTargetingSystem : ISystem
     {
-        private ComponentLookup<AbilityComponent> abilityLookup;
+        private ComponentLookup<AbilityComponent> abilityComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -18,18 +18,18 @@ namespace Systems
             state.RequireForUpdate<TargetComponent>();
             state.RequireForUpdate<PlayerAliveComponent>();
 
-            abilityLookup = state.GetComponentLookup<AbilityComponent>(true);
+            abilityComponentLookup = state.GetComponentLookup<AbilityComponent>(true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            abilityLookup.Update(ref state);
+            abilityComponentLookup.Update(ref state);
 
             ProjectileTargetingJob job = new ProjectileTargetingJob
             {
                 deltaTime = SystemAPI.Time.fixedDeltaTime,
-                AbilityLookup = abilityLookup
+                abilityComponentLookup = abilityComponentLookup
             };
 
             JobHandle jobHandle = job.ScheduleParallel(state.Dependency);

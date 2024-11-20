@@ -13,49 +13,50 @@ public partial struct EnemyMovementJob : IJobEntity
 
     [ReadOnly] public float deltaTime;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, ref EnemyComponent enemy,
-        in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform transform,
-        ref PhysicsVelocity velocity, in Entity entity)
+    private void Execute([ChunkIndexInQuery] int sortKey, ref EnemyComponent enemyComponent,
+        in DynamicBuffer<NodeComponent> pathBuffer, in LocalTransform localTransform,
+        ref PhysicsVelocity physicsVelocity, in Entity enemyEntity)
     {
-        if (pathBuffer.Length == 0 || enemy.moveTimer < enemy.moveTimerTarget)
+        if (pathBuffer.Length == 0 || enemyComponent.moveTimer < enemyComponent.moveTimerTarget)
         {
-            velocity.Linear = float3.zero;
-            enemy.moveTimer += deltaTime;
+            physicsVelocity.Linear = float3.zero;
+            enemyComponent.moveTimer += deltaTime;
 
-            if (enemy.moveTimer >= enemy.moveTimerTarget) enemy.isFullySpawned = 1;
+            if (enemyComponent.moveTimer >= enemyComponent.moveTimerTarget) enemyComponent.isFullySpawned = 1;
 
             return;
         }
 
-        int nextPathIndex = math.min(enemy.currentPathIndex + 1, pathBuffer.Length - 1);
+        int nextPathIndex = math.min(enemyComponent.currentPathIndex + 1, pathBuffer.Length - 1);
         int2 nextPathPosition = pathBuffer[nextPathIndex].position;
-        float3 currentPos3D = new float3(transform.Position.x, 0, transform.Position.z);
+        float3 currentPos3D = new float3(localTransform.Position.x, 0, localTransform.Position.z);
         float3 targetPos3D = new float3(nextPathPosition.x, 0, nextPathPosition.y);
 
         float3 direction = math.normalize(targetPos3D - currentPos3D);
 
-        velocity.Linear = direction * enemy.moveSpeed * deltaTime;
+        physicsVelocity.Linear = direction * enemyComponent.moveSpeed * deltaTime;
 
-        int2 gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
+        int2 gridPosition = new int2((int)math.round(localTransform.Position.x),
+            (int)math.round(localTransform.Position.z));
 
-        if (!enemy.gridPosition.Equals(gridPosition))
+        if (!enemyComponent.gridPosition.Equals(gridPosition))
         {
-            int2 oldPosition = enemy.gridPosition;
+            int2 oldPosition = enemyComponent.gridPosition;
 
-            ecb.SetComponent(sortKey, entity, new GridEnemyPositionUpdateComponent
+            ecb.SetComponent(sortKey, enemyEntity, new GridEnemyPositionUpdateComponent
             {
-                entity = entity,
+                enemyEntity = enemyEntity,
                 oldPosition = oldPosition,
                 position = gridPosition,
                 status = UpdateStatus.Move
             });
-            ecb.AddComponent(sortKey, entity, new PositionChangedComponent());
+            ecb.AddComponent(sortKey, enemyEntity, new PositionChangedComponent());
 
-            enemy.gridPosition = gridPosition;
+            enemyComponent.gridPosition = gridPosition;
         }
 
-        enemy.position = transform.Position;
+        enemyComponent.position = localTransform.Position;
 
-        if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f) enemy.currentPathIndex = nextPathIndex;
+        if (math.lengthsq(currentPos3D - targetPos3D) < 0.01f) enemyComponent.currentPathIndex = nextPathIndex;
     }
 }

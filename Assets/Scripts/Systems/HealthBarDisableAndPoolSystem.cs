@@ -23,12 +23,12 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((HealthBarUIReference healthBarUI, Entity entity) in SystemAPI.Query<HealthBarUIReference>()
+            foreach ((HealthBarUIReference healthBarUI, Entity enemyEntity) in SystemAPI.Query<HealthBarUIReference>()
                          .WithNone<LocalTransform>()
                          .WithEntityAccess())
             {
-                HealthBarPoolManager.Instance.ReturnHealthBar(healthBarUI.value);
-                ecb.RemoveComponent<HealthBarUIReference>(entity);
+                HealthBarPoolManager.Instance.ReturnHealthBar(healthBarUI.gameObject);
+                ecb.RemoveComponent<HealthBarUIReference>(enemyEntity);
             }
         }
     }

@@ -7,7 +7,7 @@ namespace UI
 {
     public class ExperienceUIController : MonoBehaviour
     {
-        private ProgressBar experienceBar;
+        private ProgressBar experienceProgressBar;
         private PlayerExperienceSystem playerExperienceSystem;
 
         private void Awake()
@@ -21,7 +21,7 @@ namespace UI
         private void Start()
         {
             VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-            experienceBar = uiVisualELement.Q<ProgressBar>("experience");
+            experienceProgressBar = uiVisualELement.Q<ProgressBar>("experience");
         }
 
         private void OnDestroy()
@@ -29,16 +29,16 @@ namespace UI
             if (playerExperienceSystem != null) playerExperienceSystem.OnGainedExp -= OnGainedExp;
         }
 
-        private void OnGainedExp(uint currentEXP, uint maxEXP)
+        private void OnGainedExp(uint currentExp, uint maxExp)
         {
-            SetProgressBar(currentEXP, maxEXP);
+            SetProgressBar(currentExp, maxExp);
         }
 
-        private void SetProgressBar(uint currentEXP, uint maxEXP)
+        private void SetProgressBar(uint currentExp, uint maxExp)
         {
-            experienceBar.value = currentEXP;
-            experienceBar.highValue = maxEXP;
-            experienceBar.title = "EXP: " + experienceBar.value + "/" + experienceBar.highValue;
+            experienceProgressBar.value = currentExp;
+            experienceProgressBar.highValue = maxExp;
+            experienceProgressBar.title = "EXP: " + experienceProgressBar.value + "/" + experienceProgressBar.highValue;
         }
     }
 }

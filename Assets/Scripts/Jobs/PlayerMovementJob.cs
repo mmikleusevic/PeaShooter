@@ -12,24 +12,26 @@ public partial struct PlayerMovementJob : IJobEntity
     [ReadOnly] public float deltaTime;
     [ReadOnly] public int2 size;
 
-    private void Execute(ref PlayerComponent player, in InputComponent input, ref LocalTransform transform,
-        ref PhysicsVelocity velocity)
+    private void Execute(ref PlayerComponent playerComponent, in InputComponent inputComponent,
+        ref LocalTransform localTransform,
+        ref PhysicsVelocity physicsVelocity)
     {
-        float3 moveDirection = new float3(input.move.x, 0, input.move.y);
+        float3 moveDirection = new float3(inputComponent.moveInput.x, 0, inputComponent.moveInput.y);
 
         if (!MathExtensions.Approximately(moveDirection, 0))
         {
             quaternion targetRotation = quaternion.LookRotation(moveDirection, math.up());
-            transform.Rotation = math.slerp(
-                transform.Rotation,
+            localTransform.Rotation = math.slerp(
+                localTransform.Rotation,
                 targetRotation,
-                player.rotationSpeed * deltaTime
+                playerComponent.rotationSpeed * deltaTime
             );
         }
 
-        velocity.Linear = moveDirection * player.moveSpeed * deltaTime;
-        transform.Position = math.clamp(transform.Position, -size.x, size.x);
-        player.gridPosition = new int2((int)math.round(transform.Position.x), (int)math.round(transform.Position.z));
-        player.position = transform.Position;
+        physicsVelocity.Linear = moveDirection * playerComponent.moveSpeed * deltaTime;
+        localTransform.Position = math.clamp(localTransform.Position, -size.x, size.x);
+        playerComponent.gridPosition = new int2((int)math.round(localTransform.Position.x),
+            (int)math.round(localTransform.Position.z));
+        playerComponent.position = localTransform.Position;
     }
 }

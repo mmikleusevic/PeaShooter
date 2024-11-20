@@ -3,5 +3,5 @@ using Unity.Mathematics;
 
 public struct HealthBarOffset : IComponentData
 {
-    public float3 value;
+    public float3 offset;
 }

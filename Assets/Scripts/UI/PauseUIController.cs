@@ -13,7 +13,7 @@ namespace UI
         private Button mainMenuButton;
         private Button optionsButton;
         private Button pauseButton;
-        private VisualElement pauseElementUI;
+        private VisualElement pauseButtonUI;
         private VisualElement pauseUI;
         private InputActionAsset playerInputAsset;
         private Button restartButton;
@@ -28,10 +28,10 @@ namespace UI
 
         private void Start()
         {
-            VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-            pauseElementUI = uiVisualELement.Q<VisualElement>("pauseElementUI");
-            pauseUI = uiVisualELement.Q<VisualElement>("pauseUI");
-            pauseButton = pauseElementUI.Q<Button>("pause");
+            VisualElement rootVisualELement = GetComponent<UIDocument>().rootVisualElement;
+            pauseButtonUI = rootVisualELement.Q<VisualElement>("pauseButtonUI");
+            pauseUI = rootVisualELement.Q<VisualElement>("pauseUI");
+            pauseButton = pauseButtonUI.Q<Button>("pause");
             resumeButton = pauseUI.Q<Button>("resume");
             restartButton = pauseUI.Q<Button>("restart");
             optionsButton = pauseUI.Q<Button>("options");
@@ -114,7 +114,7 @@ namespace UI
         {
             OnPauseUIOpened?.Invoke();
 
-            pauseElementUI.style.visibility = Visibility.Hidden;
+            pauseButtonUI.style.visibility = Visibility.Hidden;
             pauseUI.style.visibility = Visibility.Visible;
 
             pauseUI.schedule.Execute(() => resumeButton.Focus())
@@ -125,13 +125,13 @@ namespace UI
         {
             OnPauseUIClosed?.Invoke();
 
-            pauseElementUI.style.visibility = Visibility.Visible;
+            pauseButtonUI.style.visibility = Visibility.Visible;
             pauseUI.style.visibility = Visibility.Hidden;
         }
 
         private void HideAll()
         {
-            pauseElementUI.style.visibility = Visibility.Hidden;
+            pauseButtonUI.style.visibility = Visibility.Hidden;
             pauseUI.style.visibility = Visibility.Visible;
         }
     }

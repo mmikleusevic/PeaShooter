@@ -18,8 +18,9 @@ namespace Authoring
 
                 AddComponent(entity, new PlayerSpawnerComponent
                 {
-                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
-                    startingAbilityPrefab = GetEntity(authoring.startingAbilityPrefab, TransformUsageFlags.Renderable),
+                    prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    startingAbilityPrefabEntity =
+                        GetEntity(authoring.startingAbilityPrefab, TransformUsageFlags.Renderable),
                     position = authoring.prefab.transform.position,
                     rotation = authoring.prefab.transform.rotation,
                     scale = authoring.prefab.transform.localScale.x

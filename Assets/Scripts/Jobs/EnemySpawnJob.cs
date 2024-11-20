@@ -14,24 +14,24 @@ public partial struct EnemySpawnJob : IJobEntity
     [ReadOnly] public double elapsedTime;
     [ReadOnly] public uint seed;
 
-    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawner,
-        ref RandomDataComponent randomData, in Entity entity)
+    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawnerComponent,
+        ref RandomDataComponent randomDataComponent, in Entity enemySpawnerEntity)
     {
-        if (enemySpawner.startTime == 0) enemySpawner.startTime = elapsedTime;
+        if (enemySpawnerComponent.startTime == 0) enemySpawnerComponent.startTime = elapsedTime;
 
-        double localElapsedTime = elapsedTime - enemySpawner.startTime;
+        double localElapsedTime = elapsedTime - enemySpawnerComponent.startTime;
 
-        if (enemySpawner.nextSpawnTime >= localElapsedTime) return;
+        if (enemySpawnerComponent.nextSpawnTime >= localElapsedTime) return;
 
-        randomData.seed = new Random((uint)(seed + sortKey));
+        randomDataComponent.seed = new Random((uint)(seed + sortKey));
 
-        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawner.prefab);
+        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
 
         int2 newPosition = default;
 
         do
         {
-            newPosition = randomData.nextPosition;
+            newPosition = randomDataComponent.nextPosition;
         } while (gridNodes[newPosition] == 0);
 
         float3 position = new float3(newPosition.x, 0, newPosition.y);
@@ -40,23 +40,24 @@ public partial struct EnemySpawnJob : IJobEntity
         {
             Position = position,
             Rotation = quaternion.identity,
-            Scale = enemySpawner.scale
+            Scale = enemySpawnerComponent.scale
         });
 
         ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
         {
-            moveSpeed = enemySpawner.moveSpeed,
+            moveSpeed = enemySpawnerComponent.moveSpeed,
             gridPosition = newPosition,
             position = position,
             isFullySpawned = 0,
             currentPathIndex = 0,
-            moveTimerTarget = enemySpawner.enemyMoveTimerTarget
+            moveTimerTarget = enemySpawnerComponent.enemyMoveTimerTarget
         });
 
         ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
 
-        if (localElapsedTime >= enemySpawner.destroySpawnerTimerTarget) ecb.DestroyEntity(sortKey, entity);
+        if (localElapsedTime >= enemySpawnerComponent.destroySpawnerTimerTarget)
+            ecb.DestroyEntity(sortKey, enemySpawnerEntity);
 
-        enemySpawner.nextSpawnTime += enemySpawner.spawnRate;
+        enemySpawnerComponent.nextSpawnTime += enemySpawnerComponent.spawnRate;
     }
 }

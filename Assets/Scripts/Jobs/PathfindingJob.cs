@@ -12,36 +12,37 @@ internal partial struct PathfindingJob : IJobEntity
     [ReadOnly] public float defaultMoveSpeed;
     [ReadOnly] public int2 playerPosition;
     [ReadOnly] public NativeHashMap<int2, byte> gridNodes;
-    [ReadOnly] public InputComponent input;
+    [ReadOnly] public InputComponent inputComponent;
 
-    private static readonly int2[] Directions =
+    private static readonly int2[] directions =
     {
         new(-1, 1), new(0, 1), new(1, 1),
         new(-1, 0), new(1, 0),
         new(-1, -1), new(0, -1), new(1, -1)
     };
 
-    private void Execute(ref EnemyComponent enemy, ref DynamicBuffer<NodeComponent> pathBuffer)
+    private void Execute(ref EnemyComponent enemyComponent, ref DynamicBuffer<NodeComponent> pathBuffer)
     {
-        float timeOfNextPathfinding = math.min(0.5f, defaultMoveSpeed / enemy.moveSpeed) + enemy.timeOfLastPathfinding;
+        float timeOfNextPathfinding = math.min(0.5f, defaultMoveSpeed / enemyComponent.moveSpeed) +
+                                      enemyComponent.timeOfLastPathfinding;
 
-        if (enemy.isFullySpawned == 0 || elapsedTime < timeOfNextPathfinding) return;
+        if (enemyComponent.isFullySpawned == 0 || elapsedTime < timeOfNextPathfinding) return;
 
-        enemy.timeOfLastPathfinding = elapsedTime;
+        enemyComponent.timeOfLastPathfinding = elapsedTime;
 
         pathBuffer.Clear();
 
-        int2 predictedPlayerPosition = playerPosition + (int2)math.round(input.move);
+        int2 predictedPlayerPosition = playerPosition + (int2)math.round(inputComponent.moveInput);
 
         if (IsValidPosition(predictedPlayerPosition) == 0) predictedPlayerPosition = playerPosition;
 
-        NativeList<int2> path = FindPath(enemy.gridPosition, predictedPlayerPosition);
+        NativeList<int2> path = FindPath(enemyComponent.gridPosition, predictedPlayerPosition);
 
         if (path.IsCreated)
         {
             foreach (int2 node in path) pathBuffer.Add(new NodeComponent { position = node });
 
-            enemy.currentPathIndex = 0;
+            enemyComponent.currentPathIndex = 0;
         }
 
         path.Dispose();
@@ -65,33 +66,34 @@ internal partial struct PathfindingJob : IJobEntity
         while (openSet.Length > 0)
         {
             int currentIndex = GetLowestFCostIndex(openSet);
-            NodeComponent current = openSet[currentIndex];
+            NodeComponent currentNodeComponent = openSet[currentIndex];
 
-            if (current.position.Equals(goal))
+            if (currentNodeComponent.position.Equals(goal))
             {
-                ReconstructPath(result, cameFrom, current.position);
+                ReconstructPath(result, cameFrom, currentNodeComponent.position);
                 break;
             }
 
             openSet.RemoveAtSwapBack(currentIndex);
-            closedSet.Add(current.position);
+            closedSet.Add(currentNodeComponent.position);
 
-            for (int i = 0; i < Directions.Length; i++)
+            for (int i = 0; i < directions.Length; i++)
             {
                 if (i == 0 || i == 2 || i == 5 || i == 7)
                 {
-                    int2 dirX = new int2(Directions[i].x, 0);
-                    int2 dirY = new int2(0, Directions[i].y);
-                    if (IsValidPosition(current.position + dirX) == 0 ||
-                        IsValidPosition(current.position + dirY) == 0)
+                    int2 dirX = new int2(directions[i].x, 0);
+                    int2 dirY = new int2(0, directions[i].y);
+                    if (IsValidPosition(currentNodeComponent.position + dirX) == 0 ||
+                        IsValidPosition(currentNodeComponent.position + dirY) == 0)
                         continue;
                 }
 
-                int2 neighborPos = current.position + Directions[i];
+                int2 neighborPos = currentNodeComponent.position + directions[i];
 
                 if (closedSet.Contains(neighborPos) || IsValidPosition(neighborPos) == 0) continue;
 
-                int tentativeGCost = current.gCost + CalculateDistanceCost(current.position, neighborPos);
+                int tentativeGCost = currentNodeComponent.gCost +
+                                     CalculateDistanceCost(currentNodeComponent.position, neighborPos);
 
                 bool inOpenSet = false;
                 for (int j = 0; j < openSet.Length; j++)
@@ -107,7 +109,7 @@ internal partial struct PathfindingJob : IJobEntity
                                 hCost = CalculateDistanceCost(neighborPos, goal)
                             };
 
-                            cameFrom[neighborPos] = current.position;
+                            cameFrom[neighborPos] = currentNodeComponent.position;
                         }
 
                         break;
@@ -122,7 +124,7 @@ internal partial struct PathfindingJob : IJobEntity
                         hCost = CalculateDistanceCost(neighborPos, goal)
                     });
 
-                    cameFrom[neighborPos] = current.position;
+                    cameFrom[neighborPos] = currentNodeComponent.position;
                 }
             }
         }
@@ -187,8 +189,6 @@ internal partial struct PathfindingJob : IJobEntity
     [BurstCompile]
     private byte IsValidPosition(int2 position)
     {
-        if (!gridNodes.ContainsKey(position)) return 0;
-
-        return gridNodes[position];
+        return !gridNodes.ContainsKey(position) ? (byte)0 : gridNodes[position];
     }
 }

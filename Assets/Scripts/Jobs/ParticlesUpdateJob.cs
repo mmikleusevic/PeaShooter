@@ -12,18 +12,18 @@ namespace Jobs
     public partial struct ParticlesUpdateJob : IJobEntity
     {
         public EntityCommandBuffer ecb;
-        public ComponentLookup<HealthComponent> healthLookup;
+        public ComponentLookup<HealthComponent> healthComponentLookup;
 
         [ReadOnly] public NativeParallelMultiHashMap<int2, Entity>.ReadOnly enemyPositions;
         [ReadOnly] public NativeArray<Particle> particles;
 
-        public void Execute(in AbilityComponent abilityComponent, in LocalTransform transform)
+        private void Execute(in AbilityComponent abilityComponent, in LocalTransform localTransform)
         {
             foreach (Particle particle in particles)
             {
                 float3 localParticlePosition =
                     new float3(particle.position.x, particle.position.z, -particle.position.y);
-                float3 particleWorldPosition = localParticlePosition + transform.Position;
+                float3 particleWorldPosition = localParticlePosition + localTransform.Position;
                 int2 particleGridPosition = new int2((int)math.round(particleWorldPosition.x),
                     (int)math.round(particleWorldPosition.z));
 
@@ -34,25 +34,23 @@ namespace Jobs
                 {
                     do
                     {
-                        if (healthLookup.HasComponent(enemy))
-                        {
-                            RefRW<HealthComponent> enemyHealth = healthLookup.GetRefRW(enemy);
-                            enemyHealth.ValueRW.HitPoints -= abilityComponent.damage;
+                        if (!healthComponentLookup.HasComponent(enemy)) continue;
 
-                            if (enemyHealth.ValueRO.HitPoints <= 0)
-                            {
-                                ecb.AddComponent(enemy, new EnemyDeadComponent());
-                                ecb.SetComponent(enemy, new GridEnemyPositionUpdateComponent
-                                {
-                                    entity = enemy,
-                                    oldPosition = particleGridPosition,
-                                    status = UpdateStatus.Remove,
-                                    position = particleGridPosition
-                                });
-                                ecb.AddComponent(enemy, new PositionChangedComponent());
-                                ecb.AddComponent(enemy, new DestroyComponent());
-                            }
-                        }
+                        RefRW<HealthComponent> enemyHealth = healthComponentLookup.GetRefRW(enemy);
+                        enemyHealth.ValueRW.HitPoints -= abilityComponent.damage;
+
+                        if (!(enemyHealth.ValueRO.HitPoints <= 0)) continue;
+
+                        ecb.AddComponent(enemy, new EnemyDeadComponent());
+                        ecb.SetComponent(enemy, new GridEnemyPositionUpdateComponent
+                        {
+                            enemyEntity = enemy,
+                            oldPosition = particleGridPosition,
+                            status = UpdateStatus.Remove,
+                            position = particleGridPosition
+                        });
+                        ecb.AddComponent(enemy, new PositionChangedComponent());
+                        ecb.AddComponent(enemy, new DestroyComponent());
                     } while (enemyPositions.TryGetNextValue(out enemy, ref iterator));
                 }
             }

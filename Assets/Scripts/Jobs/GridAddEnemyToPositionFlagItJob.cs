@@ -13,17 +13,17 @@ namespace Jobs
         public EntityCommandBuffer.ParallelWriter ecb;
 
         public NativeParallelMultiHashMap<int2, Entity>.ParallelWriter enemyPositionsWriter;
-        public NativeParallelMultiHashMap<int2, Entity>.ParallelWriter removalPositionsParallel;
+        public NativeParallelMultiHashMap<int2, Entity>.ParallelWriter positionRemovalsParallel;
 
-        [ReadOnly] public ComponentTypeHandle<GridEnemyPositionUpdateComponent> GridEnemyPositionUpdateTypeHandle;
-        [ReadOnly] public EntityTypeHandle EntityTypeHandle;
+        [ReadOnly] public ComponentTypeHandle<GridEnemyPositionUpdateComponent> gridEnemyPositionUpdateTypeHandle;
+        [ReadOnly] public EntityTypeHandle entityTypeHandle;
 
         public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask,
             in v128 chunkEnabledMask)
         {
             NativeArray<GridEnemyPositionUpdateComponent> enemyPositionUpdates =
-                chunk.GetNativeArray(ref GridEnemyPositionUpdateTypeHandle);
-            NativeArray<Entity> entities = chunk.GetNativeArray(EntityTypeHandle);
+                chunk.GetNativeArray(ref gridEnemyPositionUpdateTypeHandle);
+            NativeArray<Entity> entities = chunk.GetNativeArray(entityTypeHandle);
 
             for (int i = 0; i < chunk.Count; i++)
             {
@@ -38,11 +38,11 @@ namespace Jobs
                 else if (enemyPositionUpdate.status == UpdateStatus.Move)
                 {
                     enemyPositionsWriter.Add(enemyPositionUpdate.position, entity);
-                    removalPositionsParallel.Add(enemyPositionUpdate.oldPosition, entity);
+                    positionRemovalsParallel.Add(enemyPositionUpdate.oldPosition, entity);
                 }
                 else if (enemyPositionUpdate.status == UpdateStatus.Remove)
                 {
-                    removalPositionsParallel.Add(enemyPositionUpdate.oldPosition, entity);
+                    positionRemovalsParallel.Add(enemyPositionUpdate.oldPosition, entity);
                 }
 
                 ecb.RemoveComponent<PositionChangedComponent>(i, entity);

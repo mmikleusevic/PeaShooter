@@ -21,7 +21,7 @@ namespace Authoring
 
                 AddComponent(entity, new EnemySpawnerComponent
                 {
-                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
                     nextSpawnTime = authoring.spawnRate,
                     spawnRate = authoring.spawnRate,
                     moveSpeed = authoring.speed,

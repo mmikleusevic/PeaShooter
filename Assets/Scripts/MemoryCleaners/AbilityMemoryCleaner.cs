@@ -21,18 +21,18 @@ namespace MemoryCleaners
 
         public void Cleanup()
         {
-            NativeArray<Entity> entities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
+            NativeArray<Entity> abilityEntities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
 
-            foreach (Entity entity in entities)
+            foreach (Entity abilityEntity in abilityEntities)
             {
-                AbilityComponent ability = entityManager.GetComponentData<AbilityComponent>(entity);
+                AbilityComponent abilityComponent = entityManager.GetComponentData<AbilityComponent>(abilityEntity);
 
-                ability.Dispose();
+                abilityComponent.Dispose();
 
-                entityManager.SetComponentData(entity, ability);
+                entityManager.SetComponentData(abilityEntity, abilityComponent);
             }
 
-            entities.Dispose();
+            abilityEntities.Dispose();
 
             entityManager.DestroyEntity(abilityEntityQuery);
         }

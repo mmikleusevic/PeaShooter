@@ -2,6 +2,6 @@ using Unity.Entities;
 
 public struct ObstacleSpawnerComponent : IComponentData
 {
-    public Entity prefab;
+    public Entity prefabEntity;
     public int numberToSpawn;
 }

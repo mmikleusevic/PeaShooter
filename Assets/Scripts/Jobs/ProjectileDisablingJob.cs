@@ -10,26 +10,28 @@ public partial struct ProjectileDisablingJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter ecb;
 
-    [ReadOnly] public ComponentLookup<EnemyComponent> enemyLookup;
+    [ReadOnly] public ComponentLookup<EnemyComponent> enemyComponentLookup;
     [ReadOnly] public float deltaTime;
 
-    private void Execute([ChunkIndexInQuery] int sortKey, in Entity entity, ref ProjectileComponent projectile,
-        ref LocalTransform transform, ref TargetComponent target, ref PhysicsVelocity velocity)
+    private void Execute([ChunkIndexInQuery] int sortKey, in Entity projectileEntity,
+        ref ProjectileComponent projectileComponent,
+        ref LocalTransform localTransform, ref TargetComponent targetComponent, ref PhysicsVelocity physicsVelocity)
     {
-        if (projectile.lifetime <= 0 || projectile.hasCollided == 1 || !enemyLookup.HasComponent(target.enemyEntity))
+        if (projectileComponent.lifetime <= 0 || projectileComponent.hasCollided == 1 ||
+            !enemyComponentLookup.HasComponent(targetComponent.enemyEntity))
         {
-            ecb.SetComponentEnabled<ProjectileComponent>(sortKey, entity, false);
-            projectile.hasCollided = 0;
-            projectile.lifetime = projectile.maxLifetime;
-            target.enemy = default;
-            target.enemyEntity = Entity.Null;
-            velocity.Linear = 0;
-            velocity.Angular = 0;
+            ecb.SetComponentEnabled<ProjectileComponent>(sortKey, projectileEntity, false);
+            projectileComponent.hasCollided = 0;
+            projectileComponent.lifetime = projectileComponent.maxLifetime;
+            targetComponent.enemyComponent = default;
+            targetComponent.enemyEntity = Entity.Null;
+            physicsVelocity.Linear = 0;
+            physicsVelocity.Angular = 0;
 
             //Don't want to destroy projectiles so I'll just move them out of sight
-            transform.Position = new float3(-500, -500, -500);
+            localTransform.Position = new float3(-500, -500, -500);
         }
 
-        projectile.lifetime -= deltaTime;
+        projectileComponent.lifetime -= deltaTime;
     }
 }

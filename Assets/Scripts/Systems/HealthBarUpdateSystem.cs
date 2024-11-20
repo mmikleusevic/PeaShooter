@@ -22,28 +22,35 @@ namespace Systems
 
         public void OnUpdate(ref SystemState state)
         {
-            foreach ((RefRO<HealthComponent> health, HealthBarUIReference healthBarUI) in SystemAPI
+            foreach ((RefRO<HealthComponent> healthRO, HealthBarUIReference healthBarUI) in SystemAPI
                          .Query<RefRO<HealthComponent>, HealthBarUIReference>()
                          .WithChangeFilter<HealthComponent>())
-                SetHealthBar(healthBarUI.value, health.ValueRO);
+                SetHealthBar(healthBarUI.gameObject, healthRO.ValueRO);
 
-            foreach ((RefRO<LocalTransform> transform, RefRO<HealthBarOffset> healthBarOffset,
+            foreach ((RefRO<LocalTransform> localTransformRO, RefRO<HealthBarOffset> healthBarOffsetRO,
                          HealthBarUIReference healthBarUI) in SystemAPI
                          .Query<RefRO<LocalTransform>, RefRO<HealthBarOffset>, HealthBarUIReference>()
                          .WithChangeFilter<LocalTransform>())
             {
-                float3 healthBarPosition = transform.ValueRO.Position + healthBarOffset.ValueRO.value;
-                healthBarUI.value.transform.position = healthBarPosition;
+                SetTransform(healthBarUI.gameObject, localTransformRO.ValueRO, healthBarOffsetRO.ValueRO);
             }
         }
 
         [BurstCompile]
-        public void SetHealthBar(GameObject healthBarCanvasObject, HealthComponent health)
+        private void SetHealthBar(GameObject healthBarUI, HealthComponent health)
         {
-            Slider hpBarSlider = healthBarCanvasObject.GetComponentInChildren<Slider>();
+            Slider hpBarSlider = healthBarUI.GetComponentInChildren<Slider>();
             hpBarSlider.minValue = 0;
             hpBarSlider.maxValue = health.maxHitPoints;
             hpBarSlider.value = health.HitPoints;
+        }
+
+        [BurstCompile]
+        private void SetTransform(GameObject healthBarUI, LocalTransform localTransform,
+            HealthBarOffset healthBarOffset)
+        {
+            float3 healthBarPosition = localTransform.Position + healthBarOffset.offset;
+            healthBarUI.gameObject.transform.position = healthBarPosition;
         }
     }
 }

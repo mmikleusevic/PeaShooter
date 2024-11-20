@@ -1,7 +1,6 @@
 using Components;
 using Jobs;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
@@ -13,19 +12,11 @@ namespace Systems
     [RequireMatchingQueriesForUpdate]
     public partial struct ProjectilesUpdateSystem : ISystem
     {
-        private EntityQuery projectileUpdateQuery;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            projectileUpdateQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<ProjectilesUpdateComponent>()
-                .Build(ref state);
-
-            projectileUpdateQuery.SetChangedVersionFilter(ComponentType.ReadOnly<ProjectilesUpdateComponent>());
-
+            state.RequireForUpdate<ProjectilesUpdateComponent>();
             state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
-            state.RequireForUpdate(projectileUpdateQuery);
         }
 
         [BurstCompile]
@@ -37,13 +28,11 @@ namespace Systems
 
             ProjectilesUpdateJob job = new ProjectilesUpdateJob
             {
-                ProjectilesUpdate = projectileUpdateQuery.GetSingleton<ProjectilesUpdateComponent>()
+                ecb = ecb.AsParallelWriter(),
+                projectilesUpdateComponent = SystemAPI.GetSingleton<ProjectilesUpdateComponent>()
             };
 
             JobHandle jobHandle = job.ScheduleParallel(state.Dependency);
-
-            ecb.DestroyEntity(projectileUpdateQuery, EntityQueryCaptureMode.AtPlayback);
-
             state.Dependency = jobHandle;
         }
     }

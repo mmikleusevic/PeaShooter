@@ -6,12 +6,11 @@ namespace Managers
 {
     public class GameStateManager : MonoBehaviour
     {
-        public static GameStateManager Instance;
-
         private bool isDead;
         private bool isPausedForLevelUp;
 
         private PlayerHealthSystem playerHealthSystem;
+        public static GameStateManager Instance { get; private set; }
 
         private void Awake()
         {

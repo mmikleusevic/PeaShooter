@@ -19,7 +19,7 @@ namespace Authoring
 
                 AddComponent(entity, new GridSpawnerComponent
                 {
-                    prefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
+                    prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
                     size = authoring.size
                 });
             }

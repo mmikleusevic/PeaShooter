@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: value
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: experience
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -109,7 +113,7 @@ PrefabInstance:
       value: TomatoEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 7366305124181314534, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b8acf905ee3fe4044b068279e99089fb, type: 2}
     m_RemovedComponents: []

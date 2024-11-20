@@ -31,8 +31,8 @@ namespace Authoring
                     builder.CreateBlobAssetReference<LevelDataBlob>(Allocator.Persistent);
                 builder.Dispose();
 
-                Entity entity = GetEntity(TransformUsageFlags.None);
-                AddComponent(entity, new LevelsComponent { levels = blobAsset });
+                Entity levelsEntity = GetEntity(TransformUsageFlags.None);
+                AddComponent(levelsEntity, new LevelsComponent { levels = blobAsset });
             }
         }
     }

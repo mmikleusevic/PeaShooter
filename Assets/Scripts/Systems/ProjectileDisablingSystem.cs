@@ -10,7 +10,7 @@ namespace Systems
     [UpdateAfter(typeof(ProjectileTargetingSystem))]
     public partial struct ProjectileDisablingSystem : ISystem
     {
-        private ComponentLookup<EnemyComponent> enemyLookup;
+        private ComponentLookup<EnemyComponent> enemyComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -19,13 +19,13 @@ namespace Systems
             state.RequireForUpdate<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate<PlayerAliveComponent>();
 
-            enemyLookup = state.GetComponentLookup<EnemyComponent>(true);
+            enemyComponentLookup = state.GetComponentLookup<EnemyComponent>(true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            enemyLookup.Update(ref state);
+            enemyComponentLookup.Update(ref state);
 
             EndFixedStepSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
@@ -34,7 +34,7 @@ namespace Systems
             ProjectileDisablingJob job = new ProjectileDisablingJob
             {
                 deltaTime = SystemAPI.Time.fixedDeltaTime,
-                enemyLookup = enemyLookup,
+                enemyComponentLookup = enemyComponentLookup,
                 ecb = ecb.AsParallelWriter()
             };
 

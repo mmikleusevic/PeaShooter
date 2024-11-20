@@ -2,18 +2,18 @@
          engine="UnityEngine.UIElements" editor="UnityEditor.UIElements"
          noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=88932a4070dc743488908c2adac4d25c&amp;type=3#Style"/>
-    <ui:VisualElement name="ui" tabindex="-1" picking-mode="Ignore"
+    <ui:VisualElement name="gameOverUI" tabindex="-1" picking-mode="Ignore"
                       style="flex-grow: 1; align-self: center; justify-content: space-around; display: flex; visibility: hidden; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);">
         <ui:VisualElement name="background" tabindex="-1" picking-mode="Ignore"
                           style="flex-grow: 0; width: 333px; height: 266px; flex-basis: auto; background-color: rgb(255, 255, 255); align-self: center; justify-content: space-around; align-items: center; border-top-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px; border-bottom-left-radius: 50px;">
             <ui:Label tabindex="-1" text="You Died!" parse-escape-sequences="true" display-tooltip-when-elided="true"
-                      name="message-dead"
+                      name="messageDead"
                       style="width: 212px; font-size: 20px; -unity-text-align: middle-center; -unity-font-style: bold; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
             <ui:Button text="Play Again" parse-escape-sequences="true" display-tooltip-when-elided="true"
-                       name="play-again" class="button-style-positive"
+                       name="playAgain" class="button-style-positive"
                        style="border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
-            <ui:Button text="Main Menu" parse-escape-sequences="true" display-tooltip-when-elided="true"
-                       name="main-menu" tabindex="1" class="button-style-negative"
+            <ui:Button text="Main Menu" parse-escape-sequences="true" display-tooltip-when-elided="true" name="mainMenu"
+                       tabindex="1" class="button-style-negative"
                        style="border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; -unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;);"/>
         </ui:VisualElement>
     </ui:VisualElement>

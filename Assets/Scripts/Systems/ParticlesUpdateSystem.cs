@@ -18,7 +18,7 @@ namespace Systems
     {
         private EntityQuery gridEntityQuery;
         private EntityQuery playerEntityQuery;
-        private ComponentLookup<HealthComponent> healthLookup;
+        private ComponentLookup<HealthComponent> healthComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -36,22 +36,22 @@ namespace Systems
             state.RequireForUpdate(playerEntityQuery);
             state.RequireForUpdate(gridEntityQuery);
 
-            healthLookup = state.GetComponentLookup<HealthComponent>();
+            healthComponentLookup = state.GetComponentLookup<HealthComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
-            healthLookup.Update(ref state);
+            healthComponentLookup.Update(ref state);
 
             EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (particleReference, localTransform) in SystemAPI
+            foreach (var (particleReference, localTransformRW) in SystemAPI
                          .Query<ParticleObjectReferenceComponent, RefRW<LocalTransform>>())
             {
-                ParticleSystem particleSystem = particleReference.value.GetComponent<ParticleSystem>();
+                ParticleSystem particleSystem = particleReference.gameObject.GetComponent<ParticleSystem>();
 
                 if (particleSystem.particleCount > 0)
                 {
@@ -63,7 +63,7 @@ namespace Systems
                     {
                         ecb = ecb,
                         enemyPositions = gridComponent.enemyPositions.AsReadOnly(),
-                        healthLookup = healthLookup,
+                        healthComponentLookup = healthComponentLookup,
                         particles = particles
                     };
 
@@ -75,22 +75,22 @@ namespace Systems
 
                 if (particleReference.updateTransform == 1)
                 {
-                    UpdateTransform(particleReference, playerTransform.Position, ref localTransform.ValueRW);
+                    UpdateTransform(particleReference, playerTransform.Position, ref localTransformRW.ValueRW);
                 }
                 else if (particleSystem.time >= particleSystem.main.duration - 0.05f)
                 {
                     particleSystem.Clear();
-                    UpdateTransform(particleReference, playerTransform.Position, ref localTransform.ValueRW);
+                    UpdateTransform(particleReference, playerTransform.Position, ref localTransformRW.ValueRW);
                 }
             }
         }
 
         [BurstCompile]
         private void UpdateTransform(ParticleObjectReferenceComponent particleReference, float3 position,
-            ref LocalTransform transform)
+            ref LocalTransform localTransform)
         {
-            particleReference.value.transform.position = position;
-            transform.Position = position;
+            particleReference.gameObject.transform.position = position;
+            localTransform.Position = position;
         }
     }
 }

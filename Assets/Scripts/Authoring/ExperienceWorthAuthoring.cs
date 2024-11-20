@@ -5,7 +5,7 @@ namespace Authoring
 {
     public class ExperienceWorthAuthoring : MonoBehaviour
     {
-        [SerializeField] private uint value;
+        [SerializeField] private uint experience;
 
         public class ExperienceWorthBaker : Baker<ExperienceWorthAuthoring>
         {
@@ -15,7 +15,7 @@ namespace Authoring
 
                 AddComponent(entity, new EnemyExperienceWorthComponent
                 {
-                    value = authoring.value
+                    experience = authoring.experience
                 });
             }
         }

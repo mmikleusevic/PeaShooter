@@ -6,7 +6,7 @@ namespace UI
 {
     public class WaveTextUIController : MonoBehaviour
     {
-        private Label waveText;
+        private Label waveLabel;
 
         private void Awake()
         {
@@ -15,8 +15,8 @@ namespace UI
 
         private void Start()
         {
-            VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
-            waveText = uiVisualELement.Q<Label>("waveText");
+            VisualElement rootVisualELement = GetComponent<UIDocument>().rootVisualElement;
+            waveLabel = rootVisualELement.Q<Label>("waveText");
         }
 
         private void OnDestroy()
@@ -26,7 +26,7 @@ namespace UI
 
         private void OnSubSceneLoaded(int subSceneIndex)
         {
-            waveText.text = $"Wave {subSceneIndex + 1}";
+            waveLabel.text = $"Wave {subSceneIndex + 1}";
         }
     }
 }

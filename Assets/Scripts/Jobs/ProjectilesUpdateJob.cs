@@ -7,14 +7,18 @@ namespace Jobs
     [BurstCompile]
     public partial struct ProjectilesUpdateJob : IJobEntity
     {
-        public ProjectilesUpdateComponent ProjectilesUpdate;
+        public EntityCommandBuffer.ParallelWriter ecb;
+        public ProjectilesUpdateComponent projectilesUpdateComponent;
 
-        public void Execute(ref ProjectileAbilityComponent projectileAbility, in Entity entity)
+        private void Execute([ChunkIndexInQuery] int sortKey, ref ProjectileAbilityComponent projectileAbilityComponent,
+            in Entity projectileEntity)
         {
-            if (projectileAbility.parentEntity == ProjectilesUpdate.oldAbilityEntity)
-            {
-                projectileAbility.parentEntity = ProjectilesUpdate.newAbilityEntity;
-            }
+            if (projectileAbilityComponent.parentEntity != projectilesUpdateComponent.oldAbilityEntity) return;
+
+            projectileAbilityComponent.parentEntity = projectilesUpdateComponent.newAbilityEntity;
+
+            ecb.AddComponent<AbilityRemoveComponent>(sortKey, projectilesUpdateComponent.oldAbilityEntity);
+            ecb.DestroyEntity(sortKey, projectilesUpdateComponent.projectileUpdateEntity);
         }
     }
 }

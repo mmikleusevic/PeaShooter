@@ -36,7 +36,7 @@ namespace Game
 
             if (entityManager.HasComponent<PlayerComponent>(playerEntity))
             {
-                LocalTransform playerTranslation = entityManager.GetComponentData<LocalTransform>(playerEntity);
+                LocalTransform playerLocalTransform = entityManager.GetComponentData<LocalTransform>(playerEntity);
                 Transform cameraTargetTransform = virtualCamera.Follow;
 
                 if (!cameraTargetTransform)
@@ -47,7 +47,7 @@ namespace Game
                     virtualCamera.LookAt = cameraTargetTransform;
                 }
 
-                cameraTargetTransform.position = playerTranslation.Position;
+                cameraTargetTransform.position = playerLocalTransform.Position;
             }
         }
 

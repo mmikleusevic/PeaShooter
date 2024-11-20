@@ -9,18 +9,18 @@ namespace Components
     public struct PositionEntityPairComponent : IEquatable<PositionEntityPairComponent>
     {
         public int2 position;
-        public Entity entity;
+        public Entity enemyEntity;
 
         public bool Equals(PositionEntityPairComponent other)
         {
-            return position.Equals(other.position) && entity.Equals(other.entity);
+            return position.Equals(other.position) && enemyEntity.Equals(other.enemyEntity);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (position.GetHashCode() * 397) ^ entity.GetHashCode();
+                return (position.GetHashCode() * 397) ^ enemyEntity.GetHashCode();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace UI
 {
     public class GameOverUIController : MonoBehaviour
     {
-        private VisualElement gameOverScreen;
+        private VisualElement gameOverUI;
         private Button mainMenuButton;
         private Button playAgainButton;
         private PlayerHealthSystem playerHealthSystem;
@@ -17,9 +17,9 @@ namespace UI
         {
             VisualElement uiVisualELement = GetComponent<UIDocument>().rootVisualElement;
 
-            gameOverScreen = uiVisualELement.Q<VisualElement>("ui");
-            playAgainButton = uiVisualELement.Q<Button>("play-again");
-            mainMenuButton = uiVisualELement.Q<Button>("main-menu");
+            gameOverUI = uiVisualELement.Q<VisualElement>("gameOverUI");
+            playAgainButton = uiVisualELement.Q<Button>("playAgain");
+            mainMenuButton = uiVisualELement.Q<Button>("mainMenu");
 
             playerHealthSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<PlayerHealthSystem>();
 
@@ -54,15 +54,15 @@ namespace UI
 
         private void ShowUI()
         {
-            gameOverScreen.style.visibility = Visibility.Visible;
+            gameOverUI.style.visibility = Visibility.Visible;
 
-            gameOverScreen.schedule.Execute(() => playAgainButton.Focus())
-                .Until(() => gameOverScreen.focusController.focusedElement == playAgainButton);
+            gameOverUI.schedule.Execute(() => playAgainButton.Focus())
+                .Until(() => gameOverUI.focusController.focusedElement == playAgainButton);
         }
 
         private void HideUI()
         {
-            gameOverScreen.style.visibility = Visibility.Hidden;
+            gameOverUI.style.visibility = Visibility.Hidden;
         }
     }
 }

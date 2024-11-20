@@ -8,51 +8,63 @@ using Unity.Physics;
 public struct CollisionDamageJob : ICollisionEventsJob
 {
     public EntityCommandBuffer ecb;
-    public ComponentLookup<ProjectileComponent> projectileLookup;
-    public ComponentLookup<HealthComponent> healthLookup;
+    public ComponentLookup<ProjectileComponent> projectileComponentLookup;
+    public ComponentLookup<HealthComponent> healthComponentLookup;
 
-    [ReadOnly] public ComponentLookup<TargetComponent> targetLookup;
-    [ReadOnly] public ComponentLookup<AbilityComponent> abilityLookup;
-    [ReadOnly] public ComponentLookup<ProjectileAbilityComponent> projectileAbilityLookup;
-    [ReadOnly] public ComponentLookup<ObstacleComponent> obstacleLookup;
-    [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageLookup;
-    [ReadOnly] public ComponentLookup<CollisionActiveComponent> activeForCollisionLookup;
+    [ReadOnly] public ComponentLookup<TargetComponent> targetComponentLookup;
+    [ReadOnly] public ComponentLookup<AbilityComponent> abilityComponentLookup;
+    [ReadOnly] public ComponentLookup<ProjectileAbilityComponent> projectileAbilityComponentLookup;
+    [ReadOnly] public ComponentLookup<ObstacleComponent> obstacleComponentLookup;
+    [ReadOnly] public ComponentLookup<EnemyDamageComponent> enemyDamageComponentLookup;
+    [ReadOnly] public ComponentLookup<CollisionActiveComponent> activeForCollisionComponentLookup;
     [ReadOnly] public float deltaTime;
 
     [BurstCompile]
     private bool HasHealth(Entity entity)
     {
-        return healthLookup.HasComponent(entity);
+        return healthComponentLookup.HasComponent(entity);
     }
 
     [BurstCompile]
     private bool HasObstacle(Entity entity)
     {
-        return obstacleLookup.HasComponent(entity);
+        return obstacleComponentLookup.HasComponent(entity);
     }
 
     [BurstCompile]
     private bool HasEnemy(Entity entity)
     {
-        return enemyDamageLookup.HasComponent(entity);
+        return enemyDamageComponentLookup.HasComponent(entity);
     }
 
     [BurstCompile]
     private bool HasActiveForCollision(Entity entity)
     {
-        return activeForCollisionLookup.HasComponent(entity);
+        return activeForCollisionComponentLookup.HasComponent(entity);
     }
 
     [BurstCompile]
     private bool HasProjectile(Entity entity)
     {
-        return projectileLookup.HasComponent(entity);
+        return projectileComponentLookup.HasComponent(entity);
     }
 
     [BurstCompile]
     private bool HasTarget(Entity entity)
     {
-        return targetLookup.HasComponent(entity);
+        return targetComponentLookup.HasComponent(entity);
+    }
+
+    [BurstCompile]
+    private bool HasProjectileAbility(Entity entity)
+    {
+        return projectileAbilityComponentLookup.HasComponent(entity);
+    }
+
+    [BurstCompile]
+    private bool HasAbility(Entity entity)
+    {
+        return abilityComponentLookup.HasComponent(entity);
     }
 
     public void Execute(CollisionEvent collisionEvent)
@@ -90,11 +102,11 @@ public struct CollisionDamageJob : ICollisionEventsJob
     {
         collision = true;
 
-        RefRW<HealthComponent> playerHealthComponent = healthLookup.GetRefRW(playerEntity);
+        RefRW<HealthComponent> playerHealthComponent = healthComponentLookup.GetRefRW(playerEntity);
 
         if (playerHealthComponent.ValueRO.HitPoints == 0) return;
 
-        EnemyDamageComponent enemyDamageComponent = enemyDamageLookup.GetRefRO(enemyEntity).ValueRO;
+        EnemyDamageComponent enemyDamageComponent = enemyDamageComponentLookup.GetRefRO(enemyEntity).ValueRO;
 
         playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.damagePerSecond * deltaTime;
 
@@ -104,7 +116,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
     [BurstCompile]
     private void HandleProjectileCollision(Entity projectileEntity, Entity otherEntity)
     {
-        RefRW<ProjectileComponent> projectileComponent = projectileLookup.GetRefRW(projectileEntity);
+        RefRW<ProjectileComponent> projectileComponent = projectileComponentLookup.GetRefRW(projectileEntity);
 
         if (projectileComponent.ValueRO.hasCollided == 1 || HasObstacle(otherEntity))
         {
@@ -114,17 +126,23 @@ public struct CollisionDamageJob : ICollisionEventsJob
 
         if (HasTarget(projectileEntity))
         {
-            TargetComponent targetComponent = targetLookup.GetRefRO(projectileEntity).ValueRO;
+            TargetComponent targetComponent = targetComponentLookup.GetRefRO(projectileEntity).ValueRO;
 
             if (targetComponent.enemyEntity == otherEntity && HasHealth(otherEntity))
             {
                 projectileComponent.ValueRW.hasCollided = 1;
 
-                RefRW<HealthComponent> enemyHealthComponent = healthLookup.GetRefRW(otherEntity);
+                RefRW<HealthComponent> enemyHealthComponent = healthComponentLookup.GetRefRW(otherEntity);
+
+                if (!HasProjectileAbility(projectileEntity)) return;
+
                 ProjectileAbilityComponent projectileAbilityComponent =
-                    projectileAbilityLookup.GetRefRO(projectileEntity).ValueRO;
+                    projectileAbilityComponentLookup.GetRefRO(projectileEntity).ValueRO;
+
+                if (!HasAbility(projectileAbilityComponent.parentEntity)) return;
+
                 AbilityComponent abilityComponent =
-                    abilityLookup.GetRefRO(projectileAbilityComponent.parentEntity).ValueRO;
+                    abilityComponentLookup.GetRefRO(projectileAbilityComponent.parentEntity).ValueRO;
 
                 enemyHealthComponent.ValueRW.HitPoints -= abilityComponent.damage;
 
@@ -133,10 +151,10 @@ public struct CollisionDamageJob : ICollisionEventsJob
                     ecb.AddComponent(otherEntity, new EnemyDeadComponent());
                     ecb.SetComponent(otherEntity, new GridEnemyPositionUpdateComponent
                     {
-                        entity = otherEntity,
-                        oldPosition = targetComponent.enemy.gridPosition,
+                        enemyEntity = otherEntity,
+                        oldPosition = targetComponent.enemyComponent.gridPosition,
                         status = UpdateStatus.Remove,
-                        position = targetComponent.enemy.gridPosition
+                        position = targetComponent.enemyComponent.gridPosition
                     });
                     ecb.AddComponent(otherEntity, new PositionChangedComponent());
                     ecb.AddComponent(otherEntity, new DestroyComponent());
