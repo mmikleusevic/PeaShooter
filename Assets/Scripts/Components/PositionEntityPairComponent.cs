@@ -1,11 +1,9 @@
 using System;
-using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Components
 {
-    [BurstCompile]
     public struct PositionEntityPairComponent : IEquatable<PositionEntityPairComponent>
     {
         public int2 position;

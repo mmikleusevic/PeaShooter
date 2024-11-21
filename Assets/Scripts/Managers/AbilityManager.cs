@@ -127,12 +127,12 @@ namespace Managers
 
             Entity newAbilityEntity = entityManager.CreateEntity();
 
-            LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
+            LocalTransform playerLocalTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
             entityManager.AddComponentData(newAbilityEntity, new LocalTransform
             {
-                Position = playerTransform.Position,
-                Rotation = playerTransform.Rotation,
+                Position = playerLocalTransform.Position,
+                Rotation = playerLocalTransform.Rotation,
                 Scale = 0
             });
 
@@ -163,7 +163,7 @@ namespace Managers
             else
             {
                 GameObject particleSystemGameObject = Instantiate(selectedAbility.abilityPrefab,
-                    new Vector3(playerTransform.Position.x, 0.5f, playerTransform.Position.z),
+                    new Vector3(playerLocalTransform.Position.x, 0.5f, playerLocalTransform.Position.z),
                     selectedAbility.abilityPrefab.transform.rotation);
 
                 entityManager.AddComponentData(newAbilityEntity, new ParticleObjectReferenceComponent

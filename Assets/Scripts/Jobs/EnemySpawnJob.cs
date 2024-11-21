@@ -25,16 +25,11 @@ public partial struct EnemySpawnJob : IJobEntity
 
         randomDataComponent.seed = new Random((uint)(seed + sortKey));
 
-        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
-
-        int2 newPosition = default;
-
-        do
-        {
-            newPosition = randomDataComponent.nextPosition;
-        } while (gridNodes[newPosition] == 0);
+        int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
 
         float3 position = new float3(newPosition.x, 0, newPosition.y);
+
+        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
 
         ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
         {

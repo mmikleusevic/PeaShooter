@@ -50,6 +50,7 @@ namespace Systems
             {
                 uint maxExp =
                     levelsComponent.levels.Value.experience[levelsComponent.levels.Value.experience.Length - 1];
+
                 uint currentExp = playerExperienceComponentRW.ValueRO.points + experienceComponentRW.ValueRO.experience;
 
                 ecb.RemoveComponent<EnemyExperienceWorthComponent>(enemyEntity);
@@ -63,7 +64,7 @@ namespace Systems
                 int currentLevel = playerExperienceComponentRW.ValueRO.currentLevel;
                 uint currentLevelMaxExp = levelsComponent.levels.Value.experience[currentLevel - 1];
 
-                if (playerExp >= currentLevelMaxExp)
+                if (playerExp > currentLevelMaxExp)
                 {
                     playerExperienceComponentRW.ValueRW.currentLevel++;
 

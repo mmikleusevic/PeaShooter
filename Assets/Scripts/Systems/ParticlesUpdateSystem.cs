@@ -48,8 +48,8 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (particleReference, localTransformRW) in SystemAPI
-                         .Query<ParticleObjectReferenceComponent, RefRW<LocalTransform>>())
+            foreach (var (particleReference, localTransformRW, abilityComponent) in SystemAPI
+                         .Query<ParticleObjectReferenceComponent, RefRW<LocalTransform>, RefRO<AbilityComponent>>())
             {
                 ParticleSystem particleSystem = particleReference.gameObject.GetComponent<ParticleSystem>();
 
@@ -59,16 +59,21 @@ namespace Systems
                         new NativeArray<Particle>(particleSystem.particleCount, Allocator.TempJob);
                     particleSystem.GetParticles(particles);
 
-                    ParticlesUpdateJob job = new ParticlesUpdateJob
+                    ParticlesCollisionJob job = new ParticlesCollisionJob
                     {
                         ecb = ecb,
                         enemyPositions = gridComponent.enemyPositions.AsReadOnly(),
                         healthComponentLookup = healthComponentLookup,
-                        particles = particles
+                        particles = particles,
+                        abilityComponent = abilityComponent.ValueRO,
+                        localTransform = localTransformRW.ValueRO,
+                        deltaTime = SystemAPI.Time.DeltaTime
                     };
 
                     JobHandle jobHandle = job.Schedule(state.Dependency);
-                    state.Dependency = JobHandle.CombineDependencies(jobHandle, particles.Dispose(jobHandle));
+                    JobHandle combinedDependencies =
+                        JobHandle.CombineDependencies(jobHandle, particles.Dispose(jobHandle));
+                    state.Dependency = combinedDependencies;
                 }
 
                 LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();

@@ -2,6 +2,7 @@ using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Particle = UnityEngine.ParticleSystem.Particle;
@@ -9,15 +10,19 @@ using Particle = UnityEngine.ParticleSystem.Particle;
 namespace Jobs
 {
     [BurstCompile]
-    public partial struct ParticlesUpdateJob : IJobEntity
+    [WithAll(typeof(ParticleObjectReferenceComponent))]
+    public struct ParticlesCollisionJob : IJob
     {
         public EntityCommandBuffer ecb;
         public ComponentLookup<HealthComponent> healthComponentLookup;
 
         [ReadOnly] public NativeParallelMultiHashMap<int2, Entity>.ReadOnly enemyPositions;
         [ReadOnly] public NativeArray<Particle> particles;
+        [ReadOnly] public AbilityComponent abilityComponent;
+        [ReadOnly] public LocalTransform localTransform;
+        [ReadOnly] public float deltaTime;
 
-        private void Execute(in AbilityComponent abilityComponent, in LocalTransform localTransform)
+        public void Execute()
         {
             foreach (Particle particle in particles)
             {
@@ -37,11 +42,11 @@ namespace Jobs
                         if (!healthComponentLookup.HasComponent(enemy)) continue;
 
                         RefRW<HealthComponent> enemyHealth = healthComponentLookup.GetRefRW(enemy);
-                        enemyHealth.ValueRW.HitPoints -= abilityComponent.damage;
+                        enemyHealth.ValueRW.HitPoints -= abilityComponent.damage * deltaTime;
 
-                        if (!(enemyHealth.ValueRO.HitPoints <= 0)) continue;
+                        if (enemyHealth.ValueRO.HitPoints > 0) continue;
 
-                        ecb.AddComponent(enemy, new EnemyDeadComponent());
+                        ecb.AddComponent<EnemyDeadComponent>(enemy);
                         ecb.SetComponent(enemy, new GridEnemyPositionUpdateComponent
                         {
                             enemyEntity = enemy,
@@ -49,8 +54,8 @@ namespace Jobs
                             status = UpdateStatus.Remove,
                             position = particleGridPosition
                         });
-                        ecb.AddComponent(enemy, new PositionChangedComponent());
-                        ecb.AddComponent(enemy, new DestroyComponent());
+                        ecb.AddComponent<PositionChangedComponent>(enemy);
+                        ecb.AddComponent<DestroyComponent>(enemy);
                     } while (enemyPositions.TryGetNextValue(out enemy, ref iterator));
                 }
             }

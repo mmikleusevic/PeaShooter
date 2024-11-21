@@ -22,12 +22,7 @@ public partial struct ObstacleSpawnJob : IJobEntity
         {
             Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
 
-            int2 newPosition = default;
-
-            do
-            {
-                newPosition = randomDataComponent.nextPosition;
-            } while (!IsValidPosition(newPosition));
+            int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
 
             ecb.SetComponent(spawnedEntity, new LocalTransform
             {
@@ -42,11 +37,5 @@ public partial struct ObstacleSpawnJob : IJobEntity
         }
 
         ecb.DestroyEntity(obstacleSpawnerEntity);
-    }
-
-    [BurstCompile]
-    private bool IsValidPosition(int2 position)
-    {
-        return gridNodes[position] == 1 && position.x != 0 && position.y != 0;
     }
 }
