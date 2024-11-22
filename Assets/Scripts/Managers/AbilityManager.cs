@@ -42,41 +42,33 @@ namespace Managers
                 .Build(entityManager);
         }
 
-        public List<AbilityData> GetRandomAbilityChoices()
+        public List<AbilityData> GetPossibleRandomAbilityChoices()
         {
             List<AbilityData> possibleAbilities = new List<AbilityData>();
 
-            while (possibleAbilities.Count < 3)
+            while (possibleAbilities.Count < 3 && allAbilities.Count > 0)
             {
-                if (allAbilities.Count == 0)
-                {
-                    return ReturnAndResetChosenAbilities(possibleAbilities);
-                }
+                IGrouping<Abilities, AbilityData>[] groupedPossibleAbilities = allAbilities
+                    .Where(a => !possibleAbilities.Select(pa => pa.Ability).Contains(a.Ability))
+                    .OrderBy(a => a.Level)
+                    .GroupBy(a => a.Ability)
+                    .ToArray();
 
-                AbilityData randomAbility = allAbilities[Random.Range(0, allAbilities.Count)];
+                if (groupedPossibleAbilities.Length == 0) break;
 
-                if (possibleAbilities.Contains(randomAbility)) continue;
+                int randomIndex = Random.Range(0, groupedPossibleAbilities.Length);
+                IGrouping<Abilities, AbilityData> randomAbilityGroup = groupedPossibleAbilities[randomIndex];
 
-                AbilityData ownedAbility = ownedAbilities.FirstOrDefault(a => a.Ability == randomAbility.Ability);
-                AbilityData ownedAbilityLeveledUp = allAbilities.FirstOrDefault(a =>
-                    a.Ability == ownedAbility?.Ability && a.Level == ownedAbility.Level + 1);
+                AbilityData randomAbilityData = randomAbilityGroup.FirstOrDefault();
 
-                if (randomAbility != ownedAbilityLeveledUp)
-                {
-                    possibleAbilities.Add(randomAbility);
-                    allAbilities.Remove(randomAbility);
-                }
-                else
-                {
-                    possibleAbilities.Add(ownedAbilityLeveledUp);
-                    allAbilities.Remove(ownedAbilityLeveledUp);
-                }
+                possibleAbilities.Add(randomAbilityData);
+                allAbilities.Remove(randomAbilityData);
             }
 
-            return ReturnAndResetChosenAbilities(possibleAbilities);
+            return ReturnAndResetPossibleAbilities(possibleAbilities);
         }
 
-        private List<AbilityData> ReturnAndResetChosenAbilities(List<AbilityData> choices)
+        private List<AbilityData> ReturnAndResetPossibleAbilities(List<AbilityData> choices)
         {
             allAbilities.AddRange(choices);
             return choices;
@@ -110,14 +102,14 @@ namespace Managers
             NativeArray<AbilityComponent> playerAbilities =
                 abilityEntityQuery.ToComponentDataArray<AbilityComponent>(Allocator.Temp);
 
-            AbilityComponent lastAbility = default;
-            Entity lastAbilityEntity = default;
+            AbilityComponent oldAbility = default;
+            Entity oldAbilityEntity = default;
             for (int i = 0; i < playerAbilities.Length; i++)
             {
                 if (playerAbilities[i].ability == selectedAbility.Ability)
                 {
-                    lastAbility = playerAbilities[i];
-                    lastAbilityEntity = abilityEntities[i];
+                    oldAbility = playerAbilities[i];
+                    oldAbilityEntity = abilityEntities[i];
                     break;
                 }
             }
@@ -147,7 +139,7 @@ namespace Managers
                 cooldownRemaining = selectedAbility.cooldownRemaining,
                 scale = selectedAbility.scale,
                 hasProjectile = (byte)(selectedAbility.hasProjectile ? 1 : 0),
-                abilityEntity = lastAbility.abilityEntity
+                abilityEntity = oldAbility.abilityEntity
             });
 
             if (selectedAbility.hasProjectile)
@@ -155,7 +147,7 @@ namespace Managers
                 Entity projectileUpdateEntity = entityManager.CreateEntity();
                 entityManager.AddComponentData(projectileUpdateEntity, new ProjectilesUpdateComponent
                 {
-                    oldAbilityEntity = lastAbilityEntity,
+                    oldAbilityEntity = oldAbilityEntity,
                     newAbilityEntity = newAbilityEntity,
                     projectileUpdateEntity = projectileUpdateEntity
                 });
@@ -171,6 +163,10 @@ namespace Managers
                     updateTransform = (byte)(selectedAbility.updatePosition ? 1 : 0),
                     gameObject = particleSystemGameObject
                 });
+
+                if (oldAbilityEntity == default) return;
+
+                entityManager.AddComponentData(oldAbilityEntity, new AbilityRemoveComponent());
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Game
@@ -31,10 +32,9 @@ namespace Game
         private void OnValidate()
         {
             int levelIndex = name.IndexOf("Level", StringComparison.Ordinal);
-            string abilityName = name.Substring(0, levelIndex);
-
-            Enum.TryParse(abilityName, out ability);
-
+            string abilityNameNoSpace = name[..levelIndex];
+            abilityName = string.Join(" ", Regex.Split(abilityNameNoSpace, "(?=[A-Z])")).TrimStart();
+            Enum.TryParse(abilityNameNoSpace, out ability);
             int.TryParse(name.Substring(levelIndex + 5), out level);
 
             SetDescription();

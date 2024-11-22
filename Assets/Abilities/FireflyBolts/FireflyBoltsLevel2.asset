@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 729389ac760943cf92d42359df40d9d6, type: 3}
-  m_Name: VeggieMaelstromLevel1
+  m_Name: FireflyBoltsLevel2
   m_EditorClassIdentifier: 
-  lastLevelAbility: {fileID: 0}
-  icon: {fileID: -9095717837082945937, guid: 34587324d412940a79d530020c957dc0, type: 3}
-  abilityName: VeggieMaelstrom
-  abilityDescription: Brings Forth Mayhem
+  lastLevelAbility: {fileID: 11400000, guid: a586f5d5672a1b049903bba481616099, type: 2}
+  icon: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
+  abilityName: FireflyBolts
+  abilityDescription: Shoots fireflies in four directions
   cooldown: 0
   cooldownRemaining: 0
   range: 0
   speed: 0
-  damage: 10
-  abilityPrefab: {fileID: 7498807033596197178, guid: d084e8dc94e917b4dac2e9821c4abbd3, type: 3}
+  damage: 20
+  abilityPrefab: {fileID: 2642901123473026388, guid: 02203b025e513734a815e32aa5e51997, type: 3}
   hasProjectile: 0
   scale: 0
-  updatePosition: 1
+  updatePosition: 0

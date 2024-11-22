@@ -68,7 +68,7 @@ namespace UI
 
         private void OnLevelUp()
         {
-            List<AbilityData> randomAbilities = AbilityManager.Instance.GetRandomAbilityChoices();
+            List<AbilityData> randomAbilities = AbilityManager.Instance.GetPossibleRandomAbilityChoices();
 
             if (randomAbilities.Count == 0) return;
 
