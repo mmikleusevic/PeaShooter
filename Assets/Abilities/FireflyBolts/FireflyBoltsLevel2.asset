@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastLevelAbility: {fileID: 11400000, guid: a586f5d5672a1b049903bba481616099, type: 2}
   icon: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
-  abilityName: FireflyBolts
+  abilityName: Firefly Bolts
   abilityDescription: Shoots fireflies in four directions
   cooldown: 0
   cooldownRemaining: 0
   range: 0
   speed: 0
-  damage: 20
+  damage: 120
   abilityPrefab: {fileID: 2642901123473026388, guid: 02203b025e513734a815e32aa5e51997, type: 3}
   hasProjectile: 0
   scale: 0

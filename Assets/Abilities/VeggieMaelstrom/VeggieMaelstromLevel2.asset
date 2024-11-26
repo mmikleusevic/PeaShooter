@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastLevelAbility: {fileID: 11400000, guid: a01d908b2aedcee4caaf70823704cf73, type: 2}
   icon: {fileID: -9095717837082945937, guid: 34587324d412940a79d530020c957dc0, type: 3}
-  abilityName: VeggieMaelstrom
+  abilityName: Veggie Maelstrom
   abilityDescription: Brings Forth Mayhem
   cooldown: 0
   cooldownRemaining: 0
   range: 0
   speed: 0
-  damage: 20
+  damage: 4
   abilityPrefab: {fileID: 7498807033596197178, guid: d084e8dc94e917b4dac2e9821c4abbd3, type: 3}
   hasProjectile: 0
   scale: 0
