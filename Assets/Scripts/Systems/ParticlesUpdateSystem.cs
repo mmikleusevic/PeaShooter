@@ -1,3 +1,4 @@
+using Components;
 using Jobs;
 using Unity.Burst;
 using Unity.Collections;
@@ -19,6 +20,7 @@ namespace Systems
         private EntityQuery gridEntityQuery;
         private EntityQuery playerEntityQuery;
         private ComponentLookup<HealthComponent> healthComponentLookup;
+        private ComponentLookup<BarrierComponent> barrierComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -37,12 +39,14 @@ namespace Systems
             state.RequireForUpdate(gridEntityQuery);
 
             healthComponentLookup = state.GetComponentLookup<HealthComponent>();
+            barrierComponentLookup = state.GetComponentLookup<BarrierComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
             healthComponentLookup.Update(ref state);
+            barrierComponentLookup.Update(ref state);
 
             EndSimulationEntityCommandBufferSystem.Singleton ecbSingleton =
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -64,6 +68,7 @@ namespace Systems
                         ecb = ecb,
                         enemyPositions = gridComponent.enemyPositions.AsReadOnly(),
                         healthComponentLookup = healthComponentLookup,
+                        barrierComponentLookup = barrierComponentLookup,
                         particles = particles,
                         abilityComponent = abilityComponent.ValueRO,
                         localTransform = localTransformRW.ValueRO,

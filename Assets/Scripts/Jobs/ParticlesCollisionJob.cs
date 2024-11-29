@@ -15,6 +15,7 @@ namespace Jobs
     {
         public EntityCommandBuffer ecb;
         public ComponentLookup<HealthComponent> healthComponentLookup;
+        public ComponentLookup<BarrierComponent> barrierComponentLookup;
 
         [ReadOnly] public NativeParallelMultiHashMap<int2, Entity>.ReadOnly enemyPositions;
         [ReadOnly] public NativeArray<Particle> particles;
@@ -39,12 +40,25 @@ namespace Jobs
                 {
                     do
                     {
+                        float damage = abilityComponent.damage * deltaTime;
+
+                        if (barrierComponentLookup.HasComponent(enemy))
+                        {
+                            RefRW<BarrierComponent> barrierComponentRW = barrierComponentLookup.GetRefRW(enemy);
+                            float damageToBarrier = math.min(barrierComponentRW.ValueRW.BarrierValue, damage);
+
+                            barrierComponentRW.ValueRW.BarrierValue -= damageToBarrier;
+                            damage -= damageToBarrier;
+                        }
+
+                        float damageToHealth = damage;
+
                         if (!healthComponentLookup.HasComponent(enemy)) continue;
 
-                        RefRW<HealthComponent> enemyHealth = healthComponentLookup.GetRefRW(enemy);
-                        enemyHealth.ValueRW.HitPoints -= abilityComponent.damage * deltaTime;
+                        RefRW<HealthComponent> enemyHealthComponent = healthComponentLookup.GetRefRW(enemy);
+                        enemyHealthComponent.ValueRW.HitPoints -= damageToHealth;
 
-                        if (enemyHealth.ValueRO.HitPoints > 0) continue;
+                        if (enemyHealthComponent.ValueRO.IsDead) continue;
 
                         ecb.AddComponent<EnemyDeadComponent>(enemy);
                         ecb.SetComponent(enemy, new GridEnemyPositionUpdateComponent

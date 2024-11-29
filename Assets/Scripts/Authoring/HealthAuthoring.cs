@@ -16,8 +16,8 @@ namespace Authoring
 
                 AddComponent(entity, new HealthComponent
                 {
-                    HitPoints = authoring.hitPoints,
-                    maxHitPoints = authoring.hitPoints
+                    maxHitPoints = authoring.hitPoints,
+                    HitPoints = authoring.hitPoints
                 });
 
                 AddComponent(entity, new HealthBarOffset

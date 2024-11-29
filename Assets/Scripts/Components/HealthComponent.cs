@@ -12,7 +12,7 @@ public struct HealthComponent : IComponentData
         readonly get => hitPoints;
         set
         {
-            hitPoints = math.max(0, value);
+            hitPoints = math.clamp(value, 0f, maxHitPoints);
 
             if (hitPoints == 0) IsDead = true;
         }

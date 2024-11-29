@@ -20,6 +20,7 @@ namespace Systems
         private ComponentLookup<ObstacleComponent> obstacleComponentLookup;
         private ComponentLookup<EnemyDamageComponent> enemyDamageComponentLookup;
         private ComponentLookup<CollisionActiveComponent> activeForCollisionComponentLookup;
+        private ComponentLookup<BarrierComponent> barrierComponentLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -30,6 +31,7 @@ namespace Systems
 
             projectileComponentLookup = state.GetComponentLookup<ProjectileComponent>();
             healthComponentLookup = state.GetComponentLookup<HealthComponent>();
+            barrierComponentLookup = state.GetComponentLookup<BarrierComponent>();
             targetComponentLookup = state.GetComponentLookup<TargetComponent>(true);
             abilityComponentLookup = state.GetComponentLookup<AbilityComponent>(true);
             projectileAbilityComponentLookup = state.GetComponentLookup<ProjectileAbilityComponent>(true);
@@ -43,6 +45,7 @@ namespace Systems
         {
             projectileComponentLookup.Update(ref state);
             healthComponentLookup.Update(ref state);
+            barrierComponentLookup.Update(ref state);
             targetComponentLookup.Update(ref state);
             abilityComponentLookup.Update(ref state);
             projectileAbilityComponentLookup.Update(ref state);
@@ -59,6 +62,7 @@ namespace Systems
                 ecb = ecb,
                 projectileComponentLookup = projectileComponentLookup,
                 healthComponentLookup = healthComponentLookup,
+                barrierComponentLookup = barrierComponentLookup,
                 targetComponentLookup = targetComponentLookup,
                 abilityComponentLookup = abilityComponentLookup,
                 projectileAbilityComponentLookup = projectileAbilityComponentLookup,

@@ -2,6 +2,7 @@ using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
 
 [BurstCompile]
@@ -10,6 +11,7 @@ public struct CollisionDamageJob : ICollisionEventsJob
     public EntityCommandBuffer ecb;
     public ComponentLookup<ProjectileComponent> projectileComponentLookup;
     public ComponentLookup<HealthComponent> healthComponentLookup;
+    public ComponentLookup<BarrierComponent> barrierComponentLookup;
 
     [ReadOnly] public ComponentLookup<TargetComponent> targetComponentLookup;
     [ReadOnly] public ComponentLookup<AbilityComponent> abilityComponentLookup;
@@ -67,6 +69,12 @@ public struct CollisionDamageJob : ICollisionEventsJob
         return abilityComponentLookup.HasComponent(entity);
     }
 
+    [BurstCompile]
+    private bool HasBarrier(Entity entity)
+    {
+        return barrierComponentLookup.HasComponent(entity);
+    }
+
     public void Execute(CollisionEvent collisionEvent)
     {
         Entity entityA = collisionEvent.EntityA;
@@ -102,15 +110,28 @@ public struct CollisionDamageJob : ICollisionEventsJob
     {
         collision = true;
 
-        RefRW<HealthComponent> playerHealthComponent = healthComponentLookup.GetRefRW(playerEntity);
-
-        if (playerHealthComponent.ValueRO.HitPoints == 0) return;
-
         EnemyDamageComponent enemyDamageComponent = enemyDamageComponentLookup.GetRefRO(enemyEntity).ValueRO;
 
-        playerHealthComponent.ValueRW.HitPoints -= enemyDamageComponent.damagePerSecond * deltaTime;
+        float damage = enemyDamageComponent.damagePerSecond * deltaTime;
 
-        if (playerHealthComponent.ValueRO.HitPoints == 0) ecb.RemoveComponent<PlayerAliveComponent>(playerEntity);
+        if (HasBarrier(playerEntity))
+        {
+            RefRW<BarrierComponent> barrierComponentRW = barrierComponentLookup.GetRefRW(playerEntity);
+            float damageToBarrier = math.min(barrierComponentRW.ValueRW.BarrierValue, damage);
+
+            barrierComponentRW.ValueRW.BarrierValue -= damageToBarrier;
+            damage -= damageToBarrier;
+        }
+
+        float damageToHealth = damage;
+
+        RefRW<HealthComponent> playerHealthComponent = healthComponentLookup.GetRefRW(playerEntity);
+
+        if (playerHealthComponent.ValueRO.IsDead) return;
+
+        playerHealthComponent.ValueRW.HitPoints -= damageToHealth;
+
+        if (playerHealthComponent.ValueRO.IsDead) ecb.RemoveComponent<PlayerAliveComponent>(playerEntity);
     }
 
     [BurstCompile]
@@ -144,9 +165,22 @@ public struct CollisionDamageJob : ICollisionEventsJob
                 AbilityComponent abilityComponent =
                     abilityComponentLookup.GetRefRO(projectileAbilityComponent.parentEntity).ValueRO;
 
-                enemyHealthComponent.ValueRW.HitPoints -= abilityComponent.damage;
+                float damage = abilityComponent.damage;
 
-                if (enemyHealthComponent.ValueRO.HitPoints <= 0)
+                if (HasBarrier(otherEntity))
+                {
+                    RefRW<BarrierComponent> barrierComponentRW = barrierComponentLookup.GetRefRW(otherEntity);
+                    float damageToBarrier = math.min(barrierComponentRW.ValueRW.BarrierValue, abilityComponent.damage);
+
+                    barrierComponentRW.ValueRW.BarrierValue -= damageToBarrier;
+                    damage -= damageToBarrier;
+                }
+
+                float damageToHealth = damage;
+
+                enemyHealthComponent.ValueRW.HitPoints -= damageToHealth;
+
+                if (enemyHealthComponent.ValueRO.IsDead)
                 {
                     ecb.AddComponent(otherEntity, new EnemyDeadComponent());
                     ecb.SetComponent(otherEntity, new GridEnemyPositionUpdateComponent
