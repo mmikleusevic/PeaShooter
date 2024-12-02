@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct HealthBarOffset : IComponentData
+public struct UIBarOffset : IComponentData
 {
     public float3 offset;
 }

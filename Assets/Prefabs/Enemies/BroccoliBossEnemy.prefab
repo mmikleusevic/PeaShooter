@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_ConvexHullGenerationParameters.m_BevelRadius
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1026082374762751981, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: uiBarOffset.y
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2583445254961524156, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: value
       value: 800

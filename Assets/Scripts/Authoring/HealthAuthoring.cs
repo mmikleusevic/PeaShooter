@@ -6,7 +6,6 @@ namespace Authoring
     public class HealthAuthoring : MonoBehaviour
     {
         [SerializeField] private float hitPoints;
-        [SerializeField] private Vector3 healthBarOffset;
 
         public class HealthBaker : Baker<HealthAuthoring>
         {
@@ -18,11 +17,6 @@ namespace Authoring
                 {
                     maxHitPoints = authoring.hitPoints,
                     HitPoints = authoring.hitPoints
-                });
-
-                AddComponent(entity, new HealthBarOffset
-                {
-                    offset = authoring.healthBarOffset
                 });
             }
         }

@@ -16,7 +16,7 @@ namespace Authoring
 
                 AddComponent(entity, new BarrierComponent
                 {
-                    maxBarrierValue = 100f,
+                    maxBarrierValue = authoring.barrierValue,
                     BarrierValue = authoring.barrierValue
                 });
             }

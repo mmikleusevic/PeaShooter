@@ -6,7 +6,7 @@ namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
-    [UpdateBefore(typeof(HealthBarDisableAndPoolSystem))]
+    [UpdateBefore(typeof(UIBarDisableAndPoolSystem))]
     [UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
     public partial struct DestroySystem : ISystem
     {

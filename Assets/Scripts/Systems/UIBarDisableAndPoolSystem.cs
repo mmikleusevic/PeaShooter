@@ -7,13 +7,13 @@ namespace Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
-    [UpdateAfter(typeof(UpdateHealthBarValueSystem))]
-    public partial struct HealthBarDisableAndPoolSystem : ISystem
+    [UpdateAfter(typeof(UpdateUIBarValueSystem))]
+    public partial struct UIBarDisableAndPoolSystem : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<HealthBarUIReference>();
+            state.RequireForUpdate<UIBarUIReference>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -23,12 +23,12 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((HealthBarUIReference healthBarUI, Entity enemyEntity) in SystemAPI.Query<HealthBarUIReference>()
+            foreach ((UIBarUIReference uiBarUI, Entity enemyEntity) in SystemAPI.Query<UIBarUIReference>()
                          .WithNone<LocalTransform>()
                          .WithEntityAccess())
             {
-                HealthBarPoolManager.Instance.ReturnHealthBar(healthBarUI.gameObject);
-                ecb.RemoveComponent<HealthBarUIReference>(enemyEntity);
+                UIBarPoolManager.Instance.ReturnUIBar(uiBarUI.gameObject);
+                ecb.RemoveComponent<UIBarUIReference>(enemyEntity);
             }
         }
     }
