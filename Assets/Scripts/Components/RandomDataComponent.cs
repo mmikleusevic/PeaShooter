@@ -9,7 +9,7 @@ public struct RandomDataComponent : IComponentData
 
     public int2 minimumPosition;
     public int2 maximumPosition;
-    public int2 nextPosition => seed.NextInt2(minimumPosition, maximumPosition);
+    private int2 nextPosition => seed.NextInt2(minimumPosition, maximumPosition);
 
     public int2 GetRandomPosition(NativeHashMap<int2, byte> gridNodes)
     {

@@ -1,3 +1,4 @@
+using Components;
 using Managers;
 using Unity.Collections;
 using Unity.Entities;
@@ -8,6 +9,7 @@ namespace Systems
     public partial class LoadNewWaveSystem : SystemBase
     {
         private EntityQuery loadNewWaveEntityQuery;
+
 
         private float timer;
 
@@ -21,6 +23,7 @@ namespace Systems
 
             RequireForUpdate(loadNewWaveEntityQuery);
             RequireForUpdate<PlayerAliveComponent>();
+            RequireForUpdate<PickUpSpawnerComponent>();
         }
 
         protected override void OnStartRunning()

@@ -7,7 +7,7 @@ namespace Authoring
     {
         [SerializeField] private Vector3 uiBarOffset;
 
-        private class UIBarOffsetAuthoringBaker : Baker<UIBarOffsetAuthoring>
+        private class UIBarOffsetBaker : Baker<UIBarOffsetAuthoring>
         {
             public override void Bake(UIBarOffsetAuthoring authoring)
             {

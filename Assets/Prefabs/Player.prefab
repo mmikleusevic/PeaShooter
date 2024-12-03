@@ -226,7 +226,7 @@ MonoBehaviour:
         Category01: 1
         Category02: 1
         Category03: 0
-        Category04: 0
+        Category04: 1
         Category05: 0
         Category06: 0
         Category07: 0
@@ -345,6 +345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitPoints: 100
+  maxHitPoints: 100
 --- !u!114 &2258809042960670038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,3 +371,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   barrierValue: 0
+  maxBarrierValue: 100

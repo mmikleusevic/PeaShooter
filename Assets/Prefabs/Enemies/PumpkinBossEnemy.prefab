@@ -70,7 +70,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731661373972322638, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: barrierValue
-      value: 20
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731661373972322638, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: maxBarrierValue
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3110060693954028518, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_Enabled
@@ -122,6 +126,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: hitPoints
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: maxHitPoints
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}

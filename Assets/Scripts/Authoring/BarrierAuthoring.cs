@@ -7,8 +7,9 @@ namespace Authoring
     public class BarrierAuthoring : MonoBehaviour
     {
         [SerializeField] private float barrierValue;
+        [SerializeField] private float maxBarrierValue;
 
-        private class BarrierAuthoringBaker : Baker<BarrierAuthoring>
+        private class BarrierBaker : Baker<BarrierAuthoring>
         {
             public override void Bake(BarrierAuthoring authoring)
             {
@@ -16,7 +17,7 @@ namespace Authoring
 
                 AddComponent(entity, new BarrierComponent
                 {
-                    maxBarrierValue = authoring.barrierValue,
+                    maxBarrierValue = authoring.maxBarrierValue,
                     BarrierValue = authoring.barrierValue
                 });
             }

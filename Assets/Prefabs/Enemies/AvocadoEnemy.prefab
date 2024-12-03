@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: experience
       value: 80
       objectReference: {fileID: 0}
+    - target: {fileID: 2731661373972322638, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: maxBarrierValue
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4808087580808841936, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -106,6 +110,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
       propertyPath: hitPoints
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}
+      propertyPath: maxHitPoints
       value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 6892551124217724450, guid: 8bd9f0513524e224ebced1feb5c735f6, type: 3}

@@ -38,6 +38,7 @@ namespace Managers
         }
 
         public event Action<int> OnSubSceneLoaded;
+        public event Action OnGameLoaded;
 
         public void LoadGameScene()
         {
@@ -66,6 +67,8 @@ namespace Managers
         private void LoadScene(Scenes scene)
         {
             SceneManager.LoadScene(scene.ToString(), LoadSceneMode.Single);
+
+            if (scene == Scenes.Game) OnGameLoaded?.Invoke();
         }
 
         private void UnloadSubScene()
