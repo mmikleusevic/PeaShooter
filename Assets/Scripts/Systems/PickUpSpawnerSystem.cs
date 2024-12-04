@@ -64,8 +64,8 @@ namespace Systems
 
             GridComponent gridComponent = gridEntityQuery.GetSingleton<GridComponent>();
 
-            foreach (var (pickUpSpawnerComponent, randomDataComponetRW) in SystemAPI
-                         .Query<PickUpSpawnerComponent, RefRW<RandomDataComponent>>())
+            foreach (var (pickUpSpawnerComponentRO, randomDataComponetRW) in SystemAPI
+                         .Query<RefRO<PickUpSpawnerComponent>, RefRW<RandomDataComponent>>())
             {
                 uint randomSeed = math.max(1, (uint)math.floor(UnityEngine.Random.value * uint.MaxValue));
 
@@ -74,7 +74,7 @@ namespace Systems
                 int2 randomGridPosition = randomDataComponetRW.ValueRW.GetRandomPosition(gridComponent.gridNodes);
                 float3 randomPosition = new float3(randomGridPosition.x, 0.5f, randomGridPosition.y);
 
-                Entity pickUpEntity = ecb.Instantiate(pickUpSpawnerComponent.prefabEntity);
+                Entity pickUpEntity = ecb.Instantiate(pickUpSpawnerComponentRO.ValueRO.prefabEntity);
 
                 ecb.SetComponent(pickUpEntity, new LocalTransform
                 {
