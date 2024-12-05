@@ -20,6 +20,11 @@ namespace Authoring
                 {
                     prefabEntity = GetEntity(authoring.pickUpPrefab, TransformUsageFlags.Dynamic)
                 });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "PickUpSpawner"
+                });
             }
         }
     }

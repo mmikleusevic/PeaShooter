@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,6 +22,11 @@ namespace Authoring
                 {
                     prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic),
                     size = authoring.size
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "GridSpawner"
                 });
             }
         }

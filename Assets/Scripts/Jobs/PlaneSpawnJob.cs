@@ -11,6 +11,8 @@ public partial struct PlaneSpawnJob : IJobEntity
     {
         Entity spawnedEntity = ecb.Instantiate(planeSpawnerComponent.prefab);
 
+        ecb.SetName(spawnedEntity, "Plane");
+
         ecb.SetComponent(spawnedEntity, new LocalTransform
         {
             Position = planeSpawnerComponent.position,

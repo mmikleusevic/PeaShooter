@@ -76,6 +76,8 @@ namespace Systems
 
                 Entity pickUpEntity = ecb.Instantiate(pickUpSpawnerComponentRO.ValueRO.prefabEntity);
 
+                ecb.SetName(pickUpEntity, "PickUp");
+
                 ecb.SetComponent(pickUpEntity, new LocalTransform
                 {
                     Position = randomPosition,

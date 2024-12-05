@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -24,6 +25,11 @@ namespace Authoring
                     position = authoring.prefab.transform.position,
                     rotation = authoring.prefab.transform.rotation,
                     scale = authoring.prefab.transform.localScale.x
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "PlayerSpawner"
                 });
             }
         }

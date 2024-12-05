@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Components;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -33,6 +34,11 @@ namespace Authoring
 
                 Entity levelsEntity = GetEntity(TransformUsageFlags.None);
                 AddComponent(levelsEntity, new LevelsComponent { levels = blobAsset });
+
+                AddComponent(levelsEntity, new DebugNameComponent
+                {
+                    entityName = "Levels"
+                });
             }
         }
     }

@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -28,6 +29,11 @@ namespace Authoring
                     scale = authoring.prefab.transform.localScale.x,
                     enemyMoveTimerTarget = authoring.enemyMoveTimerTarget,
                     destroySpawnerTimerTarget = authoring.destroySpawnerTimerTarget
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "EnemySpawnerPrefab"
                 });
             }
         }

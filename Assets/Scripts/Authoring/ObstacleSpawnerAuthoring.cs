@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace Authoring
                 {
                     prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.None),
                     numberToSpawn = authoring.numberToSpawn
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "ObstacleSpawner"
                 });
             }
         }

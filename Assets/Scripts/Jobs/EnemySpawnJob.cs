@@ -31,6 +31,8 @@ public partial struct EnemySpawnJob : IJobEntity
 
         Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
 
+        ecb.SetName(sortKey, spawnedEntity, "Enemy");
+
         ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
         {
             Position = position,

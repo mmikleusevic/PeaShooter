@@ -11,7 +11,11 @@ public partial struct PlayerSpawnJob : IJobEntity
     {
         Entity spawnedEntity = ecb.Instantiate(playerSpawner.prefabEntity);
 
+        ecb.SetName(spawnedEntity, "Player");
+
         Entity startingAbilityEntity = ecb.Instantiate(playerSpawner.startingAbilityPrefabEntity);
+
+        ecb.SetName(startingAbilityEntity, "StartingAbility");
 
         ecb.SetComponent(spawnedEntity, new LocalTransform
         {

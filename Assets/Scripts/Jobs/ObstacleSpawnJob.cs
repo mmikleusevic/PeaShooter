@@ -22,6 +22,8 @@ public partial struct ObstacleSpawnJob : IJobEntity
         {
             Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
 
+            ecb.SetName(spawnedEntity, "Obstacle");
+
             int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
 
             ecb.SetComponent(spawnedEntity, new LocalTransform

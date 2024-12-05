@@ -119,6 +119,8 @@ namespace Managers
 
             Entity newAbilityEntity = entityManager.CreateEntity();
 
+            entityManager.SetName(newAbilityEntity, selectedAbility.abilityName + "Ability");
+
             LocalTransform playerLocalTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
             entityManager.AddComponentData(newAbilityEntity, new LocalTransform
@@ -145,6 +147,9 @@ namespace Managers
             if (selectedAbility.hasProjectile)
             {
                 Entity projectileUpdateEntity = entityManager.CreateEntity();
+
+                entityManager.SetName(projectileUpdateEntity, "ProjectileUpdate");
+
                 entityManager.AddComponentData(projectileUpdateEntity, new ProjectilesUpdateComponent
                 {
                     oldAbilityEntity = oldAbilityEntity,

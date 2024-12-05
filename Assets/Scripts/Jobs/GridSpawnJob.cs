@@ -31,6 +31,8 @@ public partial struct GridSpawnJob : IJobEntity
 
         Entity gridSpawnedEntity = ecb.Instantiate(gridSpawnerComponent.prefabEntity);
 
+        ecb.SetName(gridSpawnedEntity, "Grid");
+
         ecb.AddComponent(gridSpawnedEntity, gridComponent);
         ecb.DestroyEntity(gridSpawnerEntity);
     }

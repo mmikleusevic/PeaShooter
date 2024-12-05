@@ -50,6 +50,8 @@ public partial struct AbilityJob : IJobEntity
                 {
                     projectileEntity = ecb.Instantiate(sortKey, abilityComponent.abilityEntity);
 
+                    ecb.SetName(sortKey, projectileEntity, "Projectile");
+
                     ecb.AddComponent(sortKey, projectileEntity, new ProjectileAbilityComponent
                     {
                         parentEntity = abilityEntity

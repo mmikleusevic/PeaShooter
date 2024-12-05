@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -16,6 +17,11 @@ namespace Authoring
                 AddComponent(entity, new LoadNewWaveComponent
                 {
                     loadTimerTarget = authoring.loadTimerTarget
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "LoadNewWave"
                 });
             }
         }

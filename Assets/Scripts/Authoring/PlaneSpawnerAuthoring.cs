@@ -1,3 +1,4 @@
+using Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace Authoring
                     prefab = GetEntity(authoring.prefab, TransformUsageFlags.None),
                     position = authoring.prefab.transform.position,
                     rotation = authoring.prefab.transform.rotation
+                });
+
+                AddComponent(entity, new DebugNameComponent
+                {
+                    entityName = "PlaneSpawner"
                 });
             }
         }
