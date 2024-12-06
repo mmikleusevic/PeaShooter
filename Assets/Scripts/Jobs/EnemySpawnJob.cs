@@ -1,5 +1,3 @@
-#region
-
 using Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -8,7 +6,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
-#endregion
 
 namespace Jobs
 {

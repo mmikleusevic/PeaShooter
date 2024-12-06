@@ -1,11 +1,7 @@
-#region
-
 using Components;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
-
-#endregion
 
 namespace Systems
 {

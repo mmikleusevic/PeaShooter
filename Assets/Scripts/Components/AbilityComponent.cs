@@ -1,10 +1,6 @@
-#region
-
 using System;
 using Game;
 using Unity.Entities;
-
-#endregion
 
 namespace Components
 {

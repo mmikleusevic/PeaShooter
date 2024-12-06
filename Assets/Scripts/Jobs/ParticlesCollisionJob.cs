@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Particle = UnityEngine.ParticleSystem.Particle;
 
+
 namespace Jobs
 {
     [BurstCompile]

@@ -1,11 +1,8 @@
-#region
-
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Random = Unity.Mathematics.Random;
 
-#endregion
 
 namespace Components
 {

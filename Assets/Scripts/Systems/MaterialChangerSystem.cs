@@ -5,6 +5,7 @@ using Unity.Rendering;
 using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
 
+
 namespace Systems
 {
     [RequireMatchingQueriesForUpdate]

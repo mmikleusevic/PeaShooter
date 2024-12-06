@@ -1,9 +1,5 @@
-#region
-
 using Unity.Entities;
 using Unity.Mathematics;
-
-#endregion
 
 namespace Components
 {

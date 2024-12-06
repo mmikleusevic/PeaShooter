@@ -1,12 +1,9 @@
-#region
-
 using Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
-#endregion
 
 namespace Authoring
 {

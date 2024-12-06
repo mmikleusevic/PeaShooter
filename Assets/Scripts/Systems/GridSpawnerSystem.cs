@@ -1,12 +1,8 @@
-#region
-
 using Components;
 using Jobs;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
-
-#endregion
 
 namespace Systems
 {

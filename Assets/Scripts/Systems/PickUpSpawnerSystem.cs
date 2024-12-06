@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
+
 namespace Systems
 {
     [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]

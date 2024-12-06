@@ -1,12 +1,8 @@
-#region
-
 using Components;
 using Interfaces;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-
-#endregion
 
 namespace MemoryCleaners
 {

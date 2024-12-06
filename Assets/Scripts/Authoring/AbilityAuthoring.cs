@@ -1,11 +1,7 @@
-#region
-
 using Components;
 using Game;
 using Unity.Entities;
 using UnityEngine;
-
-#endregion
 
 namespace Authoring
 {

@@ -1,10 +1,6 @@
-#region
-
 using Components;
 using Unity.Burst;
 using Unity.Entities;
-
-#endregion
 
 namespace Jobs
 {
