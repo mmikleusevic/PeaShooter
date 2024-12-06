@@ -1,8 +1,15 @@
+#region
+
 using Unity.Entities;
 
-public struct ProjectileComponent : IComponentData, IEnableableComponent
+#endregion
+
+namespace Components
 {
-    public float lifetime;
-    public float maxLifetime;
-    public byte hasCollided;
+    public struct ProjectileComponent : IComponentData, IEnableableComponent
+    {
+        public float lifetime;
+        public float maxLifetime;
+        public byte hasCollided;
+    }
 }

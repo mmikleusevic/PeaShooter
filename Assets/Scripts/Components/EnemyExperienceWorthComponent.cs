@@ -1,6 +1,13 @@
+#region
+
 using Unity.Entities;
 
-public struct EnemyExperienceWorthComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public uint experience;
+    public struct EnemyExperienceWorthComponent : IComponentData
+    {
+        public uint experience;
+    }
 }

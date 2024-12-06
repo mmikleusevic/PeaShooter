@@ -1,7 +1,14 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct InputComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public float2 moveInput;
+    public struct InputComponent : IComponentData
+    {
+        public float2 moveInput;
+    }
 }

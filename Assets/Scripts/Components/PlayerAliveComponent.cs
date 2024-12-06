@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct PlayerAliveComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct PlayerAliveComponent : IComponentData
+    {
+    }
 }

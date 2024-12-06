@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct EnemyDeadComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct EnemyDeadComponent : IComponentData
+    {
+    }
 }

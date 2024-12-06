@@ -1,27 +1,35 @@
+#region
+
+using Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 
-[BurstCompile]
-public partial struct PlaneSpawnJob : IJobEntity
+#endregion
+
+namespace Jobs
 {
-    public EntityCommandBuffer ecb;
-
-    private void Execute(in PlaneSpawnerComponent planeSpawnerComponent, in Entity spawnerEntity)
+    [BurstCompile]
+    public partial struct PlaneSpawnJob : IJobEntity
     {
-        Entity spawnedEntity = ecb.Instantiate(planeSpawnerComponent.prefab);
+        public EntityCommandBuffer ecb;
 
-        ecb.SetName(spawnedEntity, "Plane");
-
-        ecb.SetComponent(spawnedEntity, new LocalTransform
+        private void Execute(in PlaneSpawnerComponent planeSpawnerComponent, in Entity spawnerEntity)
         {
-            Position = planeSpawnerComponent.position,
-            Rotation = planeSpawnerComponent.rotation,
-            Scale = 1f
-        });
+            Entity spawnedEntity = ecb.Instantiate(planeSpawnerComponent.prefab);
 
-        ecb.AddComponent(spawnedEntity, new PlaneComponent());
+            ecb.SetName(spawnedEntity, "Plane");
 
-        ecb.DestroyEntity(spawnerEntity);
+            ecb.SetComponent(spawnedEntity, new LocalTransform
+            {
+                Position = planeSpawnerComponent.position,
+                Rotation = planeSpawnerComponent.rotation,
+                Scale = 1f
+            });
+
+            ecb.AddComponent(spawnedEntity, new PlaneComponent());
+
+            ecb.DestroyEntity(spawnerEntity);
+        }
     }
 }

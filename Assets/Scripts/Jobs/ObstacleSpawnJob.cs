@@ -1,3 +1,6 @@
+#region
+
+using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -5,39 +8,44 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
-[BurstCompile]
-public partial struct ObstacleSpawnJob : IJobEntity
+#endregion
+
+namespace Jobs
 {
-    public EntityCommandBuffer ecb;
-    public NativeHashMap<int2, byte> gridNodes;
-
-    [ReadOnly] public uint seed;
-
-    private void Execute(in ObstacleSpawnerComponent obstacleSpawnerComponent,
-        ref RandomDataComponent randomDataComponent, in Entity obstacleSpawnerEntity)
+    [BurstCompile]
+    public partial struct ObstacleSpawnJob : IJobEntity
     {
-        randomDataComponent.seed = new Random(seed);
+        public EntityCommandBuffer ecb;
+        public NativeHashMap<int2, byte> gridNodes;
 
-        for (int i = 0; i < obstacleSpawnerComponent.numberToSpawn; i++)
+        [ReadOnly] public uint seed;
+
+        private void Execute(in ObstacleSpawnerComponent obstacleSpawnerComponent,
+            ref RandomDataComponent randomDataComponent, in Entity obstacleSpawnerEntity)
         {
-            Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
+            randomDataComponent.seed = new Random(seed);
 
-            ecb.SetName(spawnedEntity, "Obstacle");
-
-            int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
-
-            ecb.SetComponent(spawnedEntity, new LocalTransform
+            for (int i = 0; i < obstacleSpawnerComponent.numberToSpawn; i++)
             {
-                Position = new float3(newPosition.x, 0, newPosition.y),
-                Rotation = quaternion.identity,
-                Scale = 1f
-            });
+                Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
 
-            ecb.AddComponent(spawnedEntity, new ObstacleComponent());
+                ecb.SetName(spawnedEntity, "Obstacle");
 
-            gridNodes[newPosition] = 0;
+                int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
+
+                ecb.SetComponent(spawnedEntity, new LocalTransform
+                {
+                    Position = new float3(newPosition.x, 0, newPosition.y),
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+
+                ecb.AddComponent(spawnedEntity, new ObstacleComponent());
+
+                gridNodes[newPosition] = 0;
+            }
+
+            ecb.DestroyEntity(obstacleSpawnerEntity);
         }
-
-        ecb.DestroyEntity(obstacleSpawnerEntity);
     }
 }

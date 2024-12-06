@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct CollisionActiveComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct CollisionActiveComponent : IComponentData
+    {
+    }
 }

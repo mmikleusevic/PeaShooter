@@ -1,7 +1,12 @@
+#region
+
+using Components;
 using Interfaces;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+
+#endregion
 
 namespace MemoryCleaners
 {
@@ -21,19 +26,20 @@ namespace MemoryCleaners
 
         public void Cleanup()
         {
-            NativeArray<Entity> abilityEntities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
+            NativeArray<AbilityComponent> abilities =
+                abilityEntityQuery.ToComponentDataArray<AbilityComponent>(Allocator.Temp);
 
-            foreach (Entity abilityEntity in abilityEntities)
+            for (int i = 0; i < abilities.Length; i++)
             {
-                AbilityComponent abilityComponent = entityManager.GetComponentData<AbilityComponent>(abilityEntity);
+                AbilityComponent abilityComponent = abilities[i];
 
                 abilityComponent.Dispose();
 
-                entityManager.SetComponentData(abilityEntity, abilityComponent);
+                abilities[i] = abilityComponent;
             }
 
-            abilityEntities.Dispose();
-
+            abilityEntityQuery.CopyFromComponentDataArray(abilities);
+            abilities.Dispose();
             entityManager.DestroyEntity(abilityEntityQuery);
         }
     }

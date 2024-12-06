@@ -1,22 +1,29 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct HealthComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public float maxHitPoints;
-
-    private float hitPoints;
-
-    public float HitPoints
+    public struct HealthComponent : IComponentData
     {
-        readonly get => hitPoints;
-        set
+        public float maxHitPoints;
+
+        private float hitPoints;
+
+        public float HitPoints
         {
-            hitPoints = math.clamp(value, 0f, maxHitPoints);
+            readonly get => hitPoints;
+            set
+            {
+                hitPoints = math.clamp(value, 0f, maxHitPoints);
 
-            if (hitPoints == 0) IsDead = true;
+                if (hitPoints == 0) IsDead = true;
+            }
         }
-    }
 
-    public bool IsDead { get; private set; }
+        public bool IsDead { get; private set; }
+    }
 }

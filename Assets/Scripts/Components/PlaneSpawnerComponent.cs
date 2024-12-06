@@ -1,9 +1,16 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct PlaneSpawnerComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public Entity prefab;
-    public float3 position;
-    public quaternion rotation;
+    public struct PlaneSpawnerComponent : IComponentData
+    {
+        public Entity prefab;
+        public float3 position;
+        public quaternion rotation;
+    }
 }

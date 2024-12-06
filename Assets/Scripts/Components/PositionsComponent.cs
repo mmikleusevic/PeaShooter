@@ -1,7 +1,11 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Game
+#endregion
+
+namespace Components
 {
     public struct PositionsComponent : IComponentData
     {

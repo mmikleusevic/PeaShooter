@@ -1,26 +1,33 @@
+#region
+
 using System;
 using Game;
 using Unity.Entities;
 
-public struct AbilityComponent : IComponentData, IDisposable
-{
-    public Abilities ability;
-    public int level;
-    public float cooldown;
-    public float cooldownRemaining;
-    public int range;
-    public float speed;
-    public float damage;
-    public Entity abilityEntity;
-    public byte hasProjectile;
-    public float scale;
-    public BlobAssetReference<PositionsComponent> positionsToCheck;
+#endregion
 
-    public void Dispose()
+namespace Components
+{
+    public struct AbilityComponent : IComponentData, IDisposable
     {
-        if (positionsToCheck.IsCreated)
+        public Abilities ability;
+        public int level;
+        public float cooldown;
+        public float cooldownRemaining;
+        public int range;
+        public float speed;
+        public float damage;
+        public Entity abilityEntity;
+        public byte hasProjectile;
+        public float scale;
+        public BlobAssetReference<PositionsComponent> positionsToCheck;
+
+        public void Dispose()
         {
-            positionsToCheck.Dispose();
+            if (positionsToCheck.IsCreated)
+            {
+                positionsToCheck.Dispose();
+            }
         }
     }
 }

@@ -1,12 +1,17 @@
+#region
+
+using Components;
 using Unity.Cinemachine;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
+#endregion
+
 namespace Game
 {
-    public class CameraDOTSFollow : MonoBehaviour
+    public class CameraDotsFollow : MonoBehaviour
     {
         private EntityManager entityManager;
         private Entity playerEntity;

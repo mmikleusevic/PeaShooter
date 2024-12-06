@@ -1,31 +1,39 @@
+#region
+
+using Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 
-[BurstCompile]
-public partial struct PlayerSpawnJob : IJobEntity
+#endregion
+
+namespace Jobs
 {
-    public EntityCommandBuffer ecb;
-
-    private void Execute(in PlayerSpawnerComponent playerSpawner, in Entity spawnerEntity)
+    [BurstCompile]
+    public partial struct PlayerSpawnJob : IJobEntity
     {
-        Entity spawnedEntity = ecb.Instantiate(playerSpawner.prefabEntity);
+        public EntityCommandBuffer ecb;
 
-        ecb.SetName(spawnedEntity, "Player");
-
-        Entity startingAbilityEntity = ecb.Instantiate(playerSpawner.startingAbilityPrefabEntity);
-
-        ecb.SetName(startingAbilityEntity, "StartingAbility");
-
-        ecb.SetComponent(spawnedEntity, new LocalTransform
+        private void Execute(in PlayerSpawnerComponent playerSpawner, in Entity spawnerEntity)
         {
-            Position = playerSpawner.position,
-            Rotation = playerSpawner.rotation,
-            Scale = playerSpawner.scale
-        });
+            Entity spawnedEntity = ecb.Instantiate(playerSpawner.prefabEntity);
 
-        ecb.AddComponent(spawnedEntity, new PlayerAliveComponent());
+            ecb.SetName(spawnedEntity, "Player");
 
-        ecb.DestroyEntity(spawnerEntity);
+            Entity startingAbilityEntity = ecb.Instantiate(playerSpawner.startingAbilityPrefabEntity);
+
+            ecb.SetName(startingAbilityEntity, "StartingAbility");
+
+            ecb.SetComponent(spawnedEntity, new LocalTransform
+            {
+                Position = playerSpawner.position,
+                Rotation = playerSpawner.rotation,
+                Scale = playerSpawner.scale
+            });
+
+            ecb.AddComponent(spawnedEntity, new PlayerAliveComponent());
+
+            ecb.DestroyEntity(spawnerEntity);
+        }
     }
 }

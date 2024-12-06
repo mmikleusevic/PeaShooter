@@ -1,8 +1,15 @@
+#region
+
 using Unity.Entities;
 using UnityEngine;
 
-public class ParticleObjectReferenceComponent : ICleanupComponentData
+#endregion
+
+namespace Components
 {
-    public GameObject gameObject;
-    public byte updateTransform;
+    public class ParticleObjectReferenceComponent : ICleanupComponentData
+    {
+        public GameObject gameObject;
+        public byte updateTransform;
+    }
 }

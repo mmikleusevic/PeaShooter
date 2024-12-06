@@ -1,3 +1,6 @@
+#region
+
+using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -5,56 +8,61 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
-[BurstCompile]
-public partial struct EnemySpawnJob : IJobEntity
+#endregion
+
+namespace Jobs
 {
-    public EntityCommandBuffer.ParallelWriter ecb;
-    public NativeHashMap<int2, byte> gridNodes;
-
-    [ReadOnly] public double elapsedTime;
-    [ReadOnly] public uint seed;
-
-    private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawnerComponent,
-        ref RandomDataComponent randomDataComponent, in Entity enemySpawnerEntity)
+    [BurstCompile]
+    public partial struct EnemySpawnJob : IJobEntity
     {
-        if (enemySpawnerComponent.startTime == 0) enemySpawnerComponent.startTime = elapsedTime;
+        public EntityCommandBuffer.ParallelWriter ecb;
+        public NativeHashMap<int2, byte> gridNodes;
 
-        double localElapsedTime = elapsedTime - enemySpawnerComponent.startTime;
+        [ReadOnly] public double elapsedTime;
+        [ReadOnly] public uint seed;
 
-        if (enemySpawnerComponent.nextSpawnTime >= localElapsedTime) return;
-
-        randomDataComponent.seed = new Random((uint)(seed + sortKey));
-
-        int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
-
-        float3 position = new float3(newPosition.x, 0, newPosition.y);
-
-        Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
-
-        ecb.SetName(sortKey, spawnedEntity, "Enemy");
-
-        ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
+        private void Execute([EntityIndexInQuery] int sortKey, ref EnemySpawnerComponent enemySpawnerComponent,
+            ref RandomDataComponent randomDataComponent, in Entity enemySpawnerEntity)
         {
-            Position = position,
-            Rotation = quaternion.identity,
-            Scale = enemySpawnerComponent.scale
-        });
+            if (enemySpawnerComponent.startTime == 0) enemySpawnerComponent.startTime = elapsedTime;
 
-        ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
-        {
-            moveSpeed = enemySpawnerComponent.moveSpeed,
-            gridPosition = newPosition,
-            position = position,
-            isFullySpawned = 0,
-            currentPathIndex = 0,
-            moveTimerTarget = enemySpawnerComponent.enemyMoveTimerTarget
-        });
+            double localElapsedTime = elapsedTime - enemySpawnerComponent.startTime;
 
-        ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
+            if (enemySpawnerComponent.nextSpawnTime >= localElapsedTime) return;
 
-        if (localElapsedTime >= enemySpawnerComponent.destroySpawnerTimerTarget)
-            ecb.DestroyEntity(sortKey, enemySpawnerEntity);
+            randomDataComponent.seed = new Random((uint)(seed + sortKey));
 
-        enemySpawnerComponent.nextSpawnTime += enemySpawnerComponent.spawnRate;
+            int2 newPosition = randomDataComponent.GetRandomPosition(gridNodes);
+
+            float3 position = new float3(newPosition.x, 0, newPosition.y);
+
+            Entity spawnedEntity = ecb.Instantiate(sortKey, enemySpawnerComponent.prefabEntity);
+
+            ecb.SetName(sortKey, spawnedEntity, "Enemy");
+
+            ecb.SetComponent(sortKey, spawnedEntity, new LocalTransform
+            {
+                Position = position,
+                Rotation = quaternion.identity,
+                Scale = enemySpawnerComponent.scale
+            });
+
+            ecb.AddComponent(sortKey, spawnedEntity, new EnemyComponent
+            {
+                moveSpeed = enemySpawnerComponent.moveSpeed,
+                gridPosition = newPosition,
+                position = position,
+                isFullySpawned = 0,
+                currentPathIndex = 0,
+                moveTimerTarget = enemySpawnerComponent.enemyMoveTimerTarget
+            });
+
+            ecb.AddBuffer<NodeComponent>(sortKey, spawnedEntity);
+
+            if (localElapsedTime >= enemySpawnerComponent.destroySpawnerTimerTarget)
+                ecb.DestroyEntity(sortKey, enemySpawnerEntity);
+
+            enemySpawnerComponent.nextSpawnTime += enemySpawnerComponent.spawnRate;
+        }
     }
 }

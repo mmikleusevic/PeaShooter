@@ -1,7 +1,14 @@
+#region
+
 using Unity.Entities;
 
-public struct ObstacleSpawnerComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public Entity prefabEntity;
-    public int numberToSpawn;
+    public struct ObstacleSpawnerComponent : IComponentData
+    {
+        public Entity prefabEntity;
+        public int numberToSpawn;
+    }
 }

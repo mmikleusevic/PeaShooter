@@ -1,6 +1,13 @@
+#region
+
 using Unity.Entities;
 
-public struct EnemyDamageComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public float damagePerSecond;
+    public struct EnemyDamageComponent : IComponentData
+    {
+        public float damagePerSecond;
+    }
 }

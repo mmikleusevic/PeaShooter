@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct PlaneComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct PlaneComponent : IComponentData
+    {
+    }
 }

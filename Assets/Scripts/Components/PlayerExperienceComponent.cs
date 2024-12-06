@@ -1,7 +1,14 @@
+#region
+
 using Unity.Entities;
 
-public struct PlayerExperienceComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public uint points;
-    public int currentLevel;
+    public struct PlayerExperienceComponent : IComponentData
+    {
+        public uint points;
+        public int currentLevel;
+    }
 }

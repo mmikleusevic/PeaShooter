@@ -1,7 +1,14 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct UIBarOffset : IComponentData
+#endregion
+
+namespace Components
 {
-    public float3 offset;
+    public struct UIBarOffset : IComponentData
+    {
+        public float3 offset;
+    }
 }

@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct ObstacleComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct ObstacleComponent : IComponentData
+    {
+    }
 }

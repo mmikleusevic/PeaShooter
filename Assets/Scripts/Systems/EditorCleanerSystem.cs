@@ -1,6 +1,11 @@
+#region
+
+using Components;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
+
+#endregion
 
 namespace Systems
 {
@@ -64,19 +69,20 @@ namespace Systems
 
             if (abilityEntityQuery.CalculateEntityCount() > 0)
             {
-                NativeArray<Entity> abilityEntities = abilityEntityQuery.ToEntityArray(Allocator.Temp);
+                NativeArray<AbilityComponent> abilities =
+                    abilityEntityQuery.ToComponentDataArray<AbilityComponent>(Allocator.Temp);
 
-                foreach (Entity abilityEntity in abilityEntities)
+                for (int i = 0; i < abilities.Length; i++)
                 {
-                    AbilityComponent abilityComponent = EntityManager.GetComponentData<AbilityComponent>(abilityEntity);
+                    AbilityComponent abilityComponent = abilities[i];
 
                     abilityComponent.Dispose();
 
-                    EntityManager.SetComponentData(abilityEntity, abilityComponent);
+                    abilities[i] = abilityComponent;
                 }
 
-                abilityEntities.Dispose();
-
+                abilityEntityQuery.CopyFromComponentDataArray(abilities);
+                abilities.Dispose();
                 EntityManager.DestroyEntity(abilityEntityQuery);
             }
         }

@@ -1,10 +1,17 @@
+#region
+
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct PlayerComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public float moveSpeed;
-    public float rotationSpeed;
-    public int2 gridPosition;
-    public float3 position;
+    public struct PlayerComponent : IComponentData
+    {
+        public float moveSpeed;
+        public float rotationSpeed;
+        public int2 gridPosition;
+        public float3 position;
+    }
 }

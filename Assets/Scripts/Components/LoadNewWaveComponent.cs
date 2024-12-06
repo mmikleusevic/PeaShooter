@@ -1,6 +1,13 @@
+#region
+
 using Unity.Entities;
 
-public struct LoadNewWaveComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public float loadTimerTarget;
+    public struct LoadNewWaveComponent : IComponentData
+    {
+        public float loadTimerTarget;
+    }
 }

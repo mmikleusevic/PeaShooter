@@ -1,8 +1,14 @@
+#region
+
 using Components;
+using Unity.Burst;
 using Unity.Entities;
+
+#endregion
 
 namespace Jobs
 {
+    [BurstCompile]
     public partial struct DebugNameJob : IJobEntity
     {
         public EntityCommandBuffer.ParallelWriter ecb;

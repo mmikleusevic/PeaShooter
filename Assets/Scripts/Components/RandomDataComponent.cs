@@ -1,25 +1,32 @@
+#region
+
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Random = Unity.Mathematics.Random;
 
-public struct RandomDataComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public Random seed;
-
-    public int2 minimumPosition;
-    public int2 maximumPosition;
-    private int2 nextPosition => seed.NextInt2(minimumPosition, maximumPosition);
-
-    public int2 GetRandomPosition(NativeHashMap<int2, byte> gridNodes)
+    public struct RandomDataComponent : IComponentData
     {
-        int2 newPosition;
+        public Random seed;
 
-        do
+        public int2 minimumPosition;
+        public int2 maximumPosition;
+        private int2 nextPosition => seed.NextInt2(minimumPosition, maximumPosition);
+
+        public int2 GetRandomPosition(NativeHashMap<int2, byte> gridNodes)
         {
-            newPosition = nextPosition;
-        } while (gridNodes[newPosition] == 0 || newPosition.Equals(default));
+            int2 newPosition;
 
-        return newPosition;
+            do
+            {
+                newPosition = nextPosition;
+            } while (gridNodes[newPosition] == 0 || newPosition.Equals(default));
+
+            return newPosition;
+        }
     }
 }

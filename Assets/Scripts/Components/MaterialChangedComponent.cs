@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct MaterialChangedComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct MaterialChangedComponent : IComponentData
+    {
+    }
 }

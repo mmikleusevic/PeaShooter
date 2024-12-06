@@ -1,7 +1,14 @@
+#region
+
 using Unity.Entities;
 using UnityEngine;
 
-public class MaterialChangerComponent : IComponentData
+#endregion
+
+namespace Components
 {
-    public Material material;
+    public class MaterialChangerComponent : IComponentData
+    {
+        public Material material;
+    }
 }

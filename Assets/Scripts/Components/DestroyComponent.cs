@@ -1,5 +1,12 @@
+#region
+
 using Unity.Entities;
 
-public struct DestroyComponent : IComponentData
+#endregion
+
+namespace Components
 {
+    public struct DestroyComponent : IComponentData
+    {
+    }
 }

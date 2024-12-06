@@ -1,9 +1,15 @@
+#region
+
+using Components;
+using Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+
+#endregion
 
 namespace Systems
 {

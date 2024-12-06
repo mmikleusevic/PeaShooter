@@ -1,9 +1,13 @@
+#region
+
 using Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+
+#endregion
 
 namespace Systems
 {
@@ -40,14 +44,15 @@ namespace Systems
 
             for (int i = 0; i < localTransforms.Length; i++)
             {
-                var localTransform = localTransforms[i];
+                LocalTransform localTransform = localTransforms[i];
                 quaternion currentRotation = localTransform.Rotation;
 
                 quaternion rotationIncrement = quaternion.RotateY(rotationSpeed * deltaTime);
                 localTransform.Rotation = math.mul(currentRotation, rotationIncrement);
-
-                state.EntityManager.SetComponentData(entities[i], localTransform);
+                localTransforms[i] = localTransform;
             }
+
+            pickUpEntityQuery.CopyFromComponentDataArray(localTransforms);
 
             localTransforms.Dispose();
             entities.Dispose();
