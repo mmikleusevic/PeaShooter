@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3959155679413510038}
-  m_Mesh: {fileID: -2967633225484500568, guid: 8782408674390a3448236b5b8d8483f6, type: 3}
+  m_Mesh: {fileID: -1272481795433867914, guid: b70c5f2b2af93aa4b940f618bfeddcfe, type: 3}
 --- !u!23 &3211034824664178684
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -67,9 +67,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8675504941488154415, guid: 8782408674390a3448236b5b8d8483f6, type: 3}
-  - {fileID: 2149803181603315678, guid: 8782408674390a3448236b5b8d8483f6, type: 3}
-  - {fileID: -6264578195049403651, guid: 8782408674390a3448236b5b8d8483f6, type: 3}
+  - {fileID: -6080035561295508770, guid: b70c5f2b2af93aa4b940f618bfeddcfe, type: 3}
+  - {fileID: -4831121045089964884, guid: b70c5f2b2af93aa4b940f618bfeddcfe, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -160,9 +159,9 @@ MonoBehaviour:
     y: 0
     z: 0
   m_PrimitiveSize:
-    x: 1
-    y: 0.5
-    z: 0.75
+    x: 0.01
+    y: 0.035
+    z: 0.05
   m_PrimitiveOrientation:
     Value:
       x: -0
@@ -170,15 +169,15 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_Capsule:
-    Height: 1
-    Radius: 0.375
-    Axis: 0
+    Height: 0.05
+    Radius: 0.0175
+    Axis: 2
   m_Cylinder:
-    Height: 0.5
-    Radius: 0.5
-    Axis: 1
+    Height: 0.01
+    Radius: 0.025
+    Axis: 0
   m_CylinderSideCount: 20
-  m_SphereRadius: 0.5
+  m_SphereRadius: 0.025
   m_MinimumSkinnedVertexWeight: 0.1
   m_ConvexHullGenerationParameters:
     m_SimplificationTolerance: 0.015
