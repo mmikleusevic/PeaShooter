@@ -4,7 +4,8 @@ namespace Components
 {
     public struct ObstacleSpawnerComponent : IComponentData
     {
-        public Entity prefabEntity;
+        public Entity prefab1Entity;
+        public Entity prefab2Entity;
         public int numberToSpawn;
     }
 }

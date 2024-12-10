@@ -24,7 +24,18 @@ namespace Jobs
 
             for (int i = 0; i < obstacleSpawnerComponent.numberToSpawn; i++)
             {
-                Entity spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefabEntity);
+                int randomValue = randomDataComponent.seed.NextInt(0, 2);
+
+                Entity spawnedEntity;
+
+                if (randomValue == 0)
+                {
+                    spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefab1Entity);
+                }
+                else
+                {
+                    spawnedEntity = ecb.Instantiate(obstacleSpawnerComponent.prefab2Entity);
+                }
 
                 ecb.SetName(spawnedEntity, "Obstacle");
 

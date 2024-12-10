@@ -6,7 +6,8 @@ namespace Authoring
 {
     public class ObstacleSpawnerAuthoring : MonoBehaviour
     {
-        [SerializeField] private GameObject prefab;
+        [SerializeField] private GameObject prefab1;
+        [SerializeField] private GameObject prefab2;
         [SerializeField] private int numberToSpawn;
 
         public class ObstacleSpawnerBaker : Baker<ObstacleSpawnerAuthoring>
@@ -15,11 +16,13 @@ namespace Authoring
             {
                 Entity entity = GetEntity(TransformUsageFlags.None);
 
-                DependsOn(authoring.prefab);
+                DependsOn(authoring.prefab1);
+                DependsOn(authoring.prefab2);
 
                 AddComponent(entity, new ObstacleSpawnerComponent
                 {
-                    prefabEntity = GetEntity(authoring.prefab, TransformUsageFlags.None),
+                    prefab1Entity = GetEntity(authoring.prefab1, TransformUsageFlags.None),
+                    prefab2Entity = GetEntity(authoring.prefab2, TransformUsageFlags.None),
                     numberToSpawn = authoring.numberToSpawn
                 });
 
