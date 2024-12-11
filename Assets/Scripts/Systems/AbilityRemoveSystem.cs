@@ -33,12 +33,12 @@ namespace Systems
                 ecb.AddComponent<DestroyComponent>(abilityEntity);
             }
 
-            foreach (var (abilityComponent, particleComponent, abilityEntity) in SystemAPI
+            foreach (var (abilityComponentRW, particleComponent, abilityEntity) in SystemAPI
                          .Query<RefRW<AbilityComponent>, ParticleObjectReferenceComponent>()
                          .WithAll<AbilityRemoveComponent>()
                          .WithEntityAccess())
             {
-                abilityComponent.ValueRW.Dispose();
+                abilityComponentRW.ValueRW.Dispose();
 
                 ecb.AddComponent<DestroyComponent>(abilityEntity);
                 ecb.RemoveComponent<ParticleObjectReferenceComponent>(abilityEntity);

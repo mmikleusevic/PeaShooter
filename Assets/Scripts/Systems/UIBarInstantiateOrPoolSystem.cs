@@ -30,16 +30,16 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((RefRO<HealthComponent> healthRO, RefRO<BarrierComponent> barrierRO,
+            foreach ((RefRO<HealthComponent> healthComponentRO, RefRO<BarrierComponent> barrierComponentRO,
                          RefRO<LocalTransform> localTransformRO,
-                         RefRO<UIBarOffset> uiBarOffsetRO, Entity enemyEntity) in SystemAPI
+                         RefRO<UIBarOffsetComponent> uiBarOffsetComponentRO, Entity enemyEntity) in SystemAPI
                          .Query<RefRO<HealthComponent>, RefRO<BarrierComponent>, RefRO<LocalTransform>,
-                             RefRO<UIBarOffset>>()
-                         .WithNone<UIBarUIReference, PlayerComponent>()
+                             RefRO<UIBarOffsetComponent>>()
+                         .WithNone<UIBarUIReferenceComponent, PlayerComponent>()
                          .WithAll<MaterialChangedComponent>()
                          .WithEntityAccess())
             {
-                float3 spawnPosition = localTransformRO.ValueRO.Position + uiBarOffsetRO.ValueRO.offset;
+                float3 spawnPosition = localTransformRO.ValueRO.Position + uiBarOffsetComponentRO.ValueRO.offset;
 
                 GameObject uiBarGameObject = UIBarPoolManager.Instance.GetUIBar(spawnPosition);
 
@@ -48,17 +48,17 @@ namespace Systems
                 Slider healthSlider = sliders[0];
                 Slider barrierSlider = sliders[1];
 
-                ecb.AddComponent(enemyEntity, new UIBarUIReference
+                ecb.AddComponent(enemyEntity, new UIBarUIReferenceComponent
                 {
                     gameObject = uiBarGameObject,
                     hpSlider = healthSlider,
                     barrierSlider = barrierSlider
                 });
 
-                UIBarUtility.SetSliderValues(healthSlider, 0, healthRO.ValueRO.maxHitPoints,
-                    healthRO.ValueRO.HitPoints);
-                UIBarUtility.SetSliderValues(barrierSlider, 0, barrierRO.ValueRO.maxBarrierValue,
-                    barrierRO.ValueRO.BarrierValue);
+                UIBarUtility.SetSliderValues(healthSlider, 0, healthComponentRO.ValueRO.maxHitPoints,
+                    healthComponentRO.ValueRO.HitPoints);
+                UIBarUtility.SetSliderValues(barrierSlider, 0, barrierComponentRO.ValueRO.maxBarrierValue,
+                    barrierComponentRO.ValueRO.BarrierValue);
             }
         }
     }

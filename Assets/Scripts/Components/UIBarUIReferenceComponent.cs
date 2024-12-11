@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Components
 {
-    public class UIBarUIReference : ICleanupComponentData
+    public class UIBarUIReferenceComponent : ICleanupComponentData
     {
         public Slider barrierSlider;
         public GameObject gameObject;

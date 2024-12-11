@@ -9,10 +9,10 @@ namespace Jobs
     {
         public EntityCommandBuffer.ParallelWriter ecb;
 
-        private void Execute([ChunkIndexInQuery] int sortKey, in DebugNameComponent debugNameComponentRO,
+        private void Execute([ChunkIndexInQuery] int sortKey, in DebugNameComponent debugNameComponent,
             in Entity debugNameEntity)
         {
-            ecb.SetName(sortKey, debugNameEntity, debugNameComponentRO.entityName);
+            ecb.SetName(sortKey, debugNameEntity, debugNameComponent.entityName);
             ecb.RemoveComponent<DebugNameComponent>(sortKey, debugNameEntity);
         }
     }

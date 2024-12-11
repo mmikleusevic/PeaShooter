@@ -9,7 +9,7 @@ using Unity.Transforms;
 namespace Jobs
 {
     [BurstCompile]
-    public partial struct ProjectileDisablingJob : IJobEntity
+    public partial struct ProjectileTargetHandlingJob : IJobEntity
     {
         public EntityCommandBuffer.ParallelWriter ecb;
 
@@ -33,6 +33,10 @@ namespace Jobs
 
                 //Don't want to destroy projectiles so I'll just move them out of sight
                 localTransform.Position = new float3(-500, -500, -500);
+            }
+            else
+            {
+                targetComponent.enemyComponent = enemyComponentLookup.GetRefRO(targetComponent.enemyEntity).ValueRO;
             }
 
             projectileComponent.lifetime -= deltaTime;

@@ -34,16 +34,16 @@ namespace Systems
                 SystemAPI.GetSingleton<BeginPresentationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(World.Unmanaged);
 
-            foreach ((MaterialChangerComponent changer, RefRW<MaterialMeshInfo> materialMeshInfoRW,
+            foreach ((MaterialChangerComponent materialChangerComponent, RefRW<MaterialMeshInfo> materialMeshInfoRW,
                          RefRO<EnemyComponent> enemyComponentRO, Entity enemyEntity) in SystemAPI
                          .Query<MaterialChangerComponent, RefRW<MaterialMeshInfo>, RefRO<EnemyComponent>>()
                          .WithEntityAccess()
                          .WithNone<MaterialChangedComponent>())
                 if (enemyComponentRO.ValueRO.moveTimer >= enemyComponentRO.ValueRO.moveTimerTarget)
                 {
-                    Material material = changer.material;
+                    Material material = materialChangerComponent.material;
 
-                    RegisterMaterial(changer.material);
+                    RegisterMaterial(materialChangerComponent.material);
 
                     materialMeshInfoRW.ValueRW.MaterialID = materialMapping[material];
 

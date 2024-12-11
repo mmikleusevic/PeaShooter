@@ -53,10 +53,10 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (particleReference, localTransformRW, abilityComponent) in SystemAPI
+            foreach (var (particleReferenceComponent, localTransformRW, abilityComponentRO) in SystemAPI
                          .Query<ParticleObjectReferenceComponent, RefRW<LocalTransform>, RefRO<AbilityComponent>>())
             {
-                ParticleSystem particleSystem = particleReference.gameObject.GetComponent<ParticleSystem>();
+                ParticleSystem particleSystem = particleReferenceComponent.gameObject.GetComponent<ParticleSystem>();
 
                 if (particleSystem.particleCount > 0)
                 {
@@ -71,7 +71,7 @@ namespace Systems
                         healthComponentLookup = healthComponentLookup,
                         barrierComponentLookup = barrierComponentLookup,
                         particles = particles,
-                        abilityComponent = abilityComponent.ValueRO,
+                        abilityComponent = abilityComponentRO.ValueRO,
                         localTransform = localTransformRW.ValueRO,
                         deltaTime = SystemAPI.Time.DeltaTime
                     };
@@ -84,14 +84,14 @@ namespace Systems
 
                 LocalTransform playerTransform = playerEntityQuery.GetSingleton<LocalTransform>();
 
-                if (particleReference.updateTransform == 1)
+                if (particleReferenceComponent.updateTransform == 1)
                 {
-                    UpdateTransform(particleReference, playerTransform.Position, ref localTransformRW.ValueRW);
+                    UpdateTransform(particleReferenceComponent, playerTransform.Position, ref localTransformRW.ValueRW);
                 }
                 else if (particleSystem.time >= particleSystem.main.duration - 0.05f)
                 {
                     particleSystem.Clear();
-                    UpdateTransform(particleReference, playerTransform.Position, ref localTransformRW.ValueRW);
+                    UpdateTransform(particleReferenceComponent, playerTransform.Position, ref localTransformRW.ValueRW);
                 }
             }
         }

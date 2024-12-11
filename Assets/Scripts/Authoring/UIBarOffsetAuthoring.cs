@@ -14,7 +14,7 @@ namespace Authoring
             {
                 Entity entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponent(entity, new UIBarOffset
+                AddComponent(entity, new UIBarOffsetComponent
                 {
                     offset = authoring.uiBarOffset
                 });

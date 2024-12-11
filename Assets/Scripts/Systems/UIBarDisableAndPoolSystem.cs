@@ -14,7 +14,7 @@ namespace Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<UIBarUIReference>();
+            state.RequireForUpdate<UIBarUIReferenceComponent>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -24,12 +24,13 @@ namespace Systems
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach ((UIBarUIReference uiBarUI, Entity enemyEntity) in SystemAPI.Query<UIBarUIReference>()
+            foreach ((UIBarUIReferenceComponent uiBarUI, Entity enemyEntity) in SystemAPI
+                         .Query<UIBarUIReferenceComponent>()
                          .WithNone<LocalTransform>()
                          .WithEntityAccess())
             {
                 UIBarPoolManager.Instance.ReturnUIBar(uiBarUI.gameObject);
-                ecb.RemoveComponent<UIBarUIReference>(enemyEntity);
+                ecb.RemoveComponent<UIBarUIReferenceComponent>(enemyEntity);
             }
         }
     }

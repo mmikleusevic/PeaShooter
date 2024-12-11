@@ -26,6 +26,8 @@ namespace Jobs
 
         public void Execute()
         {
+            NativeHashSet<Entity> damagedEnemies = new NativeHashSet<Entity>(16, Allocator.Temp);
+
             foreach (Particle particle in particles)
             {
                 float3 localParticlePosition =
@@ -41,14 +43,21 @@ namespace Jobs
                 {
                     do
                     {
+                        if (damagedEnemies.Contains(enemy))
+                            continue;
+
+                        damagedEnemies.Add(enemy);
+
                         float damage = abilityComponent.damage * deltaTime;
 
                         if (barrierComponentLookup.HasComponent(enemy))
                         {
                             RefRW<BarrierComponent> barrierComponentRW = barrierComponentLookup.GetRefRW(enemy);
+
                             float damageToBarrier = math.min(barrierComponentRW.ValueRW.BarrierValue, damage);
 
                             barrierComponentRW.ValueRW.BarrierValue -= damageToBarrier;
+
                             damage -= damageToBarrier;
                         }
 
@@ -56,10 +65,10 @@ namespace Jobs
 
                         if (!healthComponentLookup.HasComponent(enemy)) continue;
 
-                        RefRW<HealthComponent> enemyHealthComponent = healthComponentLookup.GetRefRW(enemy);
-                        enemyHealthComponent.ValueRW.HitPoints -= damageToHealth;
+                        RefRW<HealthComponent> enemyHealthComponentRW = healthComponentLookup.GetRefRW(enemy);
+                        enemyHealthComponentRW.ValueRW.HitPoints -= damageToHealth;
 
-                        if (enemyHealthComponent.ValueRO.IsDead) continue;
+                        if (!enemyHealthComponentRW.ValueRO.IsDead) continue;
 
                         ecb.AddComponent<EnemyDeadComponent>(enemy);
                         ecb.SetComponent(enemy, new GridEnemyPositionUpdateComponent
@@ -74,6 +83,8 @@ namespace Jobs
                     } while (enemyPositions.TryGetNextValue(out enemy, ref iterator));
                 }
             }
+
+            damagedEnemies.Dispose();
         }
     }
 }

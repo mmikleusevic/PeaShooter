@@ -18,11 +18,11 @@ namespace Systems
 
         protected override void OnUpdate()
         {
-            foreach (RefRO<BarrierComponent> playerBarrierRO in SystemAPI.Query<RefRO<BarrierComponent>>()
+            foreach (RefRO<BarrierComponent> playerBarrierComponentRO in SystemAPI.Query<RefRO<BarrierComponent>>()
                          .WithChangeFilter<BarrierComponent>()
                          .WithAll<PlayerAliveComponent>())
             {
-                OnBarrierChanged?.Invoke(playerBarrierRO.ValueRO.BarrierValue);
+                OnBarrierChanged?.Invoke(playerBarrierComponentRO.ValueRO.BarrierValue);
             }
         }
     }

@@ -14,35 +14,36 @@ namespace Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<UIBarUIReference>();
+            state.RequireForUpdate<UIBarUIReferenceComponent>();
             state.RequireForUpdate<PlayerAliveComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            foreach ((RefRO<HealthComponent> healthRO, UIBarUIReference uiBarReference) in SystemAPI
-                         .Query<RefRO<HealthComponent>, UIBarUIReference>()
+            foreach ((RefRO<HealthComponent> healthRO, UIBarUIReferenceComponent uiBarReferenceComponent) in SystemAPI
+                         .Query<RefRO<HealthComponent>, UIBarUIReferenceComponent>()
                          .WithChangeFilter<HealthComponent>())
             {
-                UIBarUtility.SetSliderValues(uiBarReference.hpSlider, 0, healthRO.ValueRO.maxHitPoints,
+                UIBarUtility.SetSliderValues(uiBarReferenceComponent.hpSlider, 0, healthRO.ValueRO.maxHitPoints,
                     healthRO.ValueRO.HitPoints);
             }
 
-            foreach ((RefRO<BarrierComponent> barrierRO, UIBarUIReference uiBarReference) in SystemAPI
-                         .Query<RefRO<BarrierComponent>, UIBarUIReference>()
+            foreach ((RefRO<BarrierComponent> barrierRO, UIBarUIReferenceComponent uiBarReferenceComponent) in SystemAPI
+                         .Query<RefRO<BarrierComponent>, UIBarUIReferenceComponent>()
                          .WithChangeFilter<BarrierComponent>())
             {
-                UIBarUtility.SetSliderValues(uiBarReference.barrierSlider, 0, barrierRO.ValueRO.maxBarrierValue,
+                UIBarUtility.SetSliderValues(uiBarReferenceComponent.barrierSlider, 0,
+                    barrierRO.ValueRO.maxBarrierValue,
                     barrierRO.ValueRO.BarrierValue);
             }
 
-            foreach ((RefRO<LocalTransform> localTransformRO, RefRO<UIBarOffset> uiBarOffsetRO,
-                         UIBarUIReference uiBarReference) in SystemAPI
-                         .Query<RefRO<LocalTransform>, RefRO<UIBarOffset>, UIBarUIReference>()
+            foreach ((RefRO<LocalTransform> localTransformRO, RefRO<UIBarOffsetComponent> uiBarOffsetComponentRO,
+                         UIBarUIReferenceComponent uiBarReferenceComponent) in SystemAPI
+                         .Query<RefRO<LocalTransform>, RefRO<UIBarOffsetComponent>, UIBarUIReferenceComponent>()
                          .WithChangeFilter<LocalTransform>())
             {
-                UIBarUtility.UpdateTransform(uiBarReference.gameObject, localTransformRO.ValueRO.Position,
-                    uiBarOffsetRO.ValueRO.offset);
+                UIBarUtility.UpdateTransform(uiBarReferenceComponent.gameObject, localTransformRO.ValueRO.Position,
+                    uiBarOffsetComponentRO.ValueRO.offset);
             }
         }
     }

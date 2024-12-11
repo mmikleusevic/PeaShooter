@@ -10,7 +10,7 @@ namespace Systems
     [BurstCompile]
     [UpdateInGroup(typeof(PhysicsSystemGroup))]
     [UpdateAfter(typeof(ProjectileTargetingSystem))]
-    public partial struct ProjectileDisablingSystem : ISystem
+    public partial struct ProjectileTargetHandlingSystem : ISystem
     {
         private ComponentLookup<EnemyComponent> enemyComponentLookup;
 
@@ -33,7 +33,7 @@ namespace Systems
                 SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
             EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-            ProjectileDisablingJob job = new ProjectileDisablingJob
+            ProjectileTargetHandlingJob job = new ProjectileTargetHandlingJob
             {
                 deltaTime = SystemAPI.Time.fixedDeltaTime,
                 enemyComponentLookup = enemyComponentLookup,

@@ -19,8 +19,9 @@ MonoBehaviour:
   cooldown: 1
   cooldownRemaining: 0
   range: 6
-  speed: 20
+  speed: 15
   damage: 10
   abilityPrefab: {fileID: 374743099842847101, guid: d3f9f8d699877e745b731a133230803b, type: 3}
   hasProjectile: 1
   scale: 0.5
+  updatePosition: 0
